@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
+import Fade from 'react-reveal/Fade';
+import Jump from 'react-reveal/Jump';
 
 const NavFAQ = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
@@ -90,70 +92,72 @@ const NavFAQ = () => {
               toggleMenu ? 'absolute' : 'hidden'
             }`}
           >
-            <div className="rounded-lg shadow-md">
-              <div className="rounded-lg bg-white shadow-xs overflow-hidden">
-                <div className="px-5 pt-4 flex items-center justify-between">
-                  <div>
-                    {/* logo */}
-                    <img
-                      className="h-8 w-auto"
-                      src="favicon.ico"
-                      alt="Logo official"
-                    />
-                  </div>
-                  <div className="-mr-2">
-                    {/* x icon button */}
-                    <button
-                      className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-200 focus:outline-none focus:bg-gray-100 focus:text-gray-500"
-                      onClick={() => setToggleMenu((prevState) => !prevState)}
-                    >
-                      <svg
-                        className="h-6 w-6"
-                        stroke="currentColor"
-                        fill="none"
-                        viewBox="0 0 24 24"
+            <Jump spy={toggleMenu} duration={500}>
+              <div className="rounded-lg shadow-md">
+                <div className="rounded-lg bg-white shadow-xs overflow-hidden">
+                  <div className="px-5 pt-4 flex items-center justify-between">
+                    <div>
+                      {/* logo */}
+                      <img
+                        className="h-8 w-auto"
+                        src="favicon.ico"
+                        alt="Logo official"
+                      />
+                    </div>
+                    <div className="-mr-2">
+                      {/* x icon button */}
+                      <button
+                        className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-200 focus:outline-none focus:bg-gray-100 focus:text-gray-500"
+                        onClick={() => setToggleMenu((prevState) => !prevState)}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
+                        <svg
+                          className="h-6 w-6"
+                          stroke="currentColor"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                </div>
 
-                <div className="px-2 pt-2 pb-3">
-                  <Link href="/search">
-                    <a className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                      Search
-                    </a>
-                  </Link>
-                  <Link href="/about">
-                    <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                      About
-                    </a>
-                  </Link>
-                  <Link href="/faq">
-                    <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                      FAQ
-                    </a>
-                  </Link>
-                </div>
+                  <div className="px-2 pt-2 pb-3">
+                    <Link href="/search">
+                      <a className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
+                        Search
+                      </a>
+                    </Link>
+                    <Link href="/about">
+                      <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
+                        About
+                      </a>
+                    </Link>
+                    <Link href="/faq">
+                      <a className="mt-1 block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
+                        FAQ
+                      </a>
+                    </Link>
+                  </div>
 
-                <div>
-                  <Link href="/search">
-                    <a
-                      href="/"
-                      className="block w-full px-5 py-3 text-center font-medium text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700"
-                    >
-                      Login
-                    </a>
-                  </Link>
+                  <div>
+                    <Link href="/search">
+                      <a
+                        href="/"
+                        className="block w-full px-5 py-3 text-center font-medium text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700"
+                      >
+                        Login
+                      </a>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Jump>
           </section>
 
           {/* hero header */}
@@ -186,11 +190,13 @@ const NavFAQ = () => {
 
       {/* hero image */}
       <article className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-        <img
-          className="object-cover h-full hidden lg:flex"
-          src="https://images.unsplash.com/photo-1484069560501-87d72b0c3669?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1950&q=80"
-          alt="Question Marks Cover"
-        />
+        <Fade left>
+          <img
+            className="object-cover h-full hidden lg:flex"
+            src="https://images.unsplash.com/photo-1484069560501-87d72b0c3669?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1950&q=80"
+            alt="Question Marks Cover"
+          />
+        </Fade>
       </article>
     </main>
   );

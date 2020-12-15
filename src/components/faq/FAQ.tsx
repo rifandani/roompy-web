@@ -1,3 +1,5 @@
+import Swing from 'react-reveal/Swing';
+
 export default function FAQ() {
   return (
     <article className="py-20 relative overflow-hidden bg-white">
@@ -15,55 +17,57 @@ export default function FAQ() {
         </section>
 
         <section className="flex flex-wrap -mx-2 lg:w-4/5 sm:mx-auto sm:mb-2">
-          <div className="w-full px-4 py-2 lg:w-1/2">
-            <details className="mb-4 bg-gray-100">
-              <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
-                How does it work?
-              </summary>
+          <Swing duration={2000}>
+            <div className="w-full px-4 py-2 lg:w-1/2">
+              <details className="mb-4 bg-gray-100">
+                <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
+                  How does it work?
+                </summary>
 
-              <p className="px-4 py-2">
-                Our platform works with your content to provides insights and
-                metrics on how you can grow your business and scale your
-                infastructure.
-              </p>
-            </details>
-            <details className="mb-4 bg-gray-100">
-              <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
-                How do I make changes and configure my site?
-              </summary>
+                <p className="px-4 py-2">
+                  Our platform works with your content to provides insights and
+                  metrics on how you can grow your business and scale your
+                  infastructure.
+                </p>
+              </details>
+              <details className="mb-4 bg-gray-100">
+                <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
+                  How do I make changes and configure my site?
+                </summary>
 
-              <p className="px-4 py-2">
-                You can easily change your site settings inside of your site
-                dashboard by clicking the top right menu and clicking the
-                settings button.
-              </p>
-            </details>
-          </div>
+                <p className="px-4 py-2">
+                  You can easily change your site settings inside of your site
+                  dashboard by clicking the top right menu and clicking the
+                  settings button.
+                </p>
+              </details>
+            </div>
 
-          <div className="w-full px-4 py-2 lg:w-1/2">
-            <details className="mb-4 bg-gray-100">
-              <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
-                Do you offer team pricing?
-              </summary>
+            <div className="w-full px-4 py-2 lg:w-1/2">
+              <details className="mb-4 bg-gray-100">
+                <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
+                  Do you offer team pricing?
+                </summary>
 
-              <p className="px-4 py-2">
-                Yes, we do! Team pricing is available for any plan. You can take
-                advantage of 30% off for signing up for team pricing of 10 users
-                or more.
-              </p>
-            </details>
-            <details className="mb-4 bg-gray-100">
-              <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
-                How do I add a custom domain?
-              </summary>
+                <p className="px-4 py-2">
+                  Yes, we do! Team pricing is available for any plan. You can
+                  take advantage of 30% off for signing up for team pricing of
+                  10 users or more.
+                </p>
+              </details>
+              <details className="mb-4 bg-gray-100">
+                <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
+                  How do I add a custom domain?
+                </summary>
 
-              <p className="px-4 py-2">
-                You can easily change your site settings inside of your site
-                dashboard by clicking the top right menu and clicking the
-                settings button.
-              </p>
-            </details>
-          </div>
+                <p className="px-4 py-2">
+                  You can easily change your site settings inside of your site
+                  dashboard by clicking the top right menu and clicking the
+                  settings button.
+                </p>
+              </details>
+            </div>
+          </Swing>
         </section>
       </div>
     </article>

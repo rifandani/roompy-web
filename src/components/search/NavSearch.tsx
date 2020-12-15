@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Fade from 'react-reveal/Fade';
 import Jump from 'react-reveal/Jump';
 
-const NavHome = () => {
+const NavSearch = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
 
   return (
@@ -164,29 +164,21 @@ const NavHome = () => {
           <section className="lg:h-full mx-auto max-w-screen-xl pt-10 mt-10 px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28 lg:pt-20 xl:pt-16">
             <div className="sm:text-center lg:text-left">
               <h2 className="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:text-5xl sm:leading-none md:text-6xl">
-                Find your soul
+                Start searching the
                 <br className="xl:hidden" />
-                <span className="text-purple-700"> Roommate</span>
+                <span className="text-purple-700"> Roompies</span>
               </h2>
 
               <p className="mt-5 sm:text-lg md:text-xl sm:max-w-xl sm:mx-auto lg:mx-0 italic text-base text-gray-500">
-                Cari dan dapatkan info secara langsung di
-                <span className="text-purple-700"> Roompy</span>
+                Platform gratis untuk mencari dan
+                <span className="text-purple-700"> komunikasi</span>
               </p>
 
               <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
-                  <Link href="/rooms/create">
+                  <Link href="#search">
                     <a className="w-full flex items-center justify-center px-8 py-3 md:py-4 md:text-lg md:px-10 text-base leading-6 font-medium rounded-md focus:outline-none text-white bg-purple-700 hover:bg-purple-100 hover:text-purple-700 border border-transparent">
-                      Buat room
-                    </a>
-                  </Link>
-                </div>
-
-                <div className="mt-3 sm:mt-0 sm:ml-3">
-                  <Link href="/profiles/create">
-                    <a className="w-full flex items-center justify-center px-8 py-3 md:py-4 md:text-lg md:px-10 border border-transparent text-base leading-6 font-medium rounded-md focus:outline-none text-purple-700 bg-purple-100 hover:text-white hover:bg-purple-700">
-                      Cari room
+                      Search
                     </a>
                   </Link>
                 </div>
@@ -201,8 +193,8 @@ const NavHome = () => {
         <Fade left>
           <img
             className="object-cover h-full hidden lg:flex"
-            src="https://images.unsplash.com/photo-1527137342181-19aab11a8ee8?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=2850&q=80"
-            alt=""
+            src="https://images.unsplash.com/photo-1587459803334-e14b7fd22b34?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=2100&q=80"
+            alt="Magnifying glass foto"
           />
         </Fade>
       </article>
@@ -210,4 +202,4 @@ const NavHome = () => {
   );
 };
 
-export default NavHome;
+export default NavSearch;
