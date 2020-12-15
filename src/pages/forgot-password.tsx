@@ -1,14 +1,14 @@
 import Link from 'next/link';
 // files
 
-export default function LoginPage() {
-  async function login() {
-    alert('login');
+export default function ForgotPasswordPage() {
+  async function forgot() {
+    alert('forgot password');
   }
 
   return (
     // <!-- Page Container -->
-    <div className="pt-16 min-h-screen flex justify-center bg-gray-100 text-gray-900 relative">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-900 relative">
       {/* <!-- Waves Background --> */}
       <div className="absolute right-0 bottom-0 left-0">
         <svg viewBox="0 -100 1440 320">
@@ -21,7 +21,7 @@ export default function LoginPage() {
       </div>
       {/* <!-- END Waves Background --> */}
 
-      {/* <!-- Log In Section --> */}
+      {/* <!-- Forgot Password Section --> */}
       <div className="px-5 py-6 lg:px-6 lg:py-8 w-full md:w-8/12 lg:w-6/12 xl:w-4/12 relative">
         {/* <!-- Logo --> */}
         <div className="mb-6 text-center">
@@ -36,7 +36,7 @@ export default function LoginPage() {
           </Link>
 
           <p className="mt-2 italic text-sm text-gray-500">
-            Please login to your account
+            Jangan khawatir, kami akan membantu anda!
           </p>
         </div>
         {/* <!-- END Logo --> */}
@@ -54,40 +54,22 @@ export default function LoginPage() {
               />
             </label>
 
-            <label className="text-sm block text-gray-700 mt-4">
-              Password
-              <input
-                className="appearance-none rounded-md px-4 py-3 mt-1 block w-full outline-none border-b-2 hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="******"
-                type="password"
-                required
-                minLength={6}
-              />
-            </label>
-
             <div className="mt-6">
               <button
                 className="px-4 py-3 font-bold tracking-wider uppercase rounded-md focus:outline-none focus:shadow-outline block w-full hover:text-purple-700 hover:bg-purple-100 text-white bg-purple-700"
                 type="submit"
-                onClick={login}
+                onClick={forgot}
               >
-                Login
+                Reset Password
               </button>
             </div>
           </form>
 
+          {/* back to login page */}
           <div className="mt-6 text-center text-sm">
-            <Link href="/register">
+            <Link href="/login">
               <a className="italic text-gray-500 block md:inline-block mb-2 md:mb-0 hover:text-purple-700 hover:underline">
-                Register
-              </a>
-            </Link>
-
-            <span className="text-gray-500 mx-1 hidden md:inline-block">·</span>
-
-            <Link href="/forgot-password">
-              <a className="italic text-gray-500 block md:inline-block hover:text-purple-700 hover:underline">
-                Forgot Password?
+                Back to login
               </a>
             </Link>
           </div>
