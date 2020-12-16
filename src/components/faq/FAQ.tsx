@@ -1,4 +1,4 @@
-import Swing from 'react-reveal/Swing';
+import { Roll } from 'react-awesome-reveal';
 
 export default function FAQ() {
   return (
@@ -17,7 +17,7 @@ export default function FAQ() {
         </section>
 
         <section className="flex flex-wrap -mx-2 lg:w-4/5 sm:mx-auto sm:mb-2">
-          <Swing duration={2000}>
+          <Roll duration={2000}>
             <div className="w-full px-4 py-2 lg:w-1/2">
               <details className="mb-4 bg-gray-100">
                 <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer">
@@ -67,7 +67,7 @@ export default function FAQ() {
                 </p>
               </details>
             </div>
-          </Swing>
+          </Roll>
         </section>
       </div>
     </article>

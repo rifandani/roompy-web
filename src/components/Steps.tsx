@@ -1,5 +1,5 @@
 import { FcImport, FcGlobe, FcCameraIdentification } from 'react-icons/fc';
-import Zoom from 'react-reveal/Zoom';
+import { Zoom } from 'react-awesome-reveal';
 
 export default function Steps() {
   return (
@@ -15,7 +15,7 @@ export default function Steps() {
           <span className="text-purple-700"> Roompy</span>
         </p>
 
-        <Zoom left duration={2000}>
+        <Zoom direction="left" duration={2000}>
           <article className="content-center lg:flex lg:justify-center lg:items-center">
             <section className="flex justify-center pt-10 m-auto lg:w-1/4 lg:mx-6 lg:my-8">
               <div className="relative w-64 h-48">

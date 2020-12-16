@@ -1,8 +1,53 @@
-import Flip from 'react-reveal/Flip';
+import { useEffect, useState } from 'react';
+import { Flip } from 'react-awesome-reveal';
 // files
 import CardHome from './CardHome';
+import { db } from '../configs/firebaseConfig';
 
 export default function ContentHome() {
+  const [roompies, setRoompies] = useState(null);
+
+  useEffect(() => {
+    getRoompies();
+
+    getUsers();
+  }, []);
+
+  async function getRoompies() {
+    return db
+      .collection('roompies')
+      .orderBy('age', 'desc')
+      .limit(8)
+      .onSnapshot(async (snap) => {
+        setRoompies([]);
+
+        // tambahkan id di array nya
+        const roompiesFirestore = snap.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        setRoompies(roompiesFirestore);
+
+        console.log(roompies);
+      });
+  }
+
+  async function getUsers() {
+    return db
+      .collection('users')
+      .orderBy('createdAt', 'desc')
+      .onSnapshot(async (snap) => {
+        // tambahkan id di array nya
+        const usersFirestore = snap.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        console.log(usersFirestore);
+      });
+  }
+
   return (
     <div className="py-20 relative w-full min-h-screen overflow-hidden">
       <main className="sm:px-6 lg:px-8 px-4 pt-6 min-h-full max-w-screen-xl mx-auto container">
@@ -17,17 +62,8 @@ export default function ContentHome() {
           <span className="text-purple-700"> Roommate</span>
         </p>
 
-        {/* <article className="my-2 py-2 h-20 w-full flex items-center space-x-3">
-          <button
-            onClick={() => {}}
-            className="px-4 py-1 border rounded-md shadow-lg cursor-pointer hover:bg-yellow-200 transform transition duration-500 hover:scale-125"
-          >
-            <p className="font-light uppercase">Newest</p>
-          </button>
-        </article> */}
-
         <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <Flip left duration={2000}>
+          <Flip duration={2000} direction="horizontal">
             <CardHome />
             <CardHome />
             <CardHome />

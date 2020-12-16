@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import Fade from 'react-reveal/Fade';
-import Jump from 'react-reveal/Jump';
+import { Fade, JackInTheBox } from 'react-awesome-reveal';
 
 const NavSearch = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
@@ -92,7 +91,7 @@ const NavSearch = () => {
               toggleMenu ? 'absolute' : 'hidden'
             }`}
           >
-            <Jump spy={toggleMenu} duration={500}>
+            <JackInTheBox duration={500}>
               <div className="rounded-lg shadow-md">
                 <div className="rounded-lg bg-white shadow-xs overflow-hidden">
                   <div className="px-5 pt-4 flex items-center justify-between">
@@ -157,7 +156,7 @@ const NavSearch = () => {
                   </div>
                 </div>
               </div>
-            </Jump>
+            </JackInTheBox>
           </section>
 
           {/* hero header */}
@@ -190,7 +189,7 @@ const NavSearch = () => {
 
       {/* hero image */}
       <article className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-        <Fade left>
+        <Fade direction="left">
           <img
             className="object-cover h-full hidden lg:flex"
             src="https://images.unsplash.com/photo-1587459803334-e14b7fd22b34?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=2100&q=80"

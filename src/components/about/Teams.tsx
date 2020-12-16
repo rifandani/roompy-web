@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { FaLinkedin, FaInstagram } from 'react-icons/fa';
-import Tada from 'react-reveal/Tada';
+import { Slide } from 'react-awesome-reveal';
 
 export default function Teams() {
   return (
@@ -20,7 +20,7 @@ export default function Teams() {
           </section>
 
           <section className="content-center lg:flex lg:justify-center items-center lg:items-center flex-wrap">
-            <Tada duration={2000}>
+            <Slide direction="left" duration={2000}>
               {/* team #1 */}
               <div className="p-4 lg:w-1/2 flex justify-center items-center">
                 <div className="h-full flex sm:flex-row flex-col items-center sm:justify-start justify-center text-center sm:text-left">
@@ -90,7 +90,7 @@ export default function Teams() {
                   </div>
                 </div>
               </div>
-            </Tada>
+            </Slide>
           </section>
         </div>
       </section>
