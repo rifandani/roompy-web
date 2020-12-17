@@ -1,7 +1,7 @@
 export const user = {
   createdAt: Date.now(), // number
   updatedAt: Date.now(), // number
-  name: 'Tri Rizeki Rifandani', // string
+  username: 'Tri Rizeki Rifandani', // string
   email: 'rifandani@usako.net', // string
   emailVerified: false, // boolean => untuk badge
 
@@ -30,7 +30,7 @@ const roompies = {
   ownAnimal: false, // boolean => bawa hewan peliharaan apa enggak
   phoneNumber: '+6282243199535', // string => phone number yg bisa buat di WA
 
-  genderPref: 'pria' | 'wanita', // enum => mencari teman dengan jenis kelamin
+  genderPref: 'Pria' | 'Wanita', // enum => mencari teman dengan jenis kelamin
   roomPref: 'satu kamar' | 'satu rumah', // enum => mencari teman satu kamar kah atau satu kontrakan
 
   desc: 'Saya adalah orang yang baik dan mudah diajak berkomunikasi', // penjelasan kelebihan/keuntungan satu roommate bersama user

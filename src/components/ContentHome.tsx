@@ -45,23 +45,19 @@ export default function ContentHome() {
           <span className="text-purple-700"> Roommate</span>
         </p>
 
+        {/* looping roompies array */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {roompies !== [] ? (
-            <Flip duration={2000} direction="horizontal">
-              <CardHome />
-              <CardHome />
-              <CardHome />
-              <CardHome />
-              <CardHome />
-              <CardHome />
-              <CardHome />
-              <CardHome />
-            </Flip>
-          ) : (
-            <div className="flex items-center justify-center w-full h-32">
-              <p className="text-xl text-purple-500">No data</p>
-            </div>
-          )}
+          <Flip duration={2000} direction="horizontal">
+            {roompies !== [] ? (
+              (roompies as Roompies).map((roompy) => (
+                <CardHome roompy={roompy} />
+              ))
+            ) : (
+              <div className="flex items-center justify-center w-full h-32">
+                <p className="text-xl text-purple-500">No data</p>
+              </div>
+            )}
+          </Flip>
         </div>
 
         {/* pagination */}
