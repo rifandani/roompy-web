@@ -1,22 +1,40 @@
-import { useState, MouseEvent } from 'react';
+import { useState, MouseEvent, useEffect } from 'react';
 import { Flip } from 'react-awesome-reveal';
 import Select from 'react-select';
 // files
 import CardHome from '../CardHome';
+import { db } from '../../configs/firebaseConfig';
 
 export default function Search() {
   const [types] = useState([
-    { value: 'roompies', label: 'Roompies' },
-    { value: 'rooms', label: 'Rooms' },
+    { value: 'Roompies', label: 'Roompies' },
+    { value: 'Rooms', label: 'Rooms' },
   ]);
   const [selectedTypes, setSelectedTypes] = useState(null);
-
-  const [cities] = useState([
-    { value: 'yogyakarta', label: 'Yogyakarta' },
-    { value: 'jakarta', label: 'Jakarta' },
-    { value: 'bandung', label: 'Bandung' },
-  ]);
+  const [cities, setCities] = useState([]);
   const [selectedCities, setSelectedCities] = useState(null);
+
+  async function getCities() {
+    return db
+      .collection('cities')
+      .orderBy('nama', 'asc')
+      .onSnapshot(async (snap) => {
+        setCities([]);
+
+        const citiesFirestore = snap.docs.map((doc) => ({
+          ...doc.data(),
+          docId: doc.id,
+          value: doc.get('nama'),
+          label: doc.get('nama'),
+        }));
+
+        setCities(citiesFirestore);
+      });
+  }
+
+  useEffect(() => {
+    getCities();
+  }, []);
 
   async function search(e: MouseEvent) {
     e.preventDefault();
@@ -31,25 +49,25 @@ export default function Search() {
   }
 
   return (
-    <article className="py-20 relative w-full">
-      <div className="min-h-full max-w-screen-xl mx-auto">
+    <article className="relative w-full py-20">
+      <div className="max-w-screen-xl min-h-full mx-auto">
         <form>
           {/* title and subtitle */}
-          <section className="flex flex-col text-center w-full mb-10">
-            <h2 className="px-8 pt-6 text-4xl sm:text-5xl md:text-6xl tracking-tight leading-10 sm:leading-none font-extrabold text-center xl:max-w-screen-xl text-gray-900">
+          <section className="flex flex-col w-full mb-10 text-center">
+            <h2 className="px-8 pt-6 text-4xl font-extrabold leading-10 tracking-tight text-center text-gray-900 sm:text-5xl md:text-6xl sm:leading-none xl:max-w-screen-xl">
               Connect and find
               <span className="text-purple-700"> Roommate</span>
             </h2>
 
-            <p className="px-8 mt-5 sm:text-lg md:text-xl sm:w-full sm:mx-auto lg:mx-0 italic text-base text-center xl:max-w-screen-xl text-gray-500">
+            <p className="px-8 mt-5 text-base italic text-center text-gray-500 sm:text-lg md:text-xl sm:w-full sm:mx-auto lg:mx-0 xl:max-w-screen-xl">
               Search and filter the
               <span className="text-purple-700"> Roompies</span>
             </p>
           </section>
 
           {/* filter form */}
-          <section className="mx-auto w-full flex flex-col justify-center items-center p-5 mt-10 mb-20">
-            <div className="flex justify-center items-center w-full space-x-5 mb-5">
+          <section className="flex flex-col items-center justify-center w-full p-5 mx-auto mt-10 mb-20">
+            <div className="flex items-center justify-center w-full mb-5 space-x-5">
               {/* types select */}
               <Select
                 className="w-1/3 lg:w-1/5"
@@ -72,7 +90,7 @@ export default function Search() {
             {/* Search button */}
             <div className="flex justify-center w-full">
               <button
-                className="px-8 py-3 md:py-4 md:text-lg md:px-10 text-base leading-6 font-medium rounded-md focus:outline-none text-white bg-purple-700 hover:bg-purple-100 hover:text-purple-700 border border-transparent"
+                className="px-8 py-3 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:bg-purple-100 hover:text-purple-700"
                 onClick={(e) => search(e)}
               >
                 Search
@@ -82,7 +100,7 @@ export default function Search() {
         </form>
 
         {/* roompies card list */}
-        <section className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <section className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Flip direction="horizontal" duration={2000}>
             <CardHome />
             <CardHome />
