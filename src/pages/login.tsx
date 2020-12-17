@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useContext, useEffect, useState } from 'react';
 import validator from 'validator';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 // files
 import { auth } from '../configs/firebaseConfig';
+import UserContext from '../contexts/UserContext';
 
 export default function LoginPage() {
   // state
@@ -13,6 +14,14 @@ export default function LoginPage() {
 
   // useRouter
   const { push } = useRouter();
+
+  // UserContext
+  const { user } = useContext(UserContext);
+
+  // useEffect, make sure already logged in user cant access this page
+  useEffect(() => {
+    if (user) push('/');
+  }, []);
 
   async function login(e: MouseEvent) {
     e.preventDefault();

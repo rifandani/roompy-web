@@ -1,10 +1,11 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, MouseEvent } from 'react';
+import { useState, MouseEvent, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 import validator from 'validator';
 // files
-import { auth } from '../configs/firebaseConfig';
+import { auth, db } from '../configs/firebaseConfig';
+import UserContext from '../contexts/UserContext';
 
 export default function RegisterPage() {
   // state
@@ -16,7 +17,15 @@ export default function RegisterPage() {
   // useRouter
   const { push } = useRouter();
 
-  // register func
+  // UserContext
+  const { user } = useContext(UserContext);
+
+  // useEffect, make sure already logged in user cant access this page
+  useEffect(() => {
+    if (user) push('/');
+  }, []);
+
+  // register new user
   async function register(e: MouseEvent) {
     e.preventDefault();
 
@@ -35,23 +44,24 @@ export default function RegisterPage() {
         'Please input min 3 chars USERNAME & 6 chars PASSWORD',
       );
 
-    const user = {
-      createdAt: Date.now(),
-      email,
-      emailVerified: false,
-      postedRoompies: [],
-      postedRooms: [],
-      updatedAt: Date.now(),
-      username,
-    };
-
     try {
       // save to firebase auth && update user profile
       const newUser = await auth.createUserWithEmailAndPassword(
         email,
         password,
       );
-      await newUser.user.updateProfile({ displayName: user.username });
+      await newUser.user.updateProfile({ displayName: username });
+
+      // save to firestore Users collection
+      await db.collection('users').doc(newUser.user.uid).set({
+        createdAt: Date.now(),
+        email,
+        emailVerified: false,
+        postedRoompies: [],
+        postedRooms: [],
+        updatedAt: Date.now(),
+        username,
+      });
 
       // toast & push to home
       toast.success('Welcome');
