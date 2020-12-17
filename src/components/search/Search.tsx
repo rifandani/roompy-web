@@ -115,7 +115,7 @@ export default function Search() {
 
         {/* roompies card list */}
         <section className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <Flip direction="horizontal" duration={2000}>
+          <Flip direction="horizontal" duration={2000} triggerOnce>
             {roompies &&
               (roompies as Roompies).map((roompy) => (
                 <CardHome key={roompy.id} roompy={roompy} />
