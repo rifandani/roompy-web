@@ -87,6 +87,8 @@ export default function LoginPage() {
                 placeholder="elonmusk@email.com"
                 type="email"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </label>
 
@@ -98,6 +100,8 @@ export default function LoginPage() {
                 type="password"
                 required
                 minLength={6}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </label>
 
