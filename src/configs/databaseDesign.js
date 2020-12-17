@@ -3,7 +3,7 @@ export const user = {
   updatedAt: Date.now(), // number
   name: 'Tri Rizeki Rifandani', // string
   email: 'rifandani@usako.net', // string
-  emailVerified: false | true, // boolean => untuk badge
+  emailVerified: false, // boolean => untuk badge
 
   // awal registrasi value nya === []
   postedRoompies: [
