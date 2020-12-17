@@ -103,7 +103,7 @@ export default function LoginPage() {
 
             <div className="mt-6">
               <button
-                className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:shadow-outline hover:text-purple-700 hover:bg-purple-100"
+                className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
                 type="submit"
                 onClick={(e) => login(e)}
               >
@@ -114,7 +114,7 @@ export default function LoginPage() {
 
           <div className="mt-6 text-sm text-center">
             <Link href="/register">
-              <a className="block mb-2 italic text-gray-500 md:inline-block md:mb-0 hover:text-purple-700 hover:underline">
+              <a className="block mb-2 italic text-gray-500 md:inline-block md:mb-0 hover:text-purple-700 hover:underline focus:text-purple-700 focus:underline">
                 Register
               </a>
             </Link>
@@ -122,7 +122,7 @@ export default function LoginPage() {
             <span className="hidden mx-1 text-gray-500 md:inline-block">·</span>
 
             <Link href="/forgot-password">
-              <a className="block italic text-gray-500 md:inline-block hover:text-purple-700 hover:underline">
+              <a className="block italic text-gray-500 md:inline-block hover:text-purple-700 hover:underline focus:text-purple-700 focus:underline">
                 Forgot Password?
               </a>
             </Link>

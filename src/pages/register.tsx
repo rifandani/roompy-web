@@ -165,7 +165,7 @@ export default function RegisterPage() {
 
             <div className="mt-6">
               <button
-                className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:shadow-outline hover:text-purple-700 hover:bg-purple-100"
+                className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
                 type="submit"
                 onClick={(e) => register(e)}
               >
@@ -177,7 +177,7 @@ export default function RegisterPage() {
           {/* login page */}
           <div className="mt-6 text-sm text-center">
             <Link href="/login">
-              <a className="block italic text-gray-500 hover:text-purple-700 hover:underline md:inline-block">
+              <a className="block italic text-gray-500 hover:text-purple-700 hover:underline md:inline-block focus:underline focus:text-purple-700">
                 Already have an account?
               </a>
             </Link>
