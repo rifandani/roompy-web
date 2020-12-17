@@ -6,8 +6,6 @@ import { GiMale } from 'react-icons/gi';
 import { Roompy } from '../utils/interfaces';
 
 export default function CardHome({ roompy }: { roompy: Roompy }) {
-  console.log('roompy => ', roompy);
-
   return (
     <article className="mx-auto overflow-hidden transition duration-500 transform rounded-lg shadow-lg cursor-pointer w-80 hover:z-auto hover:scale-110">
       <section className="h-40 bg-gradient-to-tl from-purple-700 via-indigo-500 to-teal-300">

@@ -7,6 +7,8 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 // files
 import '../styles/index.css';
+import UserContext from '../contexts/UserContext';
+import useAuth from '../hooks/useAuth';
 
 // create a custom progress bar
 NProgress.configure({ showSpinner: false });
@@ -21,6 +23,8 @@ Router.events.on('routeChangeError', () => {
 });
 
 export default function MyApp({ Component, pageProps }: AppProps) {
+  const [user, setUser] = useAuth(); // user auth context
+
   return (
     <>
       <Head>
@@ -38,10 +42,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
 
-      <>
+      {/* @ts-ignore: Unreachable code error */}
+      <UserContext.Provider value={{ user, setUser }}>
         <Component {...pageProps} />
         <ToastContainer />
-      </>
+      </UserContext.Provider>
     </>
   );
 }

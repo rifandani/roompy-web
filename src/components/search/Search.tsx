@@ -1,18 +1,21 @@
 import { useState, MouseEvent, useEffect } from 'react';
 import { Flip } from 'react-awesome-reveal';
 import Select from 'react-select';
+import { toast } from 'react-toastify';
 // files
 import CardHome from '../CardHome';
 import { db } from '../../configs/firebaseConfig';
+import { Roompies } from '../../utils/interfaces';
 
 export default function Search() {
   const [types] = useState([
-    { value: 'Roompies', label: 'Roompies' },
-    { value: 'Rooms', label: 'Rooms' },
+    { value: 'roompies', label: 'Roompies' },
+    { value: 'rooms', label: 'Rooms' },
   ]);
-  const [selectedTypes, setSelectedTypes] = useState(null);
+  const [selectedTypes, setSelectedTypes] = useState(null); // object
   const [cities, setCities] = useState([]);
-  const [selectedCities, setSelectedCities] = useState(null);
+  const [selectedCities, setSelectedCities] = useState(null); // object
+  const [roompies, setRoompies] = useState<Roompies | []>([]);
 
   async function getCities() {
     return db
@@ -40,12 +43,23 @@ export default function Search() {
     e.preventDefault();
 
     // kalau select input tidak dipilih
-    if (!selectedTypes || !selectedCities) {
-      return console.log('Choose the filter please');
-    }
+    if (!selectedTypes || !selectedCities)
+      return toast.warning('Choose the filter please');
 
-    console.log(selectedTypes);
-    console.log(selectedCities);
+    return db
+      .collection(selectedTypes.value)
+      .where('city', '==', selectedCities.value)
+      .onSnapshot(async (snap) => {
+        setRoompies([]);
+
+        const roompiesFirestore = snap.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+
+        setRoompies(roompiesFirestore as Roompies);
+        console.log('roompies => ', roompiesFirestore);
+      });
   }
 
   return (
@@ -102,16 +116,18 @@ export default function Search() {
         {/* roompies card list */}
         <section className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Flip direction="horizontal" duration={2000}>
-            <CardHome />
-            <CardHome />
-            <CardHome />
-            <CardHome />
-            <CardHome />
-            <CardHome />
-            <CardHome />
-            <CardHome />
+            {roompies &&
+              (roompies as Roompies).map((roompy) => (
+                <CardHome key={roompy.id} roompy={roompy} />
+              ))}
           </Flip>
         </section>
+
+        {roompies === [] && (
+          <div className="flex items-center justify-center w-full h-full">
+            <p className="text-xl">No data</p>
+          </div>
+        )}
       </div>
     </article>
   );

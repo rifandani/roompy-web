@@ -27,7 +27,6 @@ export default function ContentHome() {
         }));
 
         setRoompies(roompiesFirestore as Roompies);
-        console.log('roompies => ', roompies);
       });
   }
 
@@ -50,7 +49,7 @@ export default function ContentHome() {
           <Flip duration={2000} direction="horizontal">
             {roompies !== [] ? (
               (roompies as Roompies).map((roompy) => (
-                <CardHome roompy={roompy} />
+                <CardHome key={roompy.id} roompy={roompy} />
               ))
             ) : (
               <div className="flex items-center justify-center w-full h-32">
