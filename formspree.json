@@ -1,0 +1,14 @@
+{
+  "forms": {
+    "contact": {
+      "name": "Contact Form",
+      "fields": {
+        "username": { "type": "text", "required": true },
+        "email": { "type": "email", "required": true },
+        "message": { "type": "text", "required": true }
+      },
+      "actions": [{ "type": "email", "to": "tri.rifandani@gmail.com" }],
+      "allowExtraFields": true
+    }
+  }
+}

@@ -5,10 +5,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import { FormspreeProvider } from '@formspree/react';
 // files
 import '../styles/index.css';
-import UserContext from '../contexts/UserContext';
 import useAuth from '../hooks/useAuth';
+import UserContext from '../contexts/UserContext';
 
 // create a custom progress bar
 NProgress.configure({ showSpinner: false });
@@ -42,11 +43,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
 
-      {/* @ts-ignore: Unreachable code error */}
-      <UserContext.Provider value={{ user, setUser }}>
-        <Component {...pageProps} />
-        <ToastContainer />
-      </UserContext.Provider>
+      {/* sets up a project context for all forms in the app, and associates your forms with the keys specified in your formspree.json config file */}
+      <FormspreeProvider project="1571395310305935055">
+        {/* @ts-ignore: Unreachable code error */}
+        <UserContext.Provider value={{ user, setUser }}>
+          <Component {...pageProps} />
+          <ToastContainer />
+        </UserContext.Provider>
+      </FormspreeProvider>
     </>
   );
 }
