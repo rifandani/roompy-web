@@ -90,12 +90,13 @@ export default function LoginPage() {
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-8">
           <form autoComplete="on">
-            <label className="block text-sm text-gray-700">
+            <label className="block text-sm text-gray-700" htmlFor="email">
               Email
               <input
                 className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
                 placeholder="elonmusk@email.com"
                 type="email"
+                name="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -103,12 +104,16 @@ export default function LoginPage() {
               />
             </label>
 
-            <label className="block mt-4 text-sm text-gray-700">
+            <label
+              className="block mt-4 text-sm text-gray-700"
+              htmlFor="password"
+            >
               Password
               <input
                 className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
                 placeholder="******"
                 type="password"
+                name="password"
                 required
                 minLength={6}
                 value={password}

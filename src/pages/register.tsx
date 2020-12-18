@@ -119,11 +119,12 @@ export default function RegisterPage() {
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-10">
           <form autoComplete="on">
-            <label className="block text-sm text-gray-700">
+            <label className="block text-sm text-gray-700" htmlFor="username">
               Username
               <input
                 className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
                 placeholder="Elon Musk"
+                name="username"
                 required
                 minLength={3}
                 value={username}
@@ -132,12 +133,13 @@ export default function RegisterPage() {
               />
             </label>
 
-            <label className="block mt-4 text-sm text-gray-700">
+            <label className="block mt-4 text-sm text-gray-700" htmlFor="email">
               Email
               <input
                 className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
                 placeholder="elonmusk@gmail.com"
                 type="email"
+                name="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -145,12 +147,16 @@ export default function RegisterPage() {
               />
             </label>
 
-            <label className="block mt-4 text-sm text-gray-700">
+            <label
+              className="block mt-4 text-sm text-gray-700"
+              htmlFor="current-password"
+            >
               Password
               <input
                 className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
                 placeholder="******"
                 type="password"
+                name="current-password"
                 required
                 minLength={6}
                 value={password}
@@ -159,12 +165,16 @@ export default function RegisterPage() {
               />
             </label>
 
-            <label className="block mt-4 text-sm text-gray-700">
+            <label
+              className="block mt-4 text-sm text-gray-700"
+              htmlFor="new-password"
+            >
               Confirm Password
               <input
                 className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
                 placeholder="******"
                 type="password"
+                name="new-password"
                 required
                 minLength={6}
                 value={password2}
