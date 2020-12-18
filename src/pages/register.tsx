@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, MouseEvent, useEffect, useContext } from 'react';
+import { useState, MouseEvent, useContext } from 'react';
 import { toast } from 'react-toastify';
 import validator from 'validator';
 // files
@@ -20,14 +20,15 @@ export default function RegisterPage() {
   // UserContext
   const { user } = useContext(UserContext);
 
-  // useEffect, make sure already logged in user cant access this page
-  useEffect(() => {
-    if (user) push('/');
-  }, []);
-
   // register new user
   async function register(e: MouseEvent) {
     e.preventDefault();
+
+    // push back home already logged in user
+    if (user) {
+      toast.warning('You are already logged in!');
+      return push('/');
+    }
 
     // validation input
     if (!username || !email || !password || !password2)
@@ -64,7 +65,7 @@ export default function RegisterPage() {
       });
 
       // toast & push to home
-      toast.success('Welcome');
+      toast.success(`Welcome, ${newUser.user.displayName}`);
       return push('/');
     } catch (err) {
       // Handle Errors here.
@@ -108,14 +109,16 @@ export default function RegisterPage() {
           </Link>
 
           <p className="mt-2 text-sm italic text-gray-500">
-            Gabung bersama komunitas kami
+            {user
+              ? 'You are already logged in'
+              : 'Gabung bersama komunitas kami'}
           </p>
         </div>
         {/* <!-- END Logo --> */}
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-10">
-          <form>
+          <form autoComplete="on">
             <label className="block text-sm text-gray-700">
               Username
               <input
@@ -125,6 +128,7 @@ export default function RegisterPage() {
                 minLength={3}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                disabled={user && Boolean(user)}
               />
             </label>
 
@@ -137,6 +141,7 @@ export default function RegisterPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={user && Boolean(user)}
               />
             </label>
 
@@ -150,6 +155,7 @@ export default function RegisterPage() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={user && Boolean(user)}
               />
             </label>
 
@@ -163,6 +169,7 @@ export default function RegisterPage() {
                 minLength={6}
                 value={password2}
                 onChange={(e) => setPassword2(e.target.value)}
+                disabled={user && Boolean(user)}
               />
             </label>
 

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MouseEvent, useContext, useEffect, useState } from 'react';
+import { MouseEvent, useContext, useState } from 'react';
 import validator from 'validator';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
@@ -18,13 +18,14 @@ export default function LoginPage() {
   // UserContext
   const { user } = useContext(UserContext);
 
-  // useEffect, make sure already logged in user cant access this page
-  useEffect(() => {
-    if (user) push('/');
-  }, []);
-
   async function login(e: MouseEvent) {
     e.preventDefault();
+
+    // push back home already logged in user
+    if (user) {
+      toast.warning('You are already logged in!');
+      return push('/');
+    }
 
     // validation
     if (!email || !password)
@@ -81,14 +82,14 @@ export default function LoginPage() {
           </Link>
 
           <p className="mt-2 text-sm italic text-gray-500">
-            Please login to your account
+            {user ? 'You already logged in' : 'Please login to your account'}
           </p>
         </div>
         {/* <!-- END Logo --> */}
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-8">
-          <form>
+          <form autoComplete="on">
             <label className="block text-sm text-gray-700">
               Email
               <input
@@ -98,6 +99,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={user && Boolean(user)}
               />
             </label>
 
@@ -111,6 +113,7 @@ export default function LoginPage() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={user && Boolean(user)}
               />
             </label>
 
