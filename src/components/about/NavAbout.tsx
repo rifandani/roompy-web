@@ -1,9 +1,23 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { JackInTheBox } from 'react-awesome-reveal';
+import { toast } from 'react-toastify';
+// files
+import UserContext from '../../contexts/UserContext';
+import { auth } from '../../configs/firebaseConfig';
 
 const NavAbout = () => {
+  // toggle menu
   const [toggleMenu, setToggleMenu] = useState(false);
+
+  // UserContext
+  const { user } = useContext(UserContext);
+
+  async function logout() {
+    await auth.signOut();
+
+    toast.info('Logout success');
+  }
 
   return (
     <main className="relative h-full overflow-hidden bg-white lg:min-h-screen">
@@ -76,11 +90,21 @@ const NavAbout = () => {
                     FAQ
                   </a>
                 </Link>
-                <Link href="/login">
-                  <a className="ml-8 font-medium text-purple-500 hover:text-purple-700">
-                    Login
-                  </a>
-                </Link>
+
+                {user ? (
+                  <span
+                    onClick={logout}
+                    className="ml-8 font-medium text-red-500 cursor-pointer hover:text-red-700"
+                  >
+                    Logout
+                  </span>
+                ) : (
+                  <Link href="/login">
+                    <a className="ml-8 font-medium text-purple-500 hover:text-purple-700">
+                      Login
+                    </a>
+                  </Link>
+                )}
               </div>
             </nav>
           </section>
@@ -145,14 +169,23 @@ const NavAbout = () => {
                   </div>
 
                   <div>
-                    <Link href="/search">
-                      <a
-                        href="/"
-                        className="block w-full px-5 py-3 font-medium text-center text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700"
+                    {user ? (
+                      <span
+                        onClick={logout}
+                        className="block w-full px-5 py-3 font-medium text-center text-red-500 cursor-pointer bg-gray-50 hover:bg-red-100 hover:text-red-700 focus:outline-none focus:bg-gray-100 focus:text-red-700"
                       >
-                        Login
-                      </a>
-                    </Link>
+                        Logout
+                      </span>
+                    ) : (
+                      <Link href="/search">
+                        <a
+                          href="/"
+                          className="block w-full px-5 py-3 font-medium text-center text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700"
+                        >
+                          Login
+                        </a>
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
