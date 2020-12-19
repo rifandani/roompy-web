@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { FaMapMarkerAlt, FaCrown } from 'react-icons/fa';
 import { FcMoneyTransfer } from 'react-icons/fc';
-import { GiMale } from 'react-icons/gi';
+import { GiFemale, GiMale } from 'react-icons/gi';
 // files
 import { Roompy } from '../utils/interfaces';
 
-export default function CardHome({ roompy }: { roompy: Roompy }) {
+export default function RoompyCard({ roompy }: { roompy: Roompy }) {
   return (
     <article className="mx-auto overflow-hidden transition duration-500 transform rounded-lg shadow-lg cursor-pointer w-80 hover:z-auto hover:scale-110">
       <section className="h-40 bg-gradient-to-tl from-purple-700 via-indigo-500 to-teal-300">
@@ -42,14 +42,18 @@ export default function CardHome({ roompy }: { roompy: Roompy }) {
 
         {/* umur */}
         <div className="flex w-full my-1">
-          <GiMale className="mr-2 text-blue-500" />
+          {roompy.gender === 'Pria' ? (
+            <GiMale className="mr-2 text-blue-500" />
+          ) : (
+            <GiFemale className="mr-2 text-pink-500" />
+          )}
           <span className="text-sm italic">{roompy.age} tahun</span>
         </div>
 
         {/* budget */}
         <div className="flex w-full my-1">
           <FcMoneyTransfer className="mr-2" />
-          <span className="text-sm italic">Rp {roompy.budget}</span>
+          <span className="text-sm italic">Rp {roompy.budget} / bln</span>
         </div>
 
         {/* lokasi */}

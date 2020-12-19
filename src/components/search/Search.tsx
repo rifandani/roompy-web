@@ -3,7 +3,7 @@ import { Flip } from 'react-awesome-reveal';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 // files
-import CardHome from '../CardHome';
+import RoompyCard from '../RoompyCard';
 import { db } from '../../configs/firebaseConfig';
 import { Roompies } from '../../utils/interfaces';
 
@@ -70,7 +70,7 @@ export default function Search() {
           <section className="flex flex-col w-full mb-10 text-center">
             <h2 className="px-8 pt-6 text-4xl font-extrabold leading-10 tracking-tight text-center text-gray-900 sm:text-5xl md:text-6xl sm:leading-none xl:max-w-screen-xl">
               Connect and find
-              <span className="text-purple-700"> Roommate</span>
+              <span className="text-purple-700 langar"> Roommate</span>
             </h2>
 
             <p className="px-8 mt-5 text-base italic text-center text-gray-500 sm:text-lg md:text-xl sm:w-full sm:mx-auto lg:mx-0 xl:max-w-screen-xl">
@@ -104,7 +104,8 @@ export default function Search() {
             {/* Search button */}
             <div className="flex justify-center w-full">
               <button
-                className="px-8 py-3 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:bg-purple-100 hover:text-purple-700"
+                className="px-8 py-3 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:bg-purple-100 hover:text-purple-700"
+                id="searchButton"
                 onClick={(e) => search(e)}
               >
                 Search
@@ -118,7 +119,7 @@ export default function Search() {
           <Flip direction="horizontal" duration={2000} triggerOnce>
             {roompies &&
               (roompies as Roompies).map((roompy) => (
-                <CardHome key={roompy.id} roompy={roompy} />
+                <RoompyCard key={roompy.id} roompy={roompy} />
               ))}
           </Flip>
         </section>

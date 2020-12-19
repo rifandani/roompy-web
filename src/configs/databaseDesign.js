@@ -7,10 +7,7 @@ export const user = {
 
   // awal registrasi value nya === []
   postedRoompies: [
-    'pgzqqeSGHvRvopxcfKquQFuIN2h1-profile1', // string => ref ke profile id yg di post
-  ],
-  postedRooms: [
-    'pgzqqeSGHvRvopxcfKquQFuIN2h1-room1', // string => ref ke room id yg di post
+    roompies, // object => ref ke wanted roompies yg di post
   ],
 },
 
@@ -20,27 +17,19 @@ const roompies = {
   updatedAt: Date.now(), // number
   postedBy: user, // object => ref ke user yg nge post
 
-  city: 'Kota Balikpapan', // string => select dari hasil request "cities" collection firestore
+  city: 'Kota Balikpapan', // string => select dari firestore collection "cities"
   age: 22, // number
   gender: 'Pria' | 'Wanita', // enum => jenis kelamin user
   budget: 100000, // number => batas kemampuan bayar untuk nge kos / sewa kamar per bulan
-  moveDate: '25/05/1998', // string => tanggal kira2 kapan user tersebut ingin pindah kos/kontrakan
+  moveDate: '21/02/2021', // string => tanggal kira2 kapan user tersebut ingin pindah kos/kontrakan
   occupation: 'Mahasiswa', // string => pekerjaan
   isSmoker: false, // boolean => user perokok apa nggak
   ownAnimal: false, // boolean => bawa hewan peliharaan apa enggak
   phoneNumber: '+6282243199535', // string => phone number yg bisa buat di WA
 
-  genderPref: 'Pria' | 'Wanita', // enum => mencari teman dengan jenis kelamin
-  roomPref: 'satu kamar' | 'satu rumah', // enum => mencari teman satu kamar kah atau satu kontrakan
+  genderPref: 'Pria' | 'Wanita', // enum => preferensi, mencari teman dengan jenis kelamin
+  roomPref: 'satu kamar' | 'satu rumah', // enum => preferensi, mencari teman satu kamar kah atau satu rumah
 
-  desc: 'Saya adalah orang yang baik dan mudah diajak berkomunikasi', // penjelasan kelebihan/keuntungan satu roommate bersama user
-  photoURL: 'https://firebasestorage.googleapis.com//users/userId/foto.png', // string => url link ke firestore
+  desc: 'Saya adalah orang yang baik dan mudah diajak berkomunikasi', // penjelasan kelebihan/keuntungan satu roommate bersama user + alamat rinci tempat pencarian
+  photoURL: 'https://firebasestorage.googleapis.com//users/userId/foto.png', // string => url link ke storage
 },
-
-const rooms = {
-  createdAt: Date.now(), // number
-  updatedAt: Date.now(), // number
-  postedBy: user, // object => ref ke user yg nge post
-
-
-}

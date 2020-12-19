@@ -3,8 +3,8 @@ import { useState, useContext } from 'react';
 import { JackInTheBox } from 'react-awesome-reveal';
 import { toast } from 'react-toastify';
 // files
-import UserContext from '../contexts/UserContext';
-import { auth } from '../configs/firebaseConfig';
+import UserContext from '../../contexts/UserContext';
+import { auth } from '../../configs/firebaseConfig';
 
 const NavHome = () => {
   const [toggleMenu, setToggleMenu] = useState(false);

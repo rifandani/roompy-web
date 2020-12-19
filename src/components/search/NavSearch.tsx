@@ -208,7 +208,7 @@ const NavSearch = () => {
 
               <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
-                  <Link href="#search">
+                  <Link href="#searchButton">
                     <a className="flex items-center justify-center w-full px-8 py-3 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:bg-purple-100 hover:text-purple-700">
                       Search
                     </a>

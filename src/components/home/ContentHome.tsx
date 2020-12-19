@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Flip } from 'react-awesome-reveal';
 // files
-import CardHome from './CardHome';
-import { db } from '../configs/firebaseConfig';
-import { Roompies } from '../utils/interfaces';
+import RoompyCard from '../RoompyCard';
+import { db } from '../../configs/firebaseConfig';
+import { Roompies } from '../../utils/interfaces';
 
 export default function ContentHome() {
   const [roompies, setRoompies] = useState<Roompies | []>([]);
@@ -49,7 +49,7 @@ export default function ContentHome() {
           <Flip duration={2000} direction="horizontal" triggerOnce>
             {roompies !== [] ? (
               (roompies as Roompies).map((roompy) => (
-                <CardHome key={roompy.id} roompy={roompy} />
+                <RoompyCard key={roompy.id} roompy={roompy} />
               ))
             ) : (
               <div className="flex items-center justify-center w-full h-32">

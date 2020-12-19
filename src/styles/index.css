@@ -8,6 +8,7 @@
 
 html,
 body {
+  scroll-behavior: smooth;
   @apply bg-white dark:bg-gray-900;
 }
 

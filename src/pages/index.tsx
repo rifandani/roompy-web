@@ -1,8 +1,8 @@
 // import Head from 'next/head';
 // files
-import NavHome from '../components/NavHome';
-import Steps from '../components/Steps';
-import ContentHome from '../components/ContentHome';
+import NavHome from '../components/home/NavHome';
+import Steps from '../components/home/Steps';
+import ContentHome from '../components/home/ContentHome';
 import CTA from '../components/CTA';
 import Footer from '../components/Footer';
 

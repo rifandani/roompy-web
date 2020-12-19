@@ -29,7 +29,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Roompy | Cari teman sekamar secara online</title>
+        <title>Roompy | Cari teman sekamar atau serumah secara online</title>
         {/* meta */}
         <meta
           name="viewport"
@@ -37,10 +37,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
         {/* link */}
         <link rel="icon" href="favicon.ico" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,700;1,400&display=swap"
-          rel="stylesheet"
-        />
       </Head>
 
       {/* sets up a project context for all forms in the app, and associates your forms with the keys specified in your formspree.json config file */}
