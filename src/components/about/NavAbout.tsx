@@ -94,13 +94,13 @@ const NavAbout = () => {
                 {user ? (
                   <span
                     onClick={logout}
-                    className="ml-8 font-medium text-red-500 cursor-pointer hover:text-red-700"
+                    className="p-2 ml-6 font-medium text-red-700 bg-red-100 rounded-md hover:text-white hover:bg-red-700"
                   >
                     Logout
                   </span>
                 ) : (
                   <Link href="/login">
-                    <a className="ml-8 font-medium text-purple-500 hover:text-purple-700">
+                    <a className="p-2 ml-6 font-medium text-purple-700 bg-purple-100 rounded-md hover:text-white hover:bg-purple-700">
                       Login
                     </a>
                   </Link>
@@ -177,11 +177,8 @@ const NavAbout = () => {
                         Logout
                       </span>
                     ) : (
-                      <Link href="/search">
-                        <a
-                          href="/"
-                          className="block w-full px-5 py-3 font-medium text-center text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700"
-                        >
+                      <Link href="/login">
+                        <a className="block w-full px-5 py-3 font-medium text-center text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700">
                           Login
                         </a>
                       </Link>

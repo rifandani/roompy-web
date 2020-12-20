@@ -3,29 +3,41 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { db } from '../../../configs/firebaseConfig';
 import { Roompy } from '../../../utils/interfaces';
 import Nav from '../../../components/profile/Nav';
+import RoompyDetail from '../../../components/profile/RoompyDetail';
 
 export default function RoompyPage({ roompy }: { roompy: Roompy }) {
   return (
-    <>
+    <div className="w-full min-h-screen">
       <Nav />
 
-      <pre className="mt-30">{JSON.stringify(roompy, null, 4)}</pre>
-    </>
+      <RoompyDetail />
+    </div>
   );
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const id = ctx.params?.id as string;
+  let id: string | string[];
 
-  const docSnap = await db.collection('roompies').doc(id).get();
+  if (Array.isArray(ctx.params?.id)) {
+    id = ctx.params?.id[0];
+  } else {
+    id = ctx.params?.id;
+  }
+
+  const roompiesRef = db.collection('roompies').doc(id);
+  const roompiesSnap = await roompiesRef.get();
+
   const roompy = {
-    ...docSnap.data(),
+    ...roompiesSnap.data(),
     id,
   };
 
   return {
     props: {
-      roompy,
+      roompy: {
+        ...roompy,
+        // test: roompy.test.toMillis(),
+      },
     },
   };
 };

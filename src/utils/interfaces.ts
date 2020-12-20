@@ -13,7 +13,7 @@ export interface Roompy {
   occupation: string;
   phoneNumber: string;
   photoURL: string;
-  postedBy: firebase.firestore.DocumentReference;
+  postedBy: string; // awalnya DocRef
   updatedAt: number;
 }
 
@@ -21,8 +21,8 @@ export interface User {
   createdAt: number;
   email: string;
   emailVerified: boolean;
-  postedRoompies: firebase.firestore.DocumentReference[] | [];
-  postedRooms: firebase.firestore.DocumentReference[] | [];
+  postedRoompies: string[] | []; // awalnya DocRef
+  postedRooms: string[] | []; // awalnya DocRef
   username: string;
   updatedAt: number;
 }
@@ -35,3 +35,7 @@ export interface UserContextState {
 export type Roompies = Roompy[];
 export type Users = User[];
 export type AuthUser = firebase.User | null;
+
+// firebase type
+export type DocRef = firebase.firestore.DocumentReference;
+export type Timestamp = firebase.firestore.Timestamp;
