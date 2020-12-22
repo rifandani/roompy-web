@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useState, useContext, MouseEvent } from 'react';
+import { useState, useContext, MouseEvent } from 'react';
 import {
   FaCrown,
   FaRegCalendarAlt,
@@ -31,13 +31,16 @@ import {
   HiOutlineHome,
 } from 'react-icons/hi';
 import { IoLogoWhatsapp } from 'react-icons/io';
+import { toast } from 'react-toastify';
 // files
 import UserContext from '../../contexts/UserContext';
 import { Roompy } from '../../utils/interfaces';
+import MyModal from '../MyModal';
 
 export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
   // state
   const [message, setMessage] = useState<string>('');
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   // useRouter
   const { back } = useRouter();
@@ -45,14 +48,32 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
   // UserContext
   const { user } = useContext(UserContext);
 
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    if (!user) {
+      return toast.warning('Please login to report roompies');
+    }
+
+    setIsOpen(true);
+  }
+
   async function submitMessage(e: MouseEvent) {
     e.preventDefault();
 
-    alert(message);
+    console.log(message);
+
+    // when all done
+    toast.success('Message delivered. Please wait for the reply.');
   }
 
   return (
     <article className="mx-auto bg-white max-w-7xl">
+      {/* report modal */}
+      <MyModal isOpen={isOpen} closeModal={closeModal} roompyId={roompy.id} />
+
       {/* <!-- Image Header --> */}
       <header className="container relative w-full mx-auto">
         {/* image */}
@@ -360,7 +381,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
                   {roompy.roompiesPref.gender.includes('ria') ? (
                     <p className="text-base">
-                      Jenis kelamin: <strong className="">Pria</strong>{' '}
+                      Jenis kelamin: <strong>Pria</strong>{' '}
                       <strong className="mx-2">/</strong>{' '}
                       <strong className="font-normal line-through">
                         Wanita
@@ -375,7 +396,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                       Jenis kelamin:{' '}
                       <strong className="font-normal line-through">Pria</strong>{' '}
                       <strong className="mx-2">/</strong>{' '}
-                      <strong className="">Wanita</strong>
+                      <strong>Wanita</strong>
                       <strong className="mx-2">/</strong>{' '}
                       <strong className="font-normal line-through">
                         Flexible
@@ -390,7 +411,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                         Wanita
                       </strong>
                       <strong className="mx-2">/</strong>{' '}
-                      <strong className="">Flexible</strong>
+                      <strong>Flexible</strong>
                     </p>
                   )}
                 </span>
@@ -425,7 +446,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                     <strong className="mx-2">/</strong>{' '}
                     <strong
                       className={
-                        roompy.homePref.bathroom.includes('ot')
+                        roompy.roompiesPref.smoker.includes('ot')
                           ? ''
                           : 'font-normal line-through'
                       }
@@ -443,7 +464,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                     Hewan Peliharaan:{' '}
                     <strong
                       className={
-                        roompy.roompiesPref.smoker.includes('ot')
+                        roompy.roompiesPref.pet.includes('ot')
                           ? 'font-normal line-through'
                           : ''
                       }
@@ -453,7 +474,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                     <strong className="mx-2">/</strong>{' '}
                     <strong
                       className={
-                        roompy.roompiesPref.smoker.includes('ot')
+                        roompy.roompiesPref.pet.includes('ot')
                           ? ''
                           : 'font-normal line-through'
                       }
@@ -566,7 +587,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
               </label>
 
               <button
-                className="flex items-center justify-center w-full px-2 py-3 mt-4 text-sm font-bold tracking-wider uppercase bg-purple-100 rounded-md text-FaShower focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-white hover:bg-purple-700"
+                className="flex items-center justify-center w-full px-2 py-3 mt-4 text-sm font-bold tracking-wider text-purple-700 uppercase bg-purple-100 rounded-md text-FaShower focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-white hover:bg-purple-700"
                 type="submit"
                 disabled={user ? false : true}
                 onClick={(e) => submitMessage(e)}
@@ -578,7 +599,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
           {/* report user */}
           <section
-            onClick={() => {}}
+            onClick={openModal}
             className="flex items-center justify-center w-full p-3 my-4 space-x-2 rounded-md cursor-pointer hover:bg-red-100 hover:shadow"
           >
             <HiExclamationCircle className="text-2xl text-red-500" />

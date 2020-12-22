@@ -6,6 +6,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import { FormspreeProvider } from '@formspree/react';
+import 'rodal/lib/rodal.css';
 // files
 import '../styles/index.css';
 import useAuth from '../hooks/useAuth';

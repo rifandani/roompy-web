@@ -6,6 +6,10 @@ import { GiFemale, GiMale } from 'react-icons/gi';
 import { Roompy } from '../utils/interfaces';
 
 export default function RoompyCard({ roompy }: { roompy: Roompy }) {
+  // milliseconds
+  const oneWeek = 604800000;
+  const isMoreThanAWeek = Date.now() <= roompy.updatedAt + oneWeek;
+
   return (
     <Link href={`/roompies/${roompy.id}`}>
       <article className="mx-auto overflow-hidden transition duration-500 transform rounded-lg shadow-lg cursor-pointer w-80 hover:z-auto hover:scale-110">
@@ -25,9 +29,25 @@ export default function RoompyCard({ roompy }: { roompy: Roompy }) {
               alt={roompy.name}
             />
 
-            <span className="absolute inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3">
-              Updated
-            </span>
+            {roompy.createdAt === roompy.updatedAt ? (
+              <span
+                className={`${
+                  isMoreThanAWeek ? 'hidden' : 'absolute'
+                } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
+              >
+                New
+              </span>
+            ) : (
+              roompy.updatedAt > roompy.createdAt && (
+                <span
+                  className={`${
+                    isMoreThanAWeek ? 'hidden' : 'absolute'
+                  } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
+                >
+                  Updated
+                </span>
+              )
+            )}
 
             <FaCrown className="absolute inline-flex items-center text-2xl text-yellow-200 bottom-10 right-12" />
             <span className="absolute inline-flex items-center px-3 py-1 mr-4 -mb-3 text-xs font-medium leading-tight bg-yellow-200 border rounded-full bottom-8 right-2">
