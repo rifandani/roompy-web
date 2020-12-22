@@ -60,7 +60,8 @@ export default function RoompyCard({ roompy }: { roompy: Roompy }) {
           {/* lokasi */}
           <div className="flex w-full my-1">
             <FaMapMarkerAlt className="mr-2 text-purple-500" />
-            <span className="text-sm italic truncate">{roompy.city}</span>
+
+            <span className="text-sm italic truncate">{roompy.locPref[0]}</span>
           </div>
         </section>
       </article>

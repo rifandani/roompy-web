@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useState, useContext, MouseEvent } from 'react';
 import {
   FaCrown,
@@ -10,12 +11,14 @@ import {
   FaShower,
   FaMapMarkerAlt,
   FaGenderless,
+  FaHandPointLeft,
 } from 'react-icons/fa';
 import {
   GiAges,
   GiCigarette,
   GiHomeGarage,
   GiMale,
+  GiFemale,
   GiSandsOfTime,
   GiSittingDog,
 } from 'react-icons/gi';
@@ -30,10 +33,14 @@ import {
 import { IoLogoWhatsapp } from 'react-icons/io';
 // files
 import UserContext from '../../contexts/UserContext';
+import { Roompy } from '../../utils/interfaces';
 
-export default function RoompyDetail() {
+export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
   // state
   const [message, setMessage] = useState<string>('');
+
+  // useRouter
+  const { back } = useRouter();
 
   // UserContext
   const { user } = useContext(UserContext);
@@ -50,7 +57,21 @@ export default function RoompyDetail() {
       <header className="container relative w-full mx-auto">
         {/* image */}
         <div className="flex items-center justify-center py-10">
-          <img className="object-cover w-64 rounded-md" src="/me.jpg" />
+          <img
+            className="object-cover w-64 rounded-md"
+            src={roompy.photoURL}
+            alt={roompy.name}
+          />
+        </div>
+
+        {/* back button */}
+        <div
+          onClick={() => back()}
+          className="absolute top-0 left-0 flex items-center px-3 py-1 mt-5 ml-5 transition duration-500 transform border border-red-500 rounded-md cursor-pointer hover:scale-125"
+        >
+          <FaHandPointLeft className="text-lg text-red-500" />
+
+          <p className="ml-1 text-base text-gray-500">Go back</p>
         </div>
 
         {/* add to favorite */}
@@ -73,12 +94,16 @@ export default function RoompyDetail() {
             <div className="flex flex-col justify-start p-6 bg-white">
               {/* name + gender + age */}
               <div className="flex items-center pb-4">
-                <p className="text-2xl font-bold">Rifandani</p>
+                <p className="text-2xl font-bold">{roompy.name}</p>
 
                 <div className="flex items-center ml-3">
-                  <GiMale className="text-2xl text-blue-500" />
+                  {roompy.gender === 'Pria' ? (
+                    <GiMale className="text-2xl text-blue-500" />
+                  ) : (
+                    <GiFemale className="text-2xl text-pink-500" />
+                  )}
 
-                  <span className="ml-2 text-lg">30 tahun</span>
+                  <span className="ml-2 text-lg">{roompy.age} tahun</span>
                 </div>
               </div>
 
@@ -118,7 +143,7 @@ export default function RoompyDetail() {
 
                   <div className="flex flex-col items-center">
                     <p className="text-base font-semibold">
-                      Rp 865000 <small>/bln</small>
+                      Rp {roompy.budget} <small>/bln</small>
                     </p>
                     <p className="text-sm italic">Budget</p>
                   </div>
@@ -128,7 +153,9 @@ export default function RoompyDetail() {
                   <GiSandsOfTime className="text-3xl text-purple-500" />
 
                   <div className="flex flex-col items-center">
-                    <p className="text-base font-semibold">12 bulan</p>
+                    <p className="text-base font-semibold">
+                      {roompy.stayLength} minggu
+                    </p>
                     <p className="text-sm italic">Stay length</p>
                   </div>
                 </section>
@@ -137,7 +164,9 @@ export default function RoompyDetail() {
                   <FaRegCalendarAlt className="text-3xl text-yellow-500" />
 
                   <div className="flex flex-col items-center">
-                    <p className="text-base font-semibold">30/12/2020</p>
+                    <p className="text-base font-semibold">
+                      {new Date(roompy.moveDate).toLocaleDateString()}
+                    </p>
                     <p className="text-sm italic">Move date</p>
                   </div>
                 </section>
@@ -152,42 +181,36 @@ export default function RoompyDetail() {
                 <p className="pb-4 text-xl font-bold">About Me</p>
               </div>
 
-              <p className="pb-6 text-gray-500">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Curabitur vel neque non libero suscipit suscipit eu eu urna.
-                Proin bibendum urna mattis ante malesuada ultrices. Etiam in
-                turpis vitae elit dictum aliquet. Donec mattis risus in turpis
-                dapibus, eget tempus sem tincidunt. Orci varius natoque
-                penatibus et magnis dis parturient montes, nascetur ridiculus
-                mus. In est enim, imperdiet sed ornare quis, pellentesque vel
-                risus. Nunc vitae vestibulum turpis. Quisque eget eleifend urna.
-                Etiam et vulputate purus, ut egestas sem. Vestibulum ante ipsum
-                primis in faucibus orci luctus et ultrices posuere cubilia
-                Curae; Duis quis neque non urna venenatis mollis et at massa.
-                Pellentesque sem lacus, malesuada vel hendrerit molestie, mollis
-                vel elit.
-              </p>
+              <p className="pb-6 text-gray-500">{roompy.desc}</p>
 
               <div className="flex items-center space-x-3">
                 {/* occupation */}
                 <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
-                  <p className="text-base">Mahasiswa</p>
+                  <p className="text-base">{roompy.occupation}</p>
                 </span>
 
                 {/* smoker */}
                 <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
-                  <p className="text-base">Non-smoker</p>
+                  {roompy.isSmoker ? (
+                    <p className="text-base">Smoker</p>
+                  ) : (
+                    <p className="text-base">Non-smoker</p>
+                  )}
                 </span>
 
                 {/* pets */}
                 <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
-                  <p className="text-base">No pets</p>
+                  {roompy.ownPet ? (
+                    <p className="text-base">Has pets</p>
+                  ) : (
+                    <p className="text-base">No pets</p>
+                  )}
                 </span>
 
                 {/* children */}
@@ -213,9 +236,24 @@ export default function RoompyDetail() {
                   <HiOutlineHome className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
-                    Tipe: <strong className="">Satu Kamar</strong>{' '}
+                    Tipe:{' '}
+                    <strong
+                      className={
+                        roompy.homePref.room.includes('kamar')
+                          ? ''
+                          : 'font-normal line-through'
+                      }
+                    >
+                      Satu Kamar
+                    </strong>{' '}
                     <strong className="mx-2">/</strong>{' '}
-                    <strong className="font-normal line-through">
+                    <strong
+                      className={
+                        roompy.homePref.room.includes('kamar')
+                          ? 'font-normal line-through'
+                          : ''
+                      }
+                    >
                       Satu Rumah
                     </strong>
                   </p>
@@ -227,11 +265,25 @@ export default function RoompyDetail() {
 
                   <p className="text-base">
                     Tempat parkir:{' '}
-                    <strong className="font-normal line-through">
+                    <strong
+                      className={
+                        roompy.homePref.parking.includes('red')
+                          ? ''
+                          : 'font-normal line-through'
+                      }
+                    >
                       Required
                     </strong>{' '}
                     <strong className="mx-2">/</strong>{' '}
-                    <strong className="">Flexible</strong>
+                    <strong
+                      className={
+                        roompy.homePref.parking.includes('red')
+                          ? 'font-normal line-through'
+                          : ''
+                      }
+                    >
+                      Flexible
+                    </strong>
                   </p>
                 </span>
 
@@ -240,9 +292,24 @@ export default function RoompyDetail() {
                   <FaWifi className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
-                    WiFi: <strong className="">Required</strong>{' '}
+                    WiFi:{' '}
+                    <strong
+                      className={
+                        roompy.homePref.wifi.includes('red')
+                          ? ''
+                          : 'font-normal line-through'
+                      }
+                    >
+                      Required
+                    </strong>{' '}
                     <strong className="mx-2">/</strong>{' '}
-                    <strong className="font-normal line-through">
+                    <strong
+                      className={
+                        roompy.homePref.wifi.includes('red')
+                          ? 'font-normal line-through'
+                          : ''
+                      }
+                    >
                       Flexible
                     </strong>
                   </p>
@@ -254,9 +321,25 @@ export default function RoompyDetail() {
 
                   <p className="text-base">
                     Kamar Mandi:{' '}
-                    <strong className="font-normal line-through">Dalam</strong>{' '}
+                    <strong
+                      className={
+                        roompy.homePref.bathroom.includes('lam')
+                          ? ''
+                          : 'font-normal line-through'
+                      }
+                    >
+                      Dalam
+                    </strong>{' '}
                     <strong className="mx-2">/</strong>{' '}
-                    <strong className="">Flexible</strong>
+                    <strong
+                      className={
+                        roompy.homePref.bathroom.includes('lam')
+                          ? 'font-normal line-through'
+                          : ''
+                      }
+                    >
+                      Flexible
+                    </strong>
                   </p>
                 </span>
               </div>
@@ -275,15 +358,41 @@ export default function RoompyDetail() {
                 <span className="flex items-center px-2 py-1">
                   <FaGenderless className="mr-2 text-xl text-purple-500" />
 
-                  <p className="text-base">
-                    Jenis kelamin: <strong className="">Pria</strong>{' '}
-                    <strong className="mx-2">/</strong>{' '}
-                    <strong className="font-normal line-through">Wanita</strong>
-                    <strong className="mx-2">/</strong>{' '}
-                    <strong className="font-normal line-through">
-                      Flexible
-                    </strong>
-                  </p>
+                  {roompy.roompiesPref.gender.includes('ria') ? (
+                    <p className="text-base">
+                      Jenis kelamin: <strong className="">Pria</strong>{' '}
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong className="font-normal line-through">
+                        Wanita
+                      </strong>
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong className="font-normal line-through">
+                        Flexible
+                      </strong>
+                    </p>
+                  ) : roompy.roompiesPref.gender.includes('nita') ? (
+                    <p className="text-base">
+                      Jenis kelamin:{' '}
+                      <strong className="font-normal line-through">Pria</strong>{' '}
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong className="">Wanita</strong>
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong className="font-normal line-through">
+                        Flexible
+                      </strong>
+                    </p>
+                  ) : (
+                    <p className="text-base">
+                      Jenis kelamin:{' '}
+                      <strong className="font-normal line-through">Pria</strong>{' '}
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong className="font-normal line-through">
+                        Wanita
+                      </strong>
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong className="">Flexible</strong>
+                    </p>
+                  )}
                 </span>
 
                 {/* age */}
@@ -291,9 +400,9 @@ export default function RoompyDetail() {
                   <GiAges className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
-                    Rentang usia: <strong className="">20</strong>{' '}
+                    Rentang usia: <strong>{roompy.roompiesPref.ageFrom}</strong>{' '}
                     <strong className="mx-1">-</strong>{' '}
-                    <strong className="">30</strong>
+                    <strong>{roompy.roompiesPref.ageTo}</strong>
                     <strong className="ml-1">tahun</strong>{' '}
                   </p>
                 </span>
@@ -304,9 +413,25 @@ export default function RoompyDetail() {
 
                   <p className="text-base">
                     Merokok:{' '}
-                    <strong className="font-normal line-through">Okay</strong>{' '}
+                    <strong
+                      className={
+                        roompy.roompiesPref.smoker.includes('ot')
+                          ? 'font-normal line-through'
+                          : ''
+                      }
+                    >
+                      Okay
+                    </strong>{' '}
                     <strong className="mx-2">/</strong>{' '}
-                    <strong className="">Not Okay</strong>
+                    <strong
+                      className={
+                        roompy.homePref.bathroom.includes('ot')
+                          ? ''
+                          : 'font-normal line-through'
+                      }
+                    >
+                      Not Okay
+                    </strong>
                   </p>
                 </span>
 
@@ -316,9 +441,25 @@ export default function RoompyDetail() {
 
                   <p className="text-base">
                     Hewan Peliharaan:{' '}
-                    <strong className="font-normal line-through">Okay</strong>{' '}
+                    <strong
+                      className={
+                        roompy.roompiesPref.smoker.includes('ot')
+                          ? 'font-normal line-through'
+                          : ''
+                      }
+                    >
+                      Okay
+                    </strong>{' '}
                     <strong className="mx-2">/</strong>{' '}
-                    <strong className="">Not Okay</strong>
+                    <strong
+                      className={
+                        roompy.roompiesPref.smoker.includes('ot')
+                          ? ''
+                          : 'font-normal line-through'
+                      }
+                    >
+                      Not Okay
+                    </strong>
                   </p>
                 </span>
               </div>
@@ -333,19 +474,16 @@ export default function RoompyDetail() {
               </div>
 
               <div className="flex items-center space-x-3">
-                {/* occupation */}
-                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
-                  <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
+                {roompy.locPref.map((loc, i) => (
+                  <span
+                    key={i}
+                    className="flex items-center px-2 py-1 border border-green-500 rounded-md"
+                  >
+                    <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
 
-                  <p className="text-base">Kota Balikpapan</p>
-                </span>
-
-                {/* smoker */}
-                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
-                  <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
-
-                  <p className="text-base">Kota Yogyakarta</p>
-                </span>
+                    <p className="text-base">{loc}</p>
+                  </span>
+                ))}
               </div>
             </div>
           </article>
@@ -354,12 +492,16 @@ export default function RoompyDetail() {
           <article className="flex flex-col w-full p-6 my-4 text-center bg-white shadow md:text-left md:flex-row">
             {/* user image */}
             <div className="flex justify-center w-full pb-4 md:w-2/5 md:justify-start xl:w-1/5">
-              <img className="w-32 h-32 rounded-full shadow" src="/me.jpg" />
+              <img
+                className="w-32 h-32 rounded-full shadow"
+                src={roompy.photoURL}
+                alt={roompy.name}
+              />
             </div>
 
             {/* user simple info */}
             <div className="flex flex-col justify-center flex-1 md:justify-start">
-              <p className="text-2xl font-semibold">Rifandani</p>
+              <p className="text-2xl font-semibold">{roompy.name}</p>
 
               <span className="flex items-center justify-center py-4 md:justify-start">
                 {user ? (
@@ -367,7 +509,7 @@ export default function RoompyDetail() {
                     <IoLogoWhatsapp className="text-2xl text-green-500" />
 
                     <p className="ml-2 text-lg italic text-green-500">
-                      +6282243199535
+                      {roompy.phoneNumber}
                     </p>
                   </>
                 ) : (
