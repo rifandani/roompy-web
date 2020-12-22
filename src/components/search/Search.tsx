@@ -63,7 +63,7 @@ export default function Search() {
   }
 
   return (
-    <article className="relative w-full py-20">
+    <article className="relative w-full py-20 bg-white">
       <div className="max-w-screen-xl min-h-full mx-auto">
         <form>
           {/* title and subtitle */}

@@ -31,7 +31,7 @@ export default function ContentHome() {
   }
 
   return (
-    <div className="relative w-full min-h-screen py-20 overflow-hidden">
+    <div className="relative w-full min-h-screen py-20 overflow-hidden bg-white">
       <main className="container max-w-screen-xl min-h-full px-4 pt-6 mx-auto sm:px-6 lg:px-8">
         <h3 className="text-4xl font-extrabold leading-10 tracking-tight text-center text-gray-900 lg:text-left sm:text-5xl sm:leading-none md:text-6xl">
           Search the
@@ -45,7 +45,7 @@ export default function ContentHome() {
         </p>
 
         {/* looping roompies array */}
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:gap-28 xl:grid-cols-4">
           <Flip duration={2000} direction="horizontal" triggerOnce>
             {roompies !== [] ? (
               (roompies as Roompies).map((roompy) => (

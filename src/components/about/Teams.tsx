@@ -4,7 +4,7 @@ import { FaLinkedin, FaInstagram } from 'react-icons/fa';
 export default function Teams() {
   return (
     <>
-      <section className="relative w-full py-20 overflow-hidden">
+      <section className="relative w-full py-20 overflow-hidden bg-white">
         <div className="container max-w-screen-xl min-h-full mx-auto">
           <section className="flex flex-col w-full mb-10 text-center">
             <h2 className="px-8 pt-6 text-4xl font-extrabold leading-10 tracking-tight text-center text-gray-900 sm:text-5xl md:text-6xl sm:leading-none xl:max-w-screen-xl">

@@ -3,9 +3,9 @@ import { FaGooglePlay } from 'react-icons/fa';
 
 export default function CTA() {
   return (
-    <article className="pb-10 mt-16 block relative">
+    <article className="relative block pb-10 mt-16 bg-white">
       <div
-        className="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
+        className="absolute top-0 left-0 right-0 bottom-auto w-full -mt-20 overflow-hidden pointer-events-none"
         style={{ height: 80, transform: 'translateZ(0px)' }}
       >
         <svg
@@ -23,8 +23,8 @@ export default function CTA() {
         </svg>
       </div>
 
-      <div className="flex items-center justify-center py-5 px-8 min-w-screen ">
-        <div className="relative flex flex-col items-center w-full max-w-6xl px-4 py-8 sm:px-6 md:pb-0 md:pt-4 lg:px-12 lg:py-12 mx-auto text-center rounded-lg lg:text-left lg:block bg-gradient-to-br from-purple-700 via-indigo-500 to-teal-300">
+      <div className="flex items-center justify-center px-8 py-5 min-w-screen ">
+        <div className="relative flex flex-col items-center w-full max-w-6xl px-4 py-8 mx-auto text-center rounded-lg sm:px-6 md:pb-0 md:pt-4 lg:px-12 lg:py-12 lg:text-left lg:block bg-gradient-to-br from-purple-700 via-indigo-500 to-teal-300">
           <h2 className="my-4 text-3xl font-extrabold tracking-tight text-white sm:text-4xl md:text-5xl lg:my-0 xl:text-4xl sm:leading-tight">
             Ingin coba versi{' '}
             <span className="block text-indigo-200 xl:inline">
@@ -38,8 +38,8 @@ export default function CTA() {
 
           {/* tombol download */}
           <div className="flex items-center mb-8 lg:mt-6 lg:mb-0 ">
-            <div className="inline-flex items-center justify-center cursor-pointer p-5 border border-transparent rounded-md focus:outline-none focus:shadow-outline text-purple-700 bg-purple-100 hover:text-white hover:bg-purple-700">
-              <FaGooglePlay className="text-3xl mr-3" />
+            <div className="inline-flex items-center justify-center p-5 text-purple-700 bg-purple-100 border border-transparent rounded-md cursor-pointer focus:outline-none focus:shadow-outline hover:text-white hover:bg-purple-700">
+              <FaGooglePlay className="mr-3 text-3xl" />
 
               <Link href="/">
                 <a className="inline-flex items-center justify-center text-base font-medium">
@@ -53,7 +53,7 @@ export default function CTA() {
           <div className="bottom-0 right-0 mb-0 mr-3 lg:absolute lg:-mb-12">
             <img
               src="cta.png"
-              className="hidden lg:flex max-w-md mb-4 opacity-75 xl:mb-0"
+              className="hidden max-w-md mb-4 opacity-75 lg:flex xl:mb-0"
             />
           </div>
         </div>

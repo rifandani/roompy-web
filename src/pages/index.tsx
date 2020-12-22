@@ -8,7 +8,7 @@ import Footer from '../components/Footer';
 
 export default function IndexPage() {
   return (
-    <div className="w-full h-full">
+    <div className="w-full h-full bg-white">
       <NavHome />
 
       <Steps />

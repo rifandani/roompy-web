@@ -1,30 +1,53 @@
 import firebase from 'firebase';
 import { Dispatch, SetStateAction } from 'react';
 
+export interface HomePref {
+  room: string;
+  parking: string;
+  wifi: string;
+  bathroom: string;
+}
+
+export interface RoompiesPref {
+  gender: string;
+  ageFrom: number;
+  ageTo: number;
+  smoker: string;
+  pet: string;
+}
+
 export interface Roompy {
   id?: string;
   age: number;
   budget: number;
-  city: string;
   createdAt: number;
   desc: string;
   gender: string;
+  homePref: HomePref;
+  isSmoker: boolean;
+  locPref: string[];
+  moveDate: number;
   name: string;
   occupation: string;
+  ownPet: boolean;
   phoneNumber: string;
   photoURL: string;
   postedBy: string; // awalnya DocRef
+  roompiesPref: RoompiesPref;
+  stayLength: number;
   updatedAt: number;
 }
 
 export interface User {
   createdAt: number;
   email: string;
-  emailVerified: boolean;
+  favorites: string[];
+  isPremium: boolean;
   postedRoompies: string[] | []; // awalnya DocRef
   postedRooms: string[] | []; // awalnya DocRef
-  username: string;
+  premiumUntil: number;
   updatedAt: number;
+  username: string;
 }
 
 export interface UserContextState {

@@ -203,17 +203,17 @@ const NavHome = () => {
 
               <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
-                  <Link href="/rooms/create">
+                  <Link href={user ? '/dashboard' : '/register'}>
                     <a className="flex items-center justify-center w-full px-8 py-3 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:bg-purple-100 hover:text-purple-700">
-                      Buat room
+                      {user ? 'Share' : 'Register'}
                     </a>
                   </Link>
                 </div>
 
                 <div className="mt-3 sm:mt-0 sm:ml-3">
-                  <Link href="/profiles/create">
+                  <Link href={user ? '/roompies' : '/login'}>
                     <a className="flex items-center justify-center w-full px-8 py-3 text-base font-medium leading-6 text-purple-700 bg-purple-100 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:text-white hover:bg-purple-700">
-                      Cari room
+                      {user ? 'Search' : 'Login'}
                     </a>
                   </Link>
                 </div>

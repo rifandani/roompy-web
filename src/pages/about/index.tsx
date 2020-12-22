@@ -6,7 +6,7 @@ import Footer from '../../components/Footer';
 
 export default function AboutPage() {
   return (
-    <div className="">
+    <div className="bg-white">
       <NavAbout />
 
       <Teams />

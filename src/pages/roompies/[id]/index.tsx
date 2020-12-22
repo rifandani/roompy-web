@@ -4,6 +4,7 @@ import { db } from '../../../configs/firebaseConfig';
 import { Roompy } from '../../../utils/interfaces';
 import Nav from '../../../components/profile/Nav';
 import RoompyDetail from '../../../components/profile/RoompyDetail';
+import Footer from '../../../components/Footer';
 
 export default function RoompyPage({ roompy }: { roompy: Roompy }) {
   return (
@@ -11,6 +12,8 @@ export default function RoompyPage({ roompy }: { roompy: Roompy }) {
       <Nav />
 
       <RoompyDetail />
+
+      <Footer footer2 />
     </div>
   );
 }

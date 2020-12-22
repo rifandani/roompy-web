@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { FaInstagram, FaFacebook } from 'react-icons/fa';
 
-export default function Footer() {
+export default function Footer({ footer2 }: { footer2?: boolean }) {
   return (
-    <footer className="py-4 pt-12 mt-16  block bg-gray-100 relative">
+    <footer className="relative block py-4 pt-12 mt-16 bg-gray-100">
       <div
-        className="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
+        className="absolute top-0 left-0 right-0 bottom-auto w-full -mt-20 overflow-hidden pointer-events-none"
         style={{ height: 80, transform: 'translateZ(0px)' }}
       >
         <svg
@@ -23,70 +23,75 @@ export default function Footer() {
         </svg>
       </div>
 
-      <div className="px-4 max-w-screen-xl mx-auto container">
+      <div className="container max-w-screen-xl px-4 mx-auto">
         <div className="flex flex-wrap">
-          <section className="w-full lg:w-6/12 px-4">
+          <section className="w-full px-4 lg:w-6/12">
+            {/* logo image */}
             <div className="flex items-center">
-              <img className="h-8 w-auto sm:h-10" src="favicon.ico" />
+              <img
+                className="w-auto h-8 sm:h-10"
+                src={footer2 ? '/favicon.ico' : 'favicon.ico'}
+              />
+
               <h4 className="ml-2 text-2xl font-semibold text-purple-700">
                 Roompy
               </h4>
             </div>
 
-            <h5 className="my-2 italic text-base text-gray-500">
+            <h5 className="my-2 text-base italic text-gray-500">
               A free platform to connect and find roommate.
             </h5>
 
             <div className="mt-6">
               <Link href="/">
                 <a href="https://www.facebook.com/creativetim" target="_blank">
-                  <FaFacebook className="mr-2 shadow-lg text-3xl items-center justify-center align-center rounded-full outline-none text-blue-500 inline-block text-center transform transition duration-500 focus:outline-none hover:scale-125" />
+                  <FaFacebook className="items-center justify-center inline-block mr-2 text-3xl text-center text-blue-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
                 </a>
               </Link>
               <Link href="/">
                 <a href="https://www.dribbble.com/creativetim" target="_blank">
-                  <FaInstagram className="mr-2 shadow-lg text-3xl items-center justify-center align-center rounded-full outline-none text-pink-500 inline-block text-center transform transition duration-500 focus:outline-none hover:scale-125" />
+                  <FaInstagram className="items-center justify-center inline-block mr-2 text-3xl text-center text-pink-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
                 </a>
               </Link>
             </div>
 
-            {/* <p className="text-sm mt-6 text-gray-600 font-semibold">
+            {/* <p className="mt-6 text-sm font-semibold text-gray-600">
               Created with 💗
             </p> */}
           </section>
 
-          <section className="w-full lg:w-6/12 mt-3 lg:mt-0">
-            <div className="flex flex-wrap items-top mb-6 mt-3 lg:mt-0">
+          <section className="w-full mt-3 lg:w-6/12 lg:mt-0">
+            <div className="flex flex-wrap mt-3 mb-6 items-top lg:mt-0">
               {/* useful links */}
-              <section className="w-full lg:w-4/12 px-4 ml-auto">
-                <span className="block uppercase text-sm font-semibold mb-2 text-purple-700">
+              <section className="w-full px-4 ml-auto lg:w-4/12">
+                <span className="block mb-2 text-sm font-semibold text-purple-700 uppercase">
                   Resources
                 </span>
                 <ul className="list-unstyled">
                   <li>
                     <Link href="/search">
-                      <a className="text-gray-500 hover:text-gray-900 font-semibold block pb-2 text-sm">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         Search
                       </a>
                     </Link>
                   </li>
                   <li>
                     <Link href="/pricing">
-                      <a className="text-gray-500 hover:text-gray-900 font-semibold block pb-2 text-sm">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         Pricing
                       </a>
                     </Link>
                   </li>
                   {/* <li>
                     <Link href="/blog">
-                      <a className="text-gray-500 hover:text-gray-900 font-semibold block pb-2 text-sm">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         Blog
                       </a>
                     </Link>
                   </li> */}
                   <li>
                     <Link href="/faq">
-                      <a className="text-gray-500 hover:text-gray-900 font-semibold block pb-2 text-sm">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         FAQ
                       </a>
                     </Link>
@@ -95,28 +100,28 @@ export default function Footer() {
               </section>
 
               {/* Company */}
-              <section className="w-full lg:w-4/12 px-4 mt-3 lg:mt-0">
-                <span className="block uppercase text-sm font-semibold mb-2 text-purple-700">
+              <section className="w-full px-4 mt-3 lg:w-4/12 lg:mt-0">
+                <span className="block mb-2 text-sm font-semibold text-purple-700 uppercase">
                   Company
                 </span>
                 <ul className="list-unstyled">
                   <li>
                     <Link href="/about">
-                      <a className="text-gray-500 hover:text-gray-900 font-semibold block pb-2 text-sm">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         About
                       </a>
                     </Link>
                   </li>
                   <li>
                     <Link href="/contact">
-                      <a className="text-gray-500 hover:text-gray-900 font-semibold block pb-2 text-sm">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         Contact
                       </a>
                     </Link>
                   </li>
                   <li>
                     <Link href="/contact">
-                      <a className="text-gray-500 hover:text-gray-900 font-semibold block pb-2 text-sm">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         Privacy Policy
                       </a>
                     </Link>
@@ -129,9 +134,9 @@ export default function Footer() {
 
         <hr className="my-4 border-gray-500" />
 
-        <section className="flex flex-wrap items-center md:justify-between justify-center">
-          <div className="w-full md:w-4/12 px-4 mx-auto text-center">
-            <div className="text-sm text-gray-500 font-semibold py-1">
+        <section className="flex flex-wrap items-center justify-center md:justify-between">
+          <div className="w-full px-4 mx-auto text-center md:w-4/12">
+            <div className="py-1 text-sm font-semibold text-gray-500">
               {new Date().getFullYear()} -{' '}
               <span className="text-purple-700">Roompy</span>
             </div>

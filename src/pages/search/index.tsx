@@ -5,7 +5,7 @@ import Footer from '../../components/Footer';
 
 export default function SearchPage() {
   return (
-    <div className="">
+    <div className="bg-white">
       <NavSearch />
 
       <Search />

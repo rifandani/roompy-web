@@ -12,7 +12,7 @@ export default function Contact() {
   }
 
   return (
-    <section className="relative w-full min-h-full px-4 py-20 overflow-hidden">
+    <section className="relative w-full min-h-full px-4 py-20 overflow-hidden bg-white">
       <h2 className="px-8 pt-6 text-4xl font-extrabold leading-10 tracking-tight text-center text-gray-900 sm:text-5xl md:text-6xl sm:leading-none">
         Contact
         <span className="text-purple-700"> Us</span>

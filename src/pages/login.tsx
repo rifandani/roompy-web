@@ -54,7 +54,7 @@ export default function LoginPage() {
 
   return (
     // <!-- Page Container -->
-    <div className="relative flex justify-center min-h-screen pt-16 text-gray-900 bg-gray-100">
+    <div className="relative flex justify-center min-h-screen pt-10 text-gray-900 bg-gray-100 lg:pt-16">
       {/* <!-- Waves Background --> */}
       <div className="absolute bottom-0 left-0 right-0">
         <svg viewBox="0 -100 1440 320">

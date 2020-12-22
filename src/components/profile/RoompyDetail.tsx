@@ -1,3 +1,4 @@
+import React, { useState, useContext, MouseEvent } from 'react';
 import {
   FaCrown,
   FaRegCalendarAlt,
@@ -5,81 +6,74 @@ import {
   FaInstagram,
   FaTwitter,
   FaLinkedin,
+  FaWifi,
+  FaShower,
+  FaMapMarkerAlt,
+  FaGenderless,
 } from 'react-icons/fa';
-import { GiMale } from 'react-icons/gi';
 import {
-  HiOutlinePhoneIncoming,
+  GiAges,
+  GiCigarette,
+  GiHomeGarage,
+  GiMale,
+  GiSandsOfTime,
+  GiSittingDog,
+} from 'react-icons/gi';
+import {
   HiOutlineCurrencyDollar,
   HiExclamationCircle,
+  HiBadgeCheck,
+  HiStar,
+  HiCheck,
+  HiOutlineHome,
 } from 'react-icons/hi';
-import { SiGooglecalendar } from 'react-icons/si';
+import { IoLogoWhatsapp } from 'react-icons/io';
+// files
+import UserContext from '../../contexts/UserContext';
 
 export default function RoompyDetail() {
+  // state
+  const [message, setMessage] = useState<string>('');
+
+  // UserContext
+  const { user } = useContext(UserContext);
+
+  async function submitMessage(e: MouseEvent) {
+    e.preventDefault();
+
+    alert(message);
+  }
+
   return (
-    <article className="mx-auto mt-3 bg-white max-w-7xl">
-      {/* <!-- Text Header --> */}
-      <header className="container w-full mx-auto">
-        <div className="flex flex-col items-center py-12">
-          <a
-            className="text-5xl font-bold text-gray-800 uppercase hover:text-gray-700"
-            href="#"
-          >
-            User Image / bisa juga Room image carousel
-          </a>
+    <article className="mx-auto bg-white max-w-7xl">
+      {/* <!-- Image Header --> */}
+      <header className="container relative w-full mx-auto">
+        {/* image */}
+        <div className="flex items-center justify-center py-10">
+          <img className="object-cover w-64 rounded-md" src="/me.jpg" />
+        </div>
+
+        {/* add to favorite */}
+        <div
+          onClick={() => {}}
+          className="absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer hover:scale-125"
+        >
+          <HiStar className="text-lg text-yellow-500" />
+
+          <p className="ml-1 text-base text-gray-500">Add to favorite</p>
         </div>
       </header>
-
-      {/* <!-- Topic Nav --> */}
-      {/* x-data="{ open: false }" */}
-      <nav className="w-full py-4 bg-gray-100 border-t border-b">
-        <div className="block sm:hidden">
-          {/* @click="open = !open" */}
-          <a
-            href="#"
-            className="flex items-center justify-center text-base font-bold text-center uppercase md:hidden"
-          >
-            Topics
-            {/* :className="open ? 'fa-chevron-down': 'fa-chevron-up'" */}
-            <i className="ml-2 fas"></i>
-          </a>
-        </div>
-
-        {/*  :className="open ? 'block': 'hidden' */}
-        <div className="flex-grow w-full sm:flex sm:items-center sm:w-auto ">
-          <div className="container flex flex-col items-center justify-center w-full px-6 py-2 mx-auto mt-0 text-sm font-bold uppercase sm:flex-row">
-            <a href="#" className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
-              Link
-            </a>
-            <a href="#" className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
-              Link
-            </a>
-            <a href="#" className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
-              Link
-            </a>
-            <a href="#" className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
-              Link
-            </a>
-            <a href="#" className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
-              Link
-            </a>
-            <a href="#" className="px-4 py-2 mx-2 rounded hover:bg-gray-400">
-              Link
-            </a>
-          </div>
-        </div>
-      </nav>
 
       {/* details */}
       <div className="container flex flex-wrap py-6 mx-auto">
         {/* <!-- Post Section --> */}
-        <section className="flex flex-col items-center w-full px-3 md:w-2/3">
+        <section className="flex flex-col w-full px-3 md:w-2/3">
+          {/* first box */}
           <article className="flex flex-col my-4 shadow">
             <div className="flex flex-col justify-start p-6 bg-white">
               {/* name + gender + age */}
               <div className="flex items-center pb-4">
-                <p className="text-2xl font-bold hover:text-gray-700">
-                  Rifandani
-                </p>
+                <p className="text-2xl font-bold">Rifandani</p>
 
                 <div className="flex items-center ml-3">
                   <GiMale className="text-2xl text-blue-500" />
@@ -90,7 +84,7 @@ export default function RoompyDetail() {
 
               {/* badges => premium / verified */}
               <div className="flex space-x-3">
-                <section className="flex items-center px-3 py-1 bg-yellow-200 border rounded-md">
+                <section className="flex items-center px-3 py-1 transition duration-500 transform bg-yellow-200 border rounded-md cursor-pointer hover:scale-125">
                   <FaCrown className="text-xl text-yellow-500" />
 
                   <p className="ml-3 font-semibold text-yellow-700 uppercase">
@@ -98,8 +92,16 @@ export default function RoompyDetail() {
                   </p>
                 </section>
 
-                <section className="flex items-center px-3 py-1 bg-green-200 border rounded-md">
-                  <HiOutlinePhoneIncoming className="text-xl text-green-500" />
+                <section className="flex items-center px-3 py-1 transition duration-500 transform bg-purple-200 border rounded-md cursor-pointer hover:scale-125">
+                  <HiBadgeCheck className="text-xl text-purple-500" />
+
+                  <p className="ml-3 font-semibold text-purple-700 uppercase">
+                    Verified user
+                  </p>
+                </section>
+
+                <section className="flex items-center px-3 py-1 transition duration-500 transform bg-green-200 border rounded-md cursor-pointer hover:scale-125">
+                  <IoLogoWhatsapp className="text-xl text-green-500" />
 
                   <p className="ml-3 font-semibold text-green-700 uppercase">
                     Free to message
@@ -107,11 +109,11 @@ export default function RoompyDetail() {
                 </section>
               </div>
 
-              <hr className="my-3 text-gray-500" />
+              <hr className="my-5 text-gray-500" />
 
               {/* first row => budget + stay length + move date */}
               <div className="flex justify-evenly">
-                <section className="flex flex-col items-center space-x-2 space-y-1 lg:flex-row">
+                <section className="flex flex-col items-center space-x-3 space-y-1 lg:flex-row">
                   <HiOutlineCurrencyDollar className="text-3xl text-green-500" />
 
                   <div className="flex flex-col items-center">
@@ -122,8 +124,8 @@ export default function RoompyDetail() {
                   </div>
                 </section>
 
-                <section className="flex flex-col items-center space-x-2 space-y-1 lg:flex-row">
-                  <FaRegCalendarAlt className="text-3xl text-purple-500" />
+                <section className="flex flex-col items-center space-x-3 space-y-1 lg:flex-row">
+                  <GiSandsOfTime className="text-3xl text-purple-500" />
 
                   <div className="flex flex-col items-center">
                     <p className="text-base font-semibold">12 bulan</p>
@@ -131,8 +133,8 @@ export default function RoompyDetail() {
                   </div>
                 </section>
 
-                <section className="flex flex-col items-center space-x-2 space-y-1 lg:flex-row">
-                  <SiGooglecalendar className="text-3xl text-red-500" />
+                <section className="flex flex-col items-center space-x-3 space-y-1 lg:flex-row">
+                  <FaRegCalendarAlt className="text-3xl text-yellow-500" />
 
                   <div className="flex flex-col items-center">
                     <p className="text-base font-semibold">30/12/2020</p>
@@ -140,24 +142,17 @@ export default function RoompyDetail() {
                   </div>
                 </section>
               </div>
-
-              {/* second row => budget + stay length + move date */}
             </div>
           </article>
 
+          {/* second box */}
           <article className="flex flex-col my-4 shadow">
             <div className="flex flex-col justify-start p-6 bg-white">
               <div className="flex items-center">
-                <p className="pb-4 text-3xl font-bold hover:text-gray-700">
-                  Description
-                </p>
+                <p className="pb-4 text-xl font-bold">About Me</p>
               </div>
 
-              <p className="pb-8 text-sm">asdasdasdadasdasd</p>
-
-              <h1 className="pb-3 text-2xl font-bold">Introduction</h1>
-
-              <p className="pb-3">
+              <p className="pb-6 text-gray-500">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Curabitur vel neque non libero suscipit suscipit eu eu urna.
                 Proin bibendum urna mattis ante malesuada ultrices. Etiam in
@@ -172,66 +167,244 @@ export default function RoompyDetail() {
                 Pellentesque sem lacus, malesuada vel hendrerit molestie, mollis
                 vel elit.
               </p>
+
+              <div className="flex items-center space-x-3">
+                {/* occupation */}
+                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                  <HiCheck className="mr-1 text-xl text-green-500" />
+
+                  <p className="text-base">Mahasiswa</p>
+                </span>
+
+                {/* smoker */}
+                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                  <HiCheck className="mr-1 text-xl text-green-500" />
+
+                  <p className="text-base">Non-smoker</p>
+                </span>
+
+                {/* pets */}
+                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                  <HiCheck className="mr-1 text-xl text-green-500" />
+
+                  <p className="text-base">No pets</p>
+                </span>
+
+                {/* children */}
+                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                  <HiCheck className="mr-1 text-xl text-green-500" />
+
+                  <p className="text-base">No children</p>
+                </span>
+              </div>
             </div>
           </article>
 
-          <div className="flex w-full pt-6">
-            <a
-              href="#"
-              className="w-1/2 p-6 text-left bg-white shadow hover:shadow-md"
-            >
-              <p className="flex items-center text-lg font-bold text-blue-800">
-                <i className="pr-1 fas fa-arrow-left"></i> Previous
-              </p>
-              <p className="pt-2">Lorem Ipsum Dolor Sit Amet Dolor Sit Amet</p>
-            </a>
-            <a
-              href="#"
-              className="w-1/2 p-6 text-right bg-white shadow hover:shadow-md"
-            >
-              <p className="flex items-center justify-end text-lg font-bold text-blue-800">
-                Next <i className="pl-1 fas fa-arrow-right"></i>
-              </p>
-              <p className="pt-2">Lorem Ipsum Dolor Sit Amet Dolor Sit Amet</p>
-            </a>
-          </div>
+          {/* third box */}
+          <article className="flex flex-col my-4 shadow">
+            <div className="flex flex-col justify-start p-6 bg-white">
+              <div className="flex items-center">
+                <p className="pb-4 text-xl font-bold">Home Preferences</p>
+              </div>
 
-          <div className="flex flex-col w-full p-6 mt-10 mb-10 text-center bg-white shadow md:text-left md:flex-row">
-            <div className="flex justify-center w-full pb-4 md:w-1/5 md:justify-start">
-              <img
-                src="https://source.unsplash.com/collection/1346951/150x150?sig=1"
-                className="w-32 h-32 rounded-full shadow"
-              />
-            </div>
-            <div className="flex flex-col justify-center flex-1 md:justify-start">
-              <p className="text-2xl font-semibold">David</p>
-              <p className="pt-2">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Curabitur vel neque non libero suscipit suscipit eu eu urna.
-              </p>
-              <div className="flex items-center justify-center pt-4 text-2xl text-blue-800 no-underline md:justify-start">
-                <a className="" href="#">
-                  <i className="fab fa-facebook"></i>
-                </a>
-                <a className="pl-4" href="#">
-                  <i className="fab fa-instagram"></i>
-                </a>
-                <a className="pl-4" href="#">
-                  <i className="fab fa-twitter"></i>
-                </a>
-                <a className="pl-4" href="#">
-                  <i className="fab fa-linkedin"></i>
-                </a>
+              <div className="flex flex-col justify-center space-y-3 text-gray-500">
+                {/* tipe */}
+                <span className="flex items-center px-2 py-1">
+                  <HiOutlineHome className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    Tipe: <strong className="">Satu Kamar</strong>{' '}
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="font-normal line-through">
+                      Satu Rumah
+                    </strong>
+                  </p>
+                </span>
+
+                {/* tempat parkir */}
+                <span className="flex items-center px-2 py-1">
+                  <GiHomeGarage className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    Tempat parkir:{' '}
+                    <strong className="font-normal line-through">
+                      Required
+                    </strong>{' '}
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="">Flexible</strong>
+                  </p>
+                </span>
+
+                {/* wifi */}
+                <span className="flex items-center px-2 py-1">
+                  <FaWifi className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    WiFi: <strong className="">Required</strong>{' '}
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="font-normal line-through">
+                      Flexible
+                    </strong>
+                  </p>
+                </span>
+
+                {/* kamar mandi */}
+                <span className="flex items-center px-2 py-1">
+                  <FaShower className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    Kamar Mandi:{' '}
+                    <strong className="font-normal line-through">Dalam</strong>{' '}
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="">Flexible</strong>
+                  </p>
+                </span>
               </div>
             </div>
-          </div>
+          </article>
+
+          {/* fourth box */}
+          <article className="flex flex-col my-4 shadow">
+            <div className="flex flex-col justify-start p-6 bg-white">
+              <div className="flex items-center">
+                <p className="pb-4 text-xl font-bold">Roompies Preferences</p>
+              </div>
+
+              <div className="flex flex-col justify-center space-y-3 text-gray-500">
+                {/* gender */}
+                <span className="flex items-center px-2 py-1">
+                  <FaGenderless className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    Jenis kelamin: <strong className="">Pria</strong>{' '}
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="font-normal line-through">Wanita</strong>
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="font-normal line-through">
+                      Flexible
+                    </strong>
+                  </p>
+                </span>
+
+                {/* age */}
+                <span className="flex items-center px-2 py-1">
+                  <GiAges className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    Rentang usia: <strong className="">20</strong>{' '}
+                    <strong className="mx-1">-</strong>{' '}
+                    <strong className="">30</strong>
+                    <strong className="ml-1">tahun</strong>{' '}
+                  </p>
+                </span>
+
+                {/* smoker */}
+                <span className="flex items-center px-2 py-1">
+                  <GiCigarette className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    Merokok:{' '}
+                    <strong className="font-normal line-through">Okay</strong>{' '}
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="">Not Okay</strong>
+                  </p>
+                </span>
+
+                {/* pet */}
+                <span className="flex items-center px-2 py-1">
+                  <GiSittingDog className="mr-2 text-xl text-purple-500" />
+
+                  <p className="text-base">
+                    Hewan Peliharaan:{' '}
+                    <strong className="font-normal line-through">Okay</strong>{' '}
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong className="">Not Okay</strong>
+                  </p>
+                </span>
+              </div>
+            </div>
+          </article>
+
+          {/* fifth box */}
+          <article className="flex flex-col my-4 shadow">
+            <div className="flex flex-col justify-start p-6 bg-white">
+              <div className="flex items-center">
+                <p className="pb-4 text-xl font-bold">Location Preferences</p>
+              </div>
+
+              <div className="flex items-center space-x-3">
+                {/* occupation */}
+                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                  <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
+
+                  <p className="text-base">Kota Balikpapan</p>
+                </span>
+
+                {/* smoker */}
+                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                  <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
+
+                  <p className="text-base">Kota Yogyakarta</p>
+                </span>
+              </div>
+            </div>
+          </article>
+
+          {/* bottom user info */}
+          <article className="flex flex-col w-full p-6 my-4 text-center bg-white shadow md:text-left md:flex-row">
+            {/* user image */}
+            <div className="flex justify-center w-full pb-4 md:w-2/5 md:justify-start xl:w-1/5">
+              <img className="w-32 h-32 rounded-full shadow" src="/me.jpg" />
+            </div>
+
+            {/* user simple info */}
+            <div className="flex flex-col justify-center flex-1 md:justify-start">
+              <p className="text-2xl font-semibold">Rifandani</p>
+
+              <span className="flex items-center justify-center py-4 md:justify-start">
+                {user ? (
+                  <>
+                    <IoLogoWhatsapp className="text-2xl text-green-500" />
+
+                    <p className="ml-2 text-lg italic text-green-500">
+                      +6282243199535
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-lg italic text-red-500">
+                    Please login to see Rifandani's number
+                  </p>
+                )}
+              </span>
+
+              {/* verified social media */}
+              <div className="flex items-center justify-center space-x-4 text-2xl md:justify-start">
+                <FaFacebook
+                  onClick={() => {}}
+                  className="text-blue-500 transition duration-500 transform cursor-pointer hover:scale-125"
+                />
+                <FaInstagram
+                  onClick={() => {}}
+                  className="text-red-500 transition duration-500 transform cursor-pointer hover:scale-125"
+                />
+                <FaTwitter
+                  onClick={() => {}}
+                  className="text-blue-400 transition duration-500 transform cursor-pointer hover:scale-125"
+                />
+                <FaLinkedin
+                  onClick={() => {}}
+                  className="text-blue-500 transition duration-500 transform cursor-pointer hover:scale-125"
+                />
+              </div>
+            </div>
+          </article>
         </section>
 
-        {/* <!-- Sidebar Section --> */}
+        {/* <!-- Sidebar Section --------------------------------------------------------------> */}
         <aside className="flex flex-col items-center w-full px-3 md:w-1/3">
           {/* form message */}
-          <section className="flex flex-col w-full p-6 my-4 bg-gray-100 shadow">
-            <p className="pb-5 text-xl font-semibold text-center">
+          <section className="flex flex-col w-full p-6 my-4 shadow bg-gray-50">
+            <p className="pb-5 text-xl font-semibold text-center truncate">
               Message Rifandani
             </p>
 
@@ -243,43 +416,32 @@ export default function RoompyDetail() {
                   id="message"
                   placeholder="Write your message here..."
                   required
-                  onChange={() => {}}
-                  // value={}
+                  rows={5}
+                  disabled={user ? false : true}
+                  onChange={(e) => setMessage(e.target.value)}
+                  value={message}
                 />
               </label>
 
               <button
-                className="flex items-center justify-center w-full px-2 py-3 mt-4 text-sm font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
+                className="flex items-center justify-center w-full px-2 py-3 mt-4 text-sm font-bold tracking-wider uppercase bg-purple-100 rounded-md text-FaShower focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-white hover:bg-purple-700"
                 type="submit"
-                onClick={() => {}}
-                // disabled
+                disabled={user ? false : true}
+                onClick={(e) => submitMessage(e)}
               >
-                Submit Message
+                {user ? 'Submit Message' : 'Login to message'}
               </button>
             </form>
           </section>
 
-          {/* social media list */}
-          <section className="flex flex-col items-center w-full p-6 my-4 bg-gray-100 rounded-md shadow">
-            <p className="pb-5 text-xl font-semibold text-gray-900">
-              Verified Social Media
-            </p>
-
-            <div className="flex justify-center space-x-5">
-              <FaFacebook className="text-2xl text-blue-500" />
-              <FaInstagram className="text-2xl text-red-500" />
-              <FaTwitter className="text-2xl text-blue-400" />
-              <FaLinkedin className="text-2xl text-blue-500" />
-            </div>
-          </section>
-
           {/* report user */}
-          <section className="flex items-center justify-center w-full p-3 my-4 space-x-3 rounded-md hover:bg-purple-100 hover:shadow">
+          <section
+            onClick={() => {}}
+            className="flex items-center justify-center w-full p-3 my-4 space-x-2 rounded-md cursor-pointer hover:bg-red-100 hover:shadow"
+          >
             <HiExclamationCircle className="text-2xl text-red-500" />
 
-            <p className="font-mono text-base text-gray-900 hover:text-purple-700">
-              Report this roompies
-            </p>
+            <p className="text-base text-gray-500">Report this roompies</p>
           </section>
         </aside>
       </div>

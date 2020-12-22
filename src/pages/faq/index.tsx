@@ -5,7 +5,7 @@ import Footer from '../../components/Footer';
 
 export default function FAQPage() {
   return (
-    <div className="">
+    <div className="bg-white">
       <NavFAQ />
 
       <FAQ />

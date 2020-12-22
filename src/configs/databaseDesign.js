@@ -7,7 +7,7 @@ export const user = {
 
   // awal registrasi value nya === []
   postedRoompies: [
-    roompies, // object => ref ke wanted roompies yg di post
+    'BOvPqKhPqkaW2NPI0QRnZd5re953' // string => doc id postingan roompies
   ],
 },
 
@@ -15,7 +15,7 @@ export const user = {
 const roompies = {
   createdAt: Date.now(), // number
   updatedAt: Date.now(), // number
-  postedBy: user, // object => ref ke user yg nge post
+  postedBy: 'BOvPqKhPqkaW2NPI0QRnZd5re953', // string => doc id user yg nge post
 
   city: 'Kota Balikpapan', // string => select dari firestore collection "cities"
   age: 22, // number
