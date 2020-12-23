@@ -130,7 +130,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
               {/* badges => premium / verified */}
               <div className="flex space-x-3">
-                <section className="flex items-center px-3 py-1 transition duration-500 transform bg-yellow-200 border rounded-md cursor-pointer hover:scale-125">
+                <section className="flex items-center px-3 py-1 mb-2 mr-2 transition duration-500 transform bg-yellow-200 border rounded-md cursor-pointer hover:scale-125">
                   <FaCrown className="text-xl text-yellow-500" />
 
                   <p className="ml-3 font-semibold text-yellow-700 uppercase">
@@ -138,7 +138,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   </p>
                 </section>
 
-                <section className="flex items-center px-3 py-1 transition duration-500 transform bg-purple-200 border rounded-md cursor-pointer hover:scale-125">
+                <section className="flex items-center px-3 py-1 mb-2 mr-2 transition duration-500 transform bg-purple-200 border rounded-md cursor-pointer hover:scale-125">
                   <HiBadgeCheck className="text-xl text-purple-500" />
 
                   <p className="ml-3 font-semibold text-purple-700 uppercase">
@@ -146,7 +146,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   </p>
                 </section>
 
-                <section className="flex items-center px-3 py-1 transition duration-500 transform bg-green-200 border rounded-md cursor-pointer hover:scale-125">
+                <section className="flex items-center px-3 py-1 mb-2 transition duration-500 transform bg-green-200 border rounded-md cursor-pointer hover:scale-125">
                   <IoLogoWhatsapp className="text-xl text-green-500" />
 
                   <p className="ml-3 font-semibold text-green-700 uppercase">
@@ -155,7 +155,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </section>
               </div>
 
-              <hr className="my-5 text-gray-500" />
+              <hr className="my-4 text-gray-500" />
 
               {/* first row => budget + stay length + move date */}
               <div className="flex justify-evenly">
@@ -204,16 +204,16 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
               <p className="pb-6 text-gray-500">{roompy.desc}</p>
 
-              <div className="flex items-center space-x-3">
+              <div className="flex flex-wrap items-center">
                 {/* occupation */}
-                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                <span className="flex items-center px-2 py-1 mb-2 mr-2 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
                   <p className="text-base">{roompy.occupation}</p>
                 </span>
 
                 {/* smoker */}
-                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                <span className="flex items-center px-2 py-1 mb-2 mr-2 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
                   {roompy.isSmoker ? (
@@ -224,7 +224,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* pets */}
-                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                <span className="flex items-center px-2 py-1 mb-2 mr-2 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
                   {roompy.ownPet ? (
@@ -235,7 +235,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* children */}
-                <span className="flex items-center px-2 py-1 border border-green-500 rounded-md">
+                <span className="flex items-center px-2 py-1 mb-2 mr-2 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
                   <p className="text-base">No children</p>
@@ -253,7 +253,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
               <div className="flex flex-col justify-center space-y-3 text-gray-500">
                 {/* tipe */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <HiOutlineHome className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
@@ -281,7 +281,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* tempat parkir */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <GiHomeGarage className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
@@ -309,7 +309,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* wifi */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <FaWifi className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
@@ -337,7 +337,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* kamar mandi */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <FaShower className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
@@ -376,7 +376,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
               <div className="flex flex-col justify-center space-y-3 text-gray-500">
                 {/* gender */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <FaGenderless className="mr-2 text-xl text-purple-500" />
 
                   {roompy.roompiesPref.gender.includes('ria') ? (
@@ -417,7 +417,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* age */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <GiAges className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
@@ -429,7 +429,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* smoker */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <GiCigarette className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
@@ -457,7 +457,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 </span>
 
                 {/* pet */}
-                <span className="flex items-center px-2 py-1">
+                <span className="flex items-center">
                   <GiSittingDog className="mr-2 text-xl text-purple-500" />
 
                   <p className="text-base">
@@ -498,7 +498,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 {roompy.locPref.map((loc, i) => (
                   <span
                     key={i}
-                    className="flex items-center px-2 py-1 border border-green-500 rounded-md"
+                    className="flex items-center py-1 border border-green-500 rounded-md"
                   >
                     <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
 

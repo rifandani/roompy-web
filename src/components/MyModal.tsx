@@ -21,24 +21,24 @@ export default function MyModal({
   const [reportMessage, setReportMessage] = useState<string>('');
   const [types] = useState([
     {
-      value: 'Contains offensive or inappropriate content',
-      label: 'Contains offensive or inappropriate content',
-    },
-    {
-      value: 'Contains incorrect information',
-      label: 'Contains incorrect information',
-    },
-    {
-      value: 'Suspected scammer',
+      value: 1,
       label: 'Suspected scammer',
     },
     {
-      value: 'Spam or commercial unrelated to roompy',
+      value: 2,
+      label: 'Contains incorrect information',
+    },
+    {
+      value: 3,
+      label: 'Bug or problem with the website',
+    },
+    {
+      value: 4,
       label: 'Spam or commercial unrelated to roompy',
     },
     {
-      value: 'Bug or problem with the website',
-      label: 'Bug or problem with the website',
+      value: 5,
+      label: 'Contains offensive or inappropriate content',
     },
   ]);
   const [selectedTypes, setSelectedTypes] = useState(null); // object
@@ -57,7 +57,7 @@ export default function MyModal({
     const report = {
       from: user.uid,
       for: roompyId,
-      type: selectedTypes.value,
+      typeId: selectedTypes.value,
       desc: reportMessage,
     };
 
