@@ -2,16 +2,15 @@ import Link from 'next/link';
 import { useContext, useState } from 'react';
 import {
   HiOutlineMenu,
-  HiOutlineSearch,
-  HiOutlineInformationCircle,
-  HiOutlineQuestionMarkCircle,
+  HiOutlineUsers,
+  HiOutlineHome,
   HiX,
 } from 'react-icons/hi';
 import { JackInTheBox } from 'react-awesome-reveal';
 import { toast } from 'react-toastify';
 // files
-import UserContext from '../../contexts/UserContext';
-import { auth } from '../../configs/firebaseConfig';
+import UserContext from '../contexts/UserContext';
+import { auth } from '../configs/firebaseConfig';
 
 export default function Nav() {
   // state
@@ -56,21 +55,15 @@ export default function Nav() {
           </section>
 
           <nav className="hidden space-x-10 md:flex">
-            <Link href="/search">
+            <Link href="/roompies">
               <a className="text-base font-medium text-gray-500 hover:text-gray-900">
-                Search
+                Roompies
               </a>
             </Link>
 
-            <Link href="/about">
+            <Link href="/rooms">
               <a className="text-base font-medium text-gray-500 hover:text-gray-900">
-                About
-              </a>
-            </Link>
-
-            <Link href="/faq">
-              <a className="text-base font-medium text-gray-500 hover:text-gray-900">
-                FAQ
+                Rooms
               </a>
             </Link>
           </nav>
@@ -107,7 +100,7 @@ export default function Nav() {
       <section
         className={`${
           menu ? 'absolute' : 'hidden'
-        } top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden`}
+        } z-20 top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden`}
       >
         <JackInTheBox duration={500}>
           <div className="bg-white divide-y-2 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 divide-gray-50">
@@ -136,32 +129,22 @@ export default function Nav() {
 
               <div className="mt-6">
                 <nav className="grid gap-y-8">
-                  <Link href="/search">
+                  <Link href="/roompies">
                     <a className="flex items-center p-3 -m-3 rounded-md hover:bg-gray-200">
-                      <HiOutlineSearch className="flex-shrink-0 w-6 h-6 text-purple-500" />
+                      <HiOutlineUsers className="flex-shrink-0 w-6 h-6 text-purple-500" />
 
                       <span className="ml-3 text-base font-medium text-gray-700 hover:text-gray-900">
-                        Search
+                        Roompies
                       </span>
                     </a>
                   </Link>
 
-                  <Link href="/about">
+                  <Link href="/rooms">
                     <a className="flex items-center p-3 -m-3 rounded-md hover:bg-gray-200">
-                      <HiOutlineInformationCircle className="flex-shrink-0 w-6 h-6 text-purple-500" />
+                      <HiOutlineHome className="flex-shrink-0 w-6 h-6 text-purple-500" />
 
                       <span className="ml-3 text-base font-medium text-gray-700 hover:text-gray-900">
-                        About
-                      </span>
-                    </a>
-                  </Link>
-
-                  <Link href="/faq">
-                    <a className="flex items-center p-3 -m-3 rounded-md hover:bg-gray-200">
-                      <HiOutlineQuestionMarkCircle className="flex-shrink-0 w-6 h-6 text-purple-500" />
-
-                      <span className="ml-3 text-base font-medium text-gray-700 hover:text-gray-900">
-                        FAQ
+                        Rooms
                       </span>
                     </a>
                   </Link>
@@ -174,14 +157,14 @@ export default function Nav() {
                 {user ? (
                   <>
                     <Link href="/dashboard">
-                      <a className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-gray-700 border border-transparent rounded-md shadow-sm hover:text-gray-900 hover:bg-gray-200">
+                      <a className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-purple-700 bg-purple-100 border border-transparent rounded-md hover:text-white hover:bg-purple-700">
                         Dashboard
                       </a>
                     </Link>
 
                     <span
                       onClick={logout}
-                      className="flex items-center justify-center w-full px-4 py-2 mt-3 text-base font-medium text-red-700 bg-red-100 border border-transparent rounded-md shadow-sm cursor-pointer hover:text-white hover:bg-red-700"
+                      className="flex items-center justify-center w-full px-4 py-2 mt-3 text-base font-medium text-red-700 bg-red-100 border border-transparent rounded-md cursor-pointer hover:text-white hover:bg-red-700"
                     >
                       Logout
                     </span>

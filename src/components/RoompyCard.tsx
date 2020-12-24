@@ -38,15 +38,13 @@ export default function RoompyCard({ roompy }: { roompy: Roompy }) {
                 New
               </span>
             ) : (
-              roompy.updatedAt > roompy.createdAt && (
-                <span
-                  className={`${
-                    isMoreThanAWeek ? 'hidden' : 'absolute'
-                  } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
-                >
-                  Updated
-                </span>
-              )
+              <span
+                className={`${
+                  isMoreThanAWeek ? 'hidden' : 'absolute'
+                } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
+              >
+                Updated
+              </span>
             )}
 
             <FaCrown className="absolute inline-flex items-center text-2xl text-yellow-200 bottom-10 right-12" />

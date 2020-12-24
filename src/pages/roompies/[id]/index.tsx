@@ -2,7 +2,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 // files
 import { db } from '../../../configs/firebaseConfig';
 import { Roompy } from '../../../utils/interfaces';
-import Nav from '../../../components/profile/Nav';
+import Nav from '../../../components/Nav';
 import RoompyDetail from '../../../components/profile/RoompyDetail';
 import Footer from '../../../components/Footer';
 
