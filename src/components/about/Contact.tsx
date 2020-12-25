@@ -104,7 +104,7 @@ export default function Contact() {
         </form>
       </div>
 
-      <div className="flex flex-col items-center mt-5 -mx-4 md:flex-row md:justify-center">
+      <div className="flex flex-col items-center mt-5 -mx-4 space-y-2 md:space-y-0 md:flex-row md:justify-center">
         <div className="flex items-center px-4">
           <FiHome className="inline-block mr-2 text-purple-700 text-md" />
           <span className="align-text-bottom">Jalan Gejayan Gang Sambu</span>

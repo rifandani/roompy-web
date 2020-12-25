@@ -75,26 +75,30 @@ const NavAbout = () => {
 
               {/* nav hidden when small screen */}
               <div className="hidden md:block md:ml-10 md:pr-4">
-                <Link href="/search">
+                <Link href="/roompies">
                   <a className="font-medium text-gray-500 hover:text-gray-900">
-                    Search
+                    Roompies
                   </a>
                 </Link>
-                <Link href="/about">
+
+                <Link href="/rooms">
                   <a className="ml-8 font-medium text-gray-500 hover:text-gray-900">
-                    About
+                    Rooms
                   </a>
                 </Link>
-                <Link href="/faq">
-                  <a className="ml-8 font-medium text-gray-500 hover:text-gray-900">
-                    FAQ
-                  </a>
-                </Link>
+
+                {user && (
+                  <Link href="/dashboard">
+                    <a className="ml-8 font-medium text-gray-500 hover:text-gray-900">
+                      Dashboard
+                    </a>
+                  </Link>
+                )}
 
                 {user ? (
                   <span
                     onClick={logout}
-                    className="p-2 ml-6 font-medium text-red-700 bg-red-100 rounded-md hover:text-white hover:bg-red-700"
+                    className="p-2 ml-6 font-medium text-red-700 bg-red-100 rounded-md cursor-pointer hover:text-white hover:bg-red-700"
                   >
                     Logout
                   </span>
@@ -151,21 +155,25 @@ const NavAbout = () => {
                   </div>
 
                   <div className="px-2 pt-2 pb-3">
-                    <Link href="/search">
+                    <Link href="/roompies">
                       <a className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                        Search
+                        Roompies
                       </a>
                     </Link>
-                    <Link href="/about">
+
+                    <Link href="/rooms">
                       <a className="block px-3 py-2 mt-1 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                        About
+                        Rooms
                       </a>
                     </Link>
-                    <Link href="/faq">
-                      <a className="block px-3 py-2 mt-1 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                        FAQ
-                      </a>
-                    </Link>
+
+                    {user && (
+                      <Link href="/dashboard">
+                        <a className="block px-3 py-2 mt-1 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
+                          Dashboard
+                        </a>
+                      </Link>
+                    )}
                   </div>
 
                   <div>

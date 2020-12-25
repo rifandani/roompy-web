@@ -6,8 +6,8 @@ export default function Steps() {
     <div className="relative w-full py-20 overflow-hidden bg-white">
       <main className="container max-w-screen-xl min-h-full mx-auto">
         <h2 className="px-8 pt-6 text-4xl font-extrabold leading-10 tracking-tight text-center text-gray-900 sm:text-5xl md:text-6xl sm:leading-none lg:text-left xl:max-w-screen-xl">
-          Join
-          <span className="text-purple-700"> Us</span>
+          How to Join
+          <span className="text-purple-700"> Roompy</span>?
         </h2>
 
         <p className="px-8 mt-5 text-base italic text-center text-gray-500 sm:text-lg md:text-xl sm:w-full sm:mx-auto lg:mx-0 lg:text-left xl:max-w-screen-xl">
@@ -15,7 +15,7 @@ export default function Steps() {
           <span className="text-purple-700"> Roompy</span>
         </p>
 
-        <Zoom direction="left" duration={2000} triggerOnce>
+        <Zoom direction="left" triggerOnce>
           <article className="content-center lg:flex lg:justify-center lg:items-center">
             <section className="flex justify-center pt-10 m-auto lg:w-1/4 lg:mx-6 lg:my-8">
               <div className="relative w-64 h-48">

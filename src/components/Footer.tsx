@@ -48,16 +48,13 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
                   <FaFacebook className="items-center justify-center inline-block mr-2 text-3xl text-center text-blue-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
                 </a>
               </Link>
+
               <Link href="/">
                 <a href="https://www.dribbble.com/creativetim" target="_blank">
                   <FaInstagram className="items-center justify-center inline-block mr-2 text-3xl text-center text-pink-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
                 </a>
               </Link>
             </div>
-
-            {/* <p className="mt-6 text-sm font-semibold text-gray-600">
-              Created with 💗
-            </p> */}
           </section>
 
           <section className="w-full mt-3 lg:w-6/12 lg:mt-0">
@@ -67,14 +64,8 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
                 <span className="block mb-2 text-sm font-semibold text-purple-700 uppercase">
                   Resources
                 </span>
+
                 <ul className="list-unstyled">
-                  <li>
-                    <Link href="/search">
-                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
-                        Search
-                      </a>
-                    </Link>
-                  </li>
                   <li>
                     <Link href="/pricing">
                       <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
@@ -82,17 +73,17 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
                       </a>
                     </Link>
                   </li>
-                  {/* <li>
-                    <Link href="/blog">
-                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
-                        Blog
-                      </a>
-                    </Link>
-                  </li> */}
                   <li>
                     <Link href="/faq">
                       <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         FAQ
+                      </a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/blog">
+                      <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
+                        Blog
                       </a>
                     </Link>
                   </li>
@@ -113,14 +104,14 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/contact">
+                    <Link href="/terms">
                       <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
-                        Contact
+                        Terms of Use
                       </a>
                     </Link>
                   </li>
                   <li>
-                    <Link href="/contact">
+                    <Link href="/privacy-policy">
                       <a className="block pb-2 text-sm font-semibold text-gray-500 hover:text-gray-900">
                         Privacy Policy
                       </a>

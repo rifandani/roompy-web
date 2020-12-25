@@ -73,25 +73,29 @@ const NavHome = () => {
 
               {/* nav hidden when small screen */}
               <div className="hidden md:block md:ml-10 md:pr-4">
-                <Link href="/search">
+                <Link href="/roompies">
                   <a className="font-medium text-gray-500 hover:text-gray-900">
-                    Search
-                  </a>
-                </Link>
-                <Link href="/about">
-                  <a className="ml-8 font-medium text-gray-500 hover:text-gray-900">
-                    About
-                  </a>
-                </Link>
-                <Link href="/faq">
-                  <a className="ml-8 font-medium text-gray-500 hover:text-gray-900">
-                    FAQ
+                    Roompies
                   </a>
                 </Link>
 
+                <Link href="/rooms">
+                  <a className="ml-8 font-medium text-gray-500 hover:text-gray-900">
+                    Rooms
+                  </a>
+                </Link>
+
+                {user && (
+                  <Link href="/dashboard">
+                    <a className="ml-8 font-medium text-gray-500 hover:text-gray-900">
+                      Dashboard
+                    </a>
+                  </Link>
+                )}
+
                 {user ? (
                   <span
-                    className="p-2 ml-6 font-medium text-red-700 bg-red-100 rounded-md hover:text-white hover:bg-red-700"
+                    className="p-2 ml-6 font-medium text-red-700 bg-red-100 rounded-md cursor-pointer hover:text-white hover:bg-red-700"
                     onClick={logout}
                   >
                     Logout
@@ -149,21 +153,25 @@ const NavHome = () => {
                   </div>
 
                   <div className="px-2 pt-2 pb-3">
-                    <Link href="/search">
-                      <a className="block px-3 py-2 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                        Search
-                      </a>
-                    </Link>
-                    <Link href="/about">
+                    <Link href="/roompies">
                       <a className="block px-3 py-2 mt-1 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                        About
+                        Roompies
                       </a>
                     </Link>
-                    <Link href="/faq">
+
+                    <Link href="/rooms">
                       <a className="block px-3 py-2 mt-1 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
-                        FAQ
+                        Rooms
                       </a>
                     </Link>
+
+                    {user && (
+                      <Link href="/dashboard">
+                        <a className="block px-3 py-2 mt-1 text-base font-medium text-gray-700 rounded-md hover:text-gray-900 hover:bg-gray-200 focus:outline-none focus:text-gray-900 focus:bg-gray-50">
+                          Dashboard
+                        </a>
+                      </Link>
+                    )}
                   </div>
 
                   <div>
@@ -189,7 +197,7 @@ const NavHome = () => {
 
           {/* hero header */}
           <section className="max-w-screen-xl px-4 pt-10 mx-auto mt-10 lg:h-full sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28 lg:pt-20 xl:pt-16">
-            <div className="sm:text-center lg:text-left">
+            <div className="text-center lg:text-left">
               <h2 className="text-4xl font-extrabold leading-10 tracking-tight text-gray-900 sm:text-5xl sm:leading-none md:text-6xl">
                 Find your soul
                 <br className="xl:hidden" />
@@ -197,23 +205,23 @@ const NavHome = () => {
               </h2>
 
               <p className="mt-5 text-base italic text-gray-500 sm:text-lg md:text-xl sm:max-w-xl sm:mx-auto lg:mx-0">
-                Cari dan dapatkan info secara langsung di
-                <span className="text-purple-700"> Roompy</span>
+                Temukan teman satu rumah/kos/kontrakan yang
+                <span className="text-purple-700"> sesuai</span>
               </p>
 
               <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
-                  <Link href={user ? '/rooms' : '/register'}>
+                  <Link href={user ? '/dashboard' : '/login'}>
                     <a className="flex items-center justify-center w-full px-8 py-3 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:bg-purple-100 hover:text-purple-700">
-                      {user ? 'Rooms' : 'Register'}
+                      {user ? 'CTA 1' : 'Get Started'}
                     </a>
                   </Link>
                 </div>
 
                 <div className="mt-3 sm:mt-0 sm:ml-3">
-                  <Link href={user ? '/roompies' : '/login'}>
+                  <Link href={user ? '/dashboard' : '/roompies'}>
                     <a className="flex items-center justify-center w-full px-8 py-3 text-base font-medium leading-6 text-purple-700 bg-purple-100 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:text-white hover:bg-purple-700">
-                      {user ? 'Roompies' : 'Login'}
+                      {user ? 'CTA 2' : 'Preview Roompies'}
                     </a>
                   </Link>
                 </div>

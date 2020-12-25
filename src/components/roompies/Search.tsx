@@ -5,7 +5,12 @@ import { toast } from 'react-toastify';
 // files
 import RoompyCard from '../RoompyCard';
 import { db } from '../../configs/firebaseConfig';
-import { Roompies, RoompiesProps } from '../../utils/interfaces';
+import {
+  Postal,
+  Roompies,
+  RoompiesProps,
+  Roompy,
+} from '../../utils/interfaces';
 
 const types = [
   { value: 'Pria', label: 'Pria' },
@@ -31,16 +36,17 @@ export default function Search({ roompies }: RoompiesProps) {
 
   async function getCities() {
     // get latest cities collection
-    const snap = await db.collection('cities').orderBy('nama', 'asc').get();
+    const res = await fetch(
+      'https://roompy-postals.herokuapp.com/sub-districts',
+    );
+    const data = await res.json();
 
-    const citiesFirestore = snap.docs.map((doc) => ({
-      ...doc.data(),
-      docId: doc.id,
-      label: doc.data().nama,
-      value: doc.data().nama,
+    const subDistricts = data.map((el: Postal) => ({
+      label: el.sub_district,
+      value: el.sub_district,
     }));
 
-    setCities(citiesFirestore);
+    setCities(subDistricts);
   }
 
   async function search(e: MouseEvent) {
@@ -66,26 +72,54 @@ export default function Search({ roompies }: RoompiesProps) {
   }
 
   function onSortChange(sort: { value: string; label: string }) {
-    switch (sort.value) {
-      case 'age':
-        const sortedByAge = roompies2.sort((a, b) => a.age - b.age);
-        setRoompies2(sortedByAge);
+    if (sort.value === 'age') {
+      const sortedByAge = [...roompies2].sort((a, b) => {
+        if (a.age < b.age) {
+          return -1;
+        } else if (a.age > b.age) {
+          return 1;
+        }
 
-      case 'budget':
-        const sortedByBudget = roompies2.sort((a, b) => a.budget - b.budget);
-        setRoompies2(sortedByBudget);
+        // value must be equal
+        return 0;
+      });
+      setRoompies2(sortedByAge);
+    } else if (sort.value === 'budget') {
+      const sortedByBudget = [...roompies2].sort((a, b) => {
+        if (a.budget < b.budget) {
+          return -1;
+        } else if (a.budget > b.budget) {
+          return 1;
+        }
 
-      case 'moveDate':
-        const sortedByMoveDate = roompies2.sort(
-          (a, b) => a.moveDate - b.moveDate,
-        );
-        setRoompies2(sortedByMoveDate);
+        // value must be equal
+        return 0;
+      });
+      setRoompies2(sortedByBudget);
+    } else if (sort.value === 'moveDate') {
+      const sortedByMoveDate = [...roompies2].sort((a, b) => {
+        if (a.moveDate < b.moveDate) {
+          return -1;
+        } else if (a.moveDate > b.moveDate) {
+          return 1;
+        }
 
-      default:
-        const sortedByCreatedAt = roompies2.sort(
-          (a, b) => a.createdAt - b.createdAt,
-        );
-        setRoompies2(sortedByCreatedAt);
+        // value must be equal
+        return 0;
+      });
+      setRoompies2(sortedByMoveDate);
+    } else {
+      const sortedByCreatedAt = [...roompies2].sort((a, b) => {
+        if (a.createdAt < b.createdAt) {
+          return -1;
+        } else if (a.createdAt > b.createdAt) {
+          return 1;
+        }
+
+        // value must be equal
+        return 0;
+      });
+      setRoompies2(sortedByCreatedAt);
     }
   }
 
@@ -113,7 +147,6 @@ export default function Search({ roompies }: RoompiesProps) {
               <Select
                 className="flex-grow"
                 options={types}
-                // defaultValue={types[0]}
                 placeholder="Filter gender"
                 onChange={(type) => setSelectedTypes(type)}
               />
@@ -122,7 +155,6 @@ export default function Search({ roompies }: RoompiesProps) {
               <Select
                 className="flex-grow mx-0 my-2 md:mx-2 md:my-0 lg:w-1/5"
                 options={cities}
-                // defaultValue={cities[0]}
                 placeholder="Filter cities"
                 onChange={(city) => setSelectedCities(city)}
               />
@@ -145,9 +177,8 @@ export default function Search({ roompies }: RoompiesProps) {
 
               {/* Sort */}
               <Select
-                className="w-1/3"
+                className="w-1/3 lg:w-1/4"
                 options={sorts}
-                defaultValue={sorts[0]}
                 placeholder="Sort to:"
                 onChange={(sort) => onSortChange(sort)}
               />
@@ -163,13 +194,21 @@ export default function Search({ roompies }: RoompiesProps) {
             <p className="text-2xl">No data</p>
           </div>
         ) : (
-          <section className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <Flip direction="horizontal" duration={2000} triggerOnce>
-              {(roompies2 as Roompies).map((roompy) => (
-                <RoompyCard key={roompy.id} roompy={roompy} />
-              ))}
-            </Flip>
-          </section>
+          <>
+            <section className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <Flip direction="horizontal" duration={2000} triggerOnce>
+                {(roompies2 as Roompies).map((roompy) => (
+                  <RoompyCard key={roompy.id} roompy={roompy} />
+                ))}
+              </Flip>
+            </section>
+
+            <section className="flex justify-center mt-8">
+              <button className="px-4 py-2 text-purple-700 bg-purple-100 border rounded-md hover:text-white hover:bg-purple-700">
+                Load more...
+              </button>
+            </section>
+          </>
         )}
       </div>
     </article>

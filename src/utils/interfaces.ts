@@ -59,9 +59,18 @@ export interface UserContextState {
   setUser: firebase.User | Dispatch<SetStateAction<firebase.User>>;
 }
 
+export interface Postal {
+  urban: string;
+  sub_district: string;
+  city: string;
+  province_code: string;
+  postal_code: string;
+}
+
 export type Roompies = Roompy[];
 export type Users = User[];
 export type AuthUser = firebase.User | null;
+export type Postals = Postal[];
 
 // firebase type
 export type DocRef = firebase.firestore.DocumentReference;
