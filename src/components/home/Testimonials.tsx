@@ -50,7 +50,7 @@ export default function Testimonials() {
 
         <article className="text-gray-500 body-font">
           <div className="container px-8 pt-10 mx-auto lg:my-8">
-            <Flip direction="horizontal">
+            <Flip direction="horizontal" triggerOnce>
               <div className="w-full mx-auto text-center xl:w-1/2 lg:w-3/4">
                 <svg
                   className="inline-block w-8 h-8 mb-8 text-gray-700 fill-current"

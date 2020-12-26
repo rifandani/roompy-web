@@ -1,16 +1,36 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+// import { useEffect, useState } from 'react';
+// import { useRouter } from 'next/router';
 // files
-import { db } from '../../../configs/firebaseConfig';
-import { Roompy } from '../../../utils/interfaces';
 import Nav from '../../../components/Nav';
 import RoompyDetail from '../../../components/profile/RoompyDetail';
 import Footer from '../../../components/Footer';
+import { db } from '../../../configs/firebaseConfig';
+import { RoompyProps } from '../../../utils/interfaces';
 
-export default function RoompyPage({ roompy }: { roompy: Roompy }) {
+export default function RoompyPage({ roompy }: RoompyProps) {
+  // const [roompy, setRoompy] = useState(null);
+  // const { query } = useRouter(); // object { id: string }
+
+  // useEffect(() => {
+  //   getRoompy();
+  // }, []);
+
+  // async function getRoompy() {
+  //   const roompyRef = db.collection('roompies').doc(query.id! as string);
+  //   const roompySnap = await roompyRef.get();
+
+  //   setRoompy({
+  //     ...roompySnap.data(),
+  //     id: query.id!,
+  //   });
+  // }
+
   return (
     <div className="w-full min-h-screen">
       <Nav />
 
+      {/* {roompy && <RoompyDetail roompy={roompy} />} */}
       <RoompyDetail roompy={roompy} />
 
       <Footer footer2 />

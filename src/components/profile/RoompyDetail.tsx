@@ -77,9 +77,9 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
       {/* <!-- Image Header --> */}
       <header className="container relative w-full mx-auto">
         {/* image */}
-        <div className="flex items-center justify-center py-10">
+        <div className="flex items-center justify-center pt-10 pb-3">
           <img
-            className="object-cover w-64 rounded-md"
+            className="object-cover w-64 mt-8 rounded-md md:w-80 xl:w-96 md:mt-0"
             src={roompy.photoURL}
             alt={roompy.name}
           />
@@ -129,7 +129,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
               </div>
 
               {/* badges => premium / verified */}
-              <div className="flex space-x-3">
+              <div className="flex flex-wrap items-center">
                 <section className="flex items-center px-3 py-1 mb-2 mr-2 transition duration-500 transform bg-yellow-200 border rounded-md cursor-pointer hover:scale-125">
                   <FaCrown className="text-xl text-yellow-500" />
 
@@ -142,7 +142,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   <HiBadgeCheck className="text-xl text-purple-500" />
 
                   <p className="ml-3 font-semibold text-purple-700 uppercase">
-                    Verified user
+                    Verified
                   </p>
                 </section>
 
@@ -175,7 +175,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
                   <div className="flex flex-col items-center">
                     <p className="text-base font-semibold">
-                      {roompy.stayLength} minggu
+                      {roompy.stayLength} Minggu
                     </p>
                     <p className="text-sm italic">Stay length</p>
                   </div>
@@ -270,12 +270,22 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                     <strong className="mx-2">/</strong>{' '}
                     <strong
                       className={
-                        roompy.homePref.room.includes('kamar')
-                          ? 'font-normal line-through'
-                          : ''
+                        roompy.homePref.room.includes('rumah')
+                          ? ''
+                          : 'font-normal line-through'
                       }
                     >
                       Satu Rumah
+                    </strong>
+                    <strong className="mx-2">/</strong>{' '}
+                    <strong
+                      className={
+                        roompy.homePref.room.includes('lex')
+                          ? ''
+                          : 'font-normal line-through'
+                      }
+                    >
+                      Flexible
                     </strong>
                   </p>
                 </span>
@@ -494,11 +504,13 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 <p className="pb-4 text-xl font-bold">Location Preferences</p>
               </div>
 
-              <div className="flex items-center space-x-3">
-                {roompy.locPref.map((loc, i) => (
+              <div className="flex flex-wrap items-center">
+                {roompy.locPref.map((loc, i, arr) => (
                   <span
                     key={i}
-                    className="flex items-center py-1 border border-green-500 rounded-md"
+                    className={`${
+                      arr.length - 1 === i ? '' : 'mr-2'
+                    } flex items-center px-2 py-1 mb-2 border border-green-500 rounded-md`}
                   >
                     <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
 
@@ -535,7 +547,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   </>
                 ) : (
                   <p className="text-lg italic text-red-500">
-                    Please login to see Rifandani's number
+                    Please login to see {roompy.name}'s number
                   </p>
                 )}
               </span>
@@ -568,7 +580,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
           {/* form message */}
           <section className="flex flex-col w-full p-6 my-4 shadow bg-gray-50">
             <p className="pb-5 text-xl font-semibold text-center truncate">
-              Message Rifandani
+              Message {roompy.name}
             </p>
 
             <form>

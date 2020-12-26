@@ -38,6 +38,10 @@ export interface Roompy {
   updatedAt: number;
 }
 
+export interface RoompyProps {
+  roompy: Roompy | null;
+}
+
 export interface RoompiesProps {
   roompies: Roompies | [];
 }

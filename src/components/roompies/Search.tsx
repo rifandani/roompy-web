@@ -1,16 +1,13 @@
-import { useState, MouseEvent, useEffect } from 'react';
+import { useState, MouseEvent, useEffect, useContext } from 'react';
 import { Flip } from 'react-awesome-reveal';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 // files
 import RoompyCard from '../RoompyCard';
 import { db } from '../../configs/firebaseConfig';
-import {
-  Postal,
-  Roompies,
-  RoompiesProps,
-  Roompy,
-} from '../../utils/interfaces';
+import { Postal, Roompies } from '../../utils/interfaces';
+import UserContext from '../../contexts/UserContext';
+import subDistrictsJson from '../../utils/sub-districts.json';
 
 const types = [
   { value: 'Pria', label: 'Pria' },
@@ -18,49 +15,40 @@ const types = [
 ];
 
 const sorts = [
-  { value: 'createdAt', label: 'Newest Roompies' },
-  { value: 'age', label: 'Youngest' },
-  { value: 'budget', label: 'Lowest Budget' },
+  { value: 'createdAt', label: 'Newest' },
+  { value: 'age', label: 'Oldest' },
+  { value: 'budget', label: 'Highest Budget' },
   { value: 'moveDate', label: 'Earliest Move Date' },
 ];
 
-export default function Search({ roompies }: RoompiesProps) {
-  const [selectedTypes, setSelectedTypes] = useState(null); // object
-  const [cities, setCities] = useState([]);
-  const [selectedCities, setSelectedCities] = useState(null); // object
-  const [roompies2, setRoompies2] = useState<Roompies | []>(roompies); // array
+console.log('subDistrictsJson length = ', subDistrictsJson.length);
+const subDistrictsOptions = subDistrictsJson.map((el: Postal) => ({
+  label: el.sub_district,
+  value: el.sub_district,
+}));
 
+export default function Search() {
+  // state
+  const [selectedTypes, setSelectedTypes] = useState(null); // object
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState(null); // object
+  const [selectedSort, setSelectedSort] = useState(null); // object
+  const [roompies2, setRoompies2] = useState<Roompies | []>([]); // array
+  const [limit, setLimit] = useState<number>(20); // number
+
+  // UserContext
+  const { user } = useContext(UserContext);
+
+  // useEffect
   useEffect(() => {
-    getCities();
+    getRoompies();
   }, []);
 
-  async function getCities() {
-    // get latest cities collection
-    const res = await fetch(
-      'https://roompy-postals.herokuapp.com/sub-districts',
-    );
-    const data = await res.json();
-
-    const subDistricts = data.map((el: Postal) => ({
-      label: el.sub_district,
-      value: el.sub_district,
-    }));
-
-    setCities(subDistricts);
-  }
-
-  async function search(e: MouseEvent) {
-    e.preventDefault();
-
-    // kalau select input tidak dipilih
-    if (!selectedTypes || !selectedCities)
-      return toast.warning('Choose the filter please');
-
-    // get latest cities collection
+  async function getRoompies() {
+    // get latest roompies
     const snap = await db
       .collection('roompies')
-      .where('gender', '==', selectedTypes.value)
-      .where('locPref', 'array-contains', selectedCities.value)
+      .orderBy('createdAt', 'desc')
+      .limit(user ? limit : 12)
       .get();
 
     const roompiesFirestore = snap.docs.map((doc) => ({
@@ -71,56 +59,36 @@ export default function Search({ roompies }: RoompiesProps) {
     setRoompies2(roompiesFirestore as Roompies);
   }
 
-  function onSortChange(sort: { value: string; label: string }) {
-    if (sort.value === 'age') {
-      const sortedByAge = [...roompies2].sort((a, b) => {
-        if (a.age < b.age) {
-          return -1;
-        } else if (a.age > b.age) {
-          return 1;
-        }
+  async function search(e: MouseEvent) {
+    e.preventDefault();
 
-        // value must be equal
-        return 0;
-      });
-      setRoompies2(sortedByAge);
-    } else if (sort.value === 'budget') {
-      const sortedByBudget = [...roompies2].sort((a, b) => {
-        if (a.budget < b.budget) {
-          return -1;
-        } else if (a.budget > b.budget) {
-          return 1;
-        }
+    // kalau select input tidak dipilih
+    if (!selectedTypes || !selectedSubDistricts)
+      return toast.warning('Choose the filter please');
 
-        // value must be equal
-        return 0;
-      });
-      setRoompies2(sortedByBudget);
-    } else if (sort.value === 'moveDate') {
-      const sortedByMoveDate = [...roompies2].sort((a, b) => {
-        if (a.moveDate < b.moveDate) {
-          return -1;
-        } else if (a.moveDate > b.moveDate) {
-          return 1;
-        }
+    // get latest cities collection
+    const snap = await db
+      .collection('roompies')
+      .where('gender', '==', selectedTypes.value)
+      .where('locPref', 'array-contains', selectedSubDistricts.value)
+      .get();
 
-        // value must be equal
-        return 0;
-      });
-      setRoompies2(sortedByMoveDate);
-    } else {
-      const sortedByCreatedAt = [...roompies2].sort((a, b) => {
-        if (a.createdAt < b.createdAt) {
-          return -1;
-        } else if (a.createdAt > b.createdAt) {
-          return 1;
-        }
+    const roompiesFirestore = snap.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }));
 
-        // value must be equal
-        return 0;
-      });
-      setRoompies2(sortedByCreatedAt);
+    setRoompies2(roompiesFirestore as Roompies);
+  }
+
+  async function onLoadMore() {
+    if (!user) {
+      return toast('Please login, to view more roompies');
     }
+
+    setLimit((prev) => prev * 2);
+
+    await getRoompies();
   }
 
   return (
@@ -146,17 +114,18 @@ export default function Search({ roompies }: RoompiesProps) {
               {/* gender select */}
               <Select
                 className="flex-grow"
-                options={types}
                 placeholder="Filter gender"
+                options={types}
                 onChange={(type) => setSelectedTypes(type)}
               />
 
               {/* locPref select */}
               <Select
                 className="flex-grow mx-0 my-2 md:mx-2 md:my-0 lg:w-1/5"
-                options={cities}
                 placeholder="Filter cities"
-                onChange={(city) => setSelectedCities(city)}
+                options={subDistrictsOptions}
+                defaultValue={selectedSubDistricts}
+                onChange={setSelectedSubDistricts}
               />
 
               <button
@@ -178,9 +147,16 @@ export default function Search({ roompies }: RoompiesProps) {
               {/* Sort */}
               <Select
                 className="w-1/3 lg:w-1/4"
-                options={sorts}
                 placeholder="Sort to:"
-                onChange={(sort) => onSortChange(sort)}
+                options={sorts}
+                defaultValue={selectedSort}
+                onChange={(sort) => {
+                  setSelectedSort(sort);
+
+                  setRoompies2((prev) =>
+                    prev.sort((a, b) => b[sort.value] - a[sort.value]),
+                  );
+                }}
               />
             </div>
           </section>
@@ -204,7 +180,10 @@ export default function Search({ roompies }: RoompiesProps) {
             </section>
 
             <section className="flex justify-center mt-8">
-              <button className="px-4 py-2 text-purple-700 bg-purple-100 border rounded-md hover:text-white hover:bg-purple-700">
+              <button
+                onClick={onLoadMore}
+                className="px-4 py-2 text-purple-700 bg-purple-100 border rounded-md hover:text-white hover:bg-purple-700"
+              >
                 Load more...
               </button>
             </section>
