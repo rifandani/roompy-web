@@ -47,10 +47,11 @@ export interface RoompiesProps {
 }
 
 export interface User {
+  id?: string;
   createdAt: number;
   email: string;
   favorites: string[];
-  isPremium: boolean;
+  premium: boolean;
   postedRoompies: string[] | []; // awalnya DocRef
   postedRooms: string[] | []; // awalnya DocRef
   premiumUntil: number;
@@ -79,3 +80,6 @@ export type Postals = Postal[];
 // firebase type
 export type DocRef = firebase.firestore.DocumentReference;
 export type Timestamp = firebase.firestore.Timestamp;
+export type FireUser = firebase.User;
+export type UserCredential = firebase.UserInfo;
+export type UserCredential2 = firebase.auth.UserCredential;
