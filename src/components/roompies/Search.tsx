@@ -5,9 +5,9 @@ import { toast } from 'react-toastify';
 // files
 import RoompyCard from '../RoompyCard';
 import { db } from '../../configs/firebaseConfig';
-import { Postal, Roompies } from '../../utils/interfaces';
+import { Roompies } from '../../utils/interfaces';
 import UserContext from '../../contexts/UserContext';
-import subDistrictsJson from '../../utils/sub-districts.json';
+import subDistrictsJson2 from '../../utils/sub-districts2.json';
 
 const types = [
   { value: 'Pria', label: 'Pria' },
@@ -21,10 +21,9 @@ const sorts = [
   { value: 'moveDate', label: 'Earliest Move Date' },
 ];
 
-console.log('subDistrictsJson length = ', subDistrictsJson.length);
-const subDistrictsOptions = subDistrictsJson.map((el: Postal) => ({
-  label: el.sub_district,
-  value: el.sub_district,
+const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
+  label: el,
+  value: el,
 }));
 
 export default function Search() {

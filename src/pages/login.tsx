@@ -38,8 +38,8 @@ export default function LoginPage() {
     try {
       const credential = await auth.signInWithEmailAndPassword(email, password);
 
-      toast.success(`Welcome Back, ${credential.user.displayName}`);
-      return push('/');
+      await push('/dashboard');
+      return toast.success(`Welcome Back, ${credential.user.displayName}`);
     } catch (err) {
       // Handle Errors here.
       if (err.code === 'auth/wrong-password') {

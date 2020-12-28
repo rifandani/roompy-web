@@ -43,17 +43,21 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
             </h5>
 
             <div className="mt-6">
-              <Link href="/">
-                <a href="https://www.facebook.com/creativetim" target="_blank">
-                  <FaFacebook className="items-center justify-center inline-block mr-2 text-3xl text-center text-blue-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
-                </a>
-              </Link>
+              <a
+                href="https://www.facebook.com/ipan.dns"
+                target="_blank"
+                rel="noopener"
+              >
+                <FaFacebook className="items-center justify-center inline-block mr-2 text-3xl text-center text-blue-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
+              </a>
 
-              <Link href="/">
-                <a href="https://www.dribbble.com/creativetim" target="_blank">
-                  <FaInstagram className="items-center justify-center inline-block mr-2 text-3xl text-center text-pink-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
-                </a>
-              </Link>
+              <a
+                href="https://www.instagram.com/3richkey"
+                target="_blank"
+                rel="noopener"
+              >
+                <FaInstagram className="items-center justify-center inline-block mr-2 text-3xl text-center text-pink-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
+              </a>
             </div>
           </section>
 

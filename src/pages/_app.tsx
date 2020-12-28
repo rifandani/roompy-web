@@ -7,6 +7,7 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import { FormspreeProvider } from '@formspree/react';
 import 'rodal/lib/rodal.css';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 // files
 import '../styles/index.css';
 import useAuth from '../hooks/useAuth';

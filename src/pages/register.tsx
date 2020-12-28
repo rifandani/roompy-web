@@ -65,8 +65,8 @@ export default function RegisterPage() {
       });
 
       // toast & push to home
-      toast.success(`Welcome, ${newUser.user.displayName}`);
-      return push('/');
+      await push('/dashboard');
+      return toast.success(`Welcome, ${newUser.user.displayName}`);
     } catch (err) {
       // Handle Errors here.
       if (err.code === 'auth/weak-password') {
