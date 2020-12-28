@@ -57,9 +57,13 @@ export default function RegisterPage() {
       await db.collection('users').doc(newUser.user.uid).set({
         createdAt: Date.now(),
         email,
-        emailVerified: false,
+        favorites: [],
+        messagesFrom: [],
+        messagesTo: [],
         postedRoompies: [],
         postedRooms: [],
+        premium: false,
+        premiumUntil: 0,
         updatedAt: Date.now(),
         username,
       });

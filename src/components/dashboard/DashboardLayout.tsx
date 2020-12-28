@@ -14,8 +14,8 @@ export default function DashboardLayout({ children }) {
   const { push, pathname } = useRouter();
 
   async function logout() {
-    await auth.signOut();
     await push('/');
+    await auth.signOut();
 
     return toast.info('Logout success');
   }
