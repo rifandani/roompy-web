@@ -3,12 +3,18 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { AiFillSetting, AiFillHeart } from 'react-icons/ai';
-import { FaEnvelope, FaUserCircle } from 'react-icons/fa';
+import { FaEnvelope, FaUserCircle, FaLink } from 'react-icons/fa';
 import { HiSearch, HiOutlineLogout } from 'react-icons/hi';
 // files
 import { auth } from '../../configs/firebaseConfig';
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout({
+  children,
+  ver2,
+}: {
+  children: any;
+  ver2?: boolean;
+}) {
   // hooks
   const [toggle, setToggle] = useState(false);
   const { push, pathname } = useRouter();
@@ -30,7 +36,10 @@ export default function DashboardLayout({ children }) {
             <span className="flex items-center justify-center px-4 md:pl-5 md:pr-0">
               <Link href="/">
                 <a>
-                  <img className="w-auto h-8 md:h-10" src="favicon.ico" />
+                  <img
+                    className="w-auto h-8 md:h-10"
+                    src={ver2 ? '/favicon.ico' : 'favicon.ico'}
+                  />
                 </a>
               </Link>
             </span>
@@ -83,13 +92,12 @@ export default function DashboardLayout({ children }) {
                       toggle ? 'absolute' : 'hidden'
                     } bg-gray-800 text-white right-0 mt-3 p-3 px-5 overflow-auto z-30`}
                   >
-                    <a
-                      href="/account"
-                      className="flex items-center p-2 text-sm text-white no-underline hover:text-purple-500 hover:bg-gray-800 hover:no-underline"
-                    >
-                      <AiFillSetting className="mr-2" />
-                      <p className="">Account</p>
-                    </a>
+                    <Link href="/dashboard/account">
+                      <a className="flex items-center p-2 text-sm text-white no-underline hover:text-purple-500 hover:bg-gray-800 hover:no-underline">
+                        <AiFillSetting className="mr-2" />
+                        <p className="">Account</p>
+                      </a>
+                    </Link>
 
                     <div className="border border-gray-800"></div>
 
@@ -114,17 +122,17 @@ export default function DashboardLayout({ children }) {
             {/* nav links */}
             <ul className="flex px-1 py-0 text-center list-reset md:flex-col md:py-3 md:px-2 md:text-left">
               <li className="flex-1 mr-3 md:mt-5">
-                <Link href="/inbox">
+                <Link href="/dashboard/inbox">
                   <a
                     className={`${
-                      pathname === '/inbox'
+                      pathname === '/dashboard/inbox'
                         ? 'border-indigo-500'
                         : 'border-gray-800 hover:border-indigo-500'
                     } flex flex-col items-center py-1 pl-1 no-underline align-middle border-b-2 md:flex-row md:py-3`}
                   >
                     <FaEnvelope
                       className={`${
-                        pathname === '/inbox'
+                        pathname === '/dashboard/inbox'
                           ? 'text-indigo-500'
                           : 'text-white hover:text-indigo-500'
                       } mx-auto mt-1 text-2xl md:ml-5 md:mx-0 md:pr-3`}
@@ -138,17 +146,17 @@ export default function DashboardLayout({ children }) {
               </li>
 
               <li className="flex-1 mr-3">
-                <Link href="/favorites">
+                <Link href="/dashboard/favorites">
                   <a
                     className={`${
-                      pathname === '/favorites'
+                      pathname === '/dashboard/favorites'
                         ? 'border-red-500'
                         : 'border-gray-800 hover:border-red-500'
                     } flex flex-col items-center py-1 pl-1 no-underline align-middle border-b-2 md:flex-row md:py-3`}
                   >
                     <AiFillHeart
                       className={`${
-                        pathname === '/favorites'
+                        pathname === '/dashboard/favorites'
                           ? 'text-red-500'
                           : 'text-white hover:text-red-500'
                       } mx-auto mt-1 text-2xl md:ml-5 md:mx-0 md:pr-3`}
@@ -156,6 +164,30 @@ export default function DashboardLayout({ children }) {
 
                     <span className="block pb-1 text-sm text-white md:pb-0 md:text-base md:inline-block">
                       Favorites
+                    </span>
+                  </a>
+                </Link>
+              </li>
+
+              <li className="flex-1 mr-3">
+                <Link href="/dashboard/matches">
+                  <a
+                    className={`${
+                      pathname === '/dashboard/matches'
+                        ? 'border-green-500'
+                        : 'border-gray-800 hover:border-green-500'
+                    } flex flex-col items-center py-1 pl-1 no-underline align-middle border-b-2 md:flex-row md:py-3`}
+                  >
+                    <FaLink
+                      className={`${
+                        pathname === '/dashboard/matches'
+                          ? 'text-green-500'
+                          : 'text-white hover:text-green-500'
+                      } mx-auto mt-1 text-2xl md:ml-5 md:mx-0 md:pr-3`}
+                    />
+
+                    <span className="block pb-1 text-sm text-white md:pb-0 md:text-base md:inline-block">
+                      Matches
                     </span>
                   </a>
                 </Link>

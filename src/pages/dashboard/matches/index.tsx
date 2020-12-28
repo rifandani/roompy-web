@@ -1,11 +1,10 @@
 import Loader from 'react-loader-spinner';
 // files
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
-import AccountContent from '../../../components/account/AccountContent';
 import useCheckUser from '../../../hooks/useCheckUser';
 import { FireUser } from '../../../utils/interfaces';
 
-export default function AccountPage() {
+export default function MatchesPage() {
   const [user, isLoading] = useCheckUser();
 
   return (
@@ -21,8 +20,8 @@ export default function AccountPage() {
           />
         </div>
       ) : (
-        <DashboardLayout ver2>
-          <AccountContent user={user as FireUser} />
+        <DashboardLayout>
+          <div>Matches</div>
         </DashboardLayout>
       )}
     </div>
