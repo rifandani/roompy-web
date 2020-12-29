@@ -32,7 +32,8 @@ export default function useGetPostedRoompies(userContext: FireUser) {
   }
 
   async function getPostedRoompies() {
-    if (userDetail === null) return console.log('userDetail => ', userDetail);
+    if (userDetail === null)
+      return console.log('First render. userDetail => ', userDetail);
 
     const postedRoompiesLength = userDetail.postedRoompies.length;
     let roompyData = [];

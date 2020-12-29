@@ -19,28 +19,24 @@ export default function RegisterComp({ user }: { user: FireUser }) {
   // custom functions
   async function register(e: MouseEvent) {
     e.preventDefault();
-    setBusy(true); // disable register button
 
     // validation input
     if (!username || !email || !password || !password2) {
-      setBusy(false); // enable register button
       return toast.warning('Please input all field');
     } else if (password !== password2) {
-      setBusy(false); // enable register button
       return toast.warning('Please confirm the same password');
     } else if (!validator.isEmail(email)) {
-      setBusy(false); // enable register button
       return toast.warning('Please input a valid email');
     } else if (
       !validator.isLength(username, { min: 3 }) ||
       !validator.isLength(password, { min: 6 })
     ) {
-      setBusy(false); // enable register button
       return toast.warning(
         'Please input min 3 chars USERNAME & 6 chars PASSWORD',
       );
     }
 
+    setBusy(true); // disable register button
     try {
       // save to firebase auth && update user profile
       const newUser = await auth.createUserWithEmailAndPassword(

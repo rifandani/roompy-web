@@ -6,7 +6,7 @@ import {
   FaDoorOpen,
 } from 'react-icons/fa';
 // files
-import { FireUser, Roompies } from '../../utils/interfaces';
+import { FireUser, Roompies, User } from '../../utils/interfaces';
 import useGetPostedRoompies from '../../hooks/useGetPostedRoompies';
 
 export default function DashboardContent({ user }: { user: FireUser }) {
@@ -54,7 +54,11 @@ export default function DashboardContent({ user }: { user: FireUser }) {
                   Status
                 </h5>
 
-                <h3 className="text-2xl font-bold">Free User</h3>
+                {userDetail && (
+                  <h3 className="text-2xl font-bold">
+                    {(userDetail as User).premium ? 'Premium' : 'Free'} User
+                  </h3>
+                )}
               </div>
             </div>
           </div>
@@ -74,9 +78,19 @@ export default function DashboardContent({ user }: { user: FireUser }) {
                   Expiry
                 </h5>
 
-                <h3 className="text-2xl font-bold">
-                  {true ? 'None' : '25 February 2021'}
-                </h3>
+                {userDetail && (
+                  <h3 className="text-2xl font-bold">
+                    {(userDetail as User).premiumUntil === 0
+                      ? '-'
+                      : new Date(
+                          (userDetail as User).premiumUntil,
+                        ).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                  </h3>
+                )}
               </div>
             </div>
           </div>
@@ -105,16 +119,19 @@ export default function DashboardContent({ user }: { user: FireUser }) {
               <div className="p-5 border-b-4 border-purple-500 rounded-lg shadow-xl bg-gradient-to-b from-purple-200 to-purple-100">
                 <div className="flex flex-row items-center">
                   <div className="flex-shrink pr-4">
-                    <div className="p-4 bg-purple-500 rounded-full">
-                      <i className="fas fa-server fa-2x fa-inverse"></i>
+                    <div className="">
+                      <img
+                        className="h-16 rounded-full"
+                        src={roompy.photoURL}
+                      />
                     </div>
                   </div>
                   <div className="flex-1 text-right md:text-center">
-                    <h5 className="font-bold text-gray-500 uppercase">
+                    <h5 className="italic font-bold text-gray-500 uppercase">
                       {roompy.name}
                     </h5>
 
-                    <h3 className="text-2xl font-bold">{roompy.phoneNumber}</h3>
+                    <h3 className="text-2xl font-bold">{roompy.locPref[0]}</h3>
                   </div>
                 </div>
               </div>
@@ -148,11 +165,11 @@ export default function DashboardContent({ user }: { user: FireUser }) {
               </div>
 
               <div className="flex-1 text-right md:text-center">
-                <h5 className="font-bold text-gray-500 uppercase">
+                <h5 className="italic font-bold text-gray-500 uppercase">
                   Total Listings
                 </h5>
 
-                <h3 className="text-2xl font-bold">1</h3>
+                <h3 className="text-2xl font-bold">0</h3>
               </div>
             </div>
           </div>

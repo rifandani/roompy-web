@@ -83,3 +83,4 @@ export type Timestamp = firebase.firestore.Timestamp;
 export type FireUser = firebase.User;
 export type UserCredential = firebase.UserInfo;
 export type UserCredential2 = firebase.auth.UserCredential;
+export type FireError = firebase.FirebaseError;

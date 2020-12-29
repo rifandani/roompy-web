@@ -186,7 +186,11 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
                   <div className="flex flex-col items-center">
                     <p className="text-base font-semibold">
-                      {new Date(roompy.moveDate).toLocaleDateString()}
+                      {new Date(roompy.moveDate).toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </p>
                     <p className="text-sm italic">Move date</p>
                   </div>

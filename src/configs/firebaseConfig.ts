@@ -18,6 +18,7 @@ if (!app.apps.length) {
   app.initializeApp(firebaseConfig);
 }
 
+export const emailAuthProvider = app.auth.EmailAuthProvider;
 export const db = app.firestore();
 export const auth = app.auth();
 export const storage = app.storage();
