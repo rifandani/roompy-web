@@ -133,6 +133,7 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 minLength={3}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                disabled={user ? true : false}
               />
             </label>
 
@@ -147,6 +148,7 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={user ? true : false}
               />
             </label>
 
@@ -165,6 +167,7 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={user ? true : false}
               />
             </label>
 
@@ -183,6 +186,7 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 minLength={6}
                 value={password2}
                 onChange={(e) => setPassword2(e.target.value)}
+                disabled={user ? true : false}
               />
             </label>
 
@@ -198,9 +202,9 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
                 type="submit"
                 onClick={(e) => register(e)}
-                disabled={busy}
+                disabled={user ? true : busy}
               >
-                Register
+                {user ? 'You already logged in' : busy ? 'Loading' : 'Register'}
               </button>
             </div>
           </form>

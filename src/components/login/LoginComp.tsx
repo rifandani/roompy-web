@@ -100,6 +100,7 @@ export default function LoginComp({ user }: { user: FireUser }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={user ? true : false}
               />
             </label>
 
@@ -119,6 +120,7 @@ export default function LoginComp({ user }: { user: FireUser }) {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={user ? true : false}
               />
             </label>
 
@@ -127,9 +129,9 @@ export default function LoginComp({ user }: { user: FireUser }) {
                 className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
                 type="submit"
                 onClick={(e) => login(e)}
-                disabled={busy}
+                disabled={user ? true : busy}
               >
-                Login
+                {user ? 'You already logged in' : busy ? 'Loading' : 'Login'}
               </button>
             </div>
           </form>
