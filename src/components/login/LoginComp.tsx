@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { MouseEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import validator from 'validator';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
@@ -15,7 +15,7 @@ export default function LoginComp({ user }: { user: FireUser }) {
   const { push } = useRouter();
 
   // custom functions
-  async function login(e: MouseEvent) {
+  async function login(e: FormEvent) {
     e.preventDefault();
     setBusy(true); // disable login button
 
@@ -86,7 +86,7 @@ export default function LoginComp({ user }: { user: FireUser }) {
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-8">
-          <form autoComplete="on">
+          <form autoComplete="on" onSubmit={(e) => login(e)}>
             <label className="block text-sm text-gray-700" htmlFor="email">
               Email
               <input
@@ -128,14 +128,12 @@ export default function LoginComp({ user }: { user: FireUser }) {
               <button
                 className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
                 type="submit"
-                onClick={(e) => login(e)}
                 disabled={user ? true : busy}
               >
                 {user ? 'You already logged in' : busy ? 'Loading' : 'Login'}
               </button>
             </div>
           </form>
-
           <div className="mt-6 text-sm text-center">
             <Link href="/register">
               <a className="block mb-2 italic text-gray-500 md:inline-block md:mb-0 hover:text-purple-700 hover:underline focus:text-purple-700 focus:underline">

@@ -1,0 +1,713 @@
+import { useState, FormEvent } from 'react';
+import PhoneInput from 'react-phone-input-2';
+import id from 'react-phone-input-2/lang/id.json';
+import DatePicker from 'react-datepicker';
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import NumberFormat from 'react-number-format';
+import { Range, createSliderWithTooltip } from 'rc-slider';
+// files
+import Dropzone from './Dropzone';
+import { FireUser } from '../../utils/interfaces';
+import subDistrictsJson2 from '../../utils/sub-districts2.json';
+
+const animatedComponents = makeAnimated();
+
+const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
+  label: el,
+  value: el,
+}));
+
+const RangeWithTooltip = createSliderWithTooltip(Range);
+
+export default function CreateRoompies({ user }: { user: FireUser }) {
+  const [busy, setBusy] = useState<boolean>(false);
+  // contact info
+  const [name, setName] = useState<string>('');
+  const [phone, setPhone] = useState<string>(''); // '62822...'
+  // descriptions
+  const [gender, setGender] = useState<string>('Pria'); // Pria / Wanita
+  const [age, setAge] = useState<string>(''); // min 17
+  const [occupation, setOccupation] = useState<string>('');
+  const [smoker, setSmoker] = useState<boolean>(false);
+  const [ownPet, setOwnPet] = useState<boolean>(false);
+  // introduce yourself
+  const [budget, setBudget] = useState<string>('');
+  const [moveDate, setMoveDate] = useState<Date>(new Date()); // Date
+  const [stayLength, setStayLength] = useState<string>('');
+  const [desc, setDesc] = useState<string>('');
+  // location preferences
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState(null); // array of object => karena isMulti
+  // home preferences
+  const [roomType, setRoomType] = useState<string>('Flex'); // Satu kamar / Satu rumah / Flex
+  const [parking, setParking] = useState<string>('Flex'); // Required / Flex
+  const [wifi, setWifi] = useState<string>('Flex'); // Required / Flex
+  const [bathroom, setBathroom] = useState<string>('Flex'); // Dalam / Flex
+  // roompies preferences
+  const [genderPref, setGenderPref] = useState<string>('Flex'); // Pria / Wanita / Flex
+  const [smokerPref, setSmokerPref] = useState<string>('Okay'); // Okay / Not okay
+  const [petPref, setPetPref] = useState<string>('Okay'); // Okay / Not okay
+  const [agePref, setAgePref] = useState<number[]>([17, 70]); // [ageFrom, ageTo]
+  // your photos
+  const [images, setImages] = useState<any>([]); // images FIRESTORAGE
+
+  async function onCreateRoompies(e: FormEvent) {
+    e.preventDefault();
+    // setBusy(true);
+
+    const state = {
+      name,
+      phoneNumber: phone,
+      age: ~~age,
+      occupation,
+      smoker,
+      ownPet,
+      budget: ~~budget,
+      moveDate: new Date(moveDate).getTime(), // milliseconds
+      stayLength: ~~stayLength,
+      desc,
+      locPref: selectedSubDistricts.map(
+        (el: { label: string; value: string }) => el.value, // only return string
+      ),
+      homePref: {
+        room: roomType,
+        parking,
+        wifi,
+        bathroom,
+      },
+      roompiesPref: {
+        gender: genderPref,
+        ageFrom: agePref[0],
+        ageTo: agePref[1],
+        smoker: smokerPref,
+        pet: petPref,
+      },
+      photoUrl: images, // image object + preview: URL.createObjectURL(image)
+    };
+    console.log(state);
+  }
+
+  return (
+    <article className="flex-1 pb-24 mt-12 bg-gray-100 md:mt-2 md:pb-5">
+      {/* content title */}
+      <div className="pt-4 bg-gray-800">
+        <div className="p-4 text-2xl text-white shadow rounded-tl-3xl bg-gradient-to-r from-purple-700 to-gray-800">
+          <h3 className="pl-2 font-bold">Create Roompies</h3>
+        </div>
+      </div>
+      {/* all form */}
+
+      <form
+        className="w-full min-h-screen bg-white"
+        autoComplete="on"
+        onSubmit={(e) => onCreateRoompies(e)}
+      >
+        {/* contact info*/}
+        <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
+          <h6 className="px-6 text-2xl italic font-bold text-purple-500">
+            Contact Info
+          </h6>
+        </div>
+
+        <div className="flex flex-wrap w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
+          {/* fullname */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="username">Fullname</label>
+
+            <input
+              className="block w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              placeholder="Elon Musk"
+              name="username"
+              id="username"
+              autoComplete="username"
+              autoFocus
+              required
+              minLength={3}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </section>
+
+          {/* phone number */}
+          <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
+            <label htmlFor="phone" className="mb-2">
+              Phone Numbers
+            </label>
+
+            <PhoneInput
+              inputProps={{
+                name: 'phone',
+                id: 'phone',
+                required: true,
+              }}
+              localization={id}
+              country="id"
+              preferredCountries={['id']}
+              value={phone}
+              onChange={(val) => setPhone(val)}
+            />
+          </section>
+        </div>
+
+        {/* Your description*/}
+        <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
+          <h6 className="px-6 text-2xl italic font-bold text-purple-500">
+            Your Description
+          </h6>
+        </div>
+
+        <div className="flex flex-wrap w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
+          {/* Gender */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="gender">Gender</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="gender"
+                type="radio"
+                value="Pria"
+                checked={gender === 'Pria'}
+                onChange={(e) => setGender(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Pria</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="gender"
+                type="radio"
+                value="Wanita"
+                checked={gender === 'Wanita'}
+                onChange={(e) => setGender(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Wanita</p>
+            </span>
+          </section>
+
+          {/* smoker */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="smoker">Smoker</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="smoker"
+                type="radio"
+                value="true"
+                checked={smoker === true}
+                onChange={() => setSmoker(true)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Ya</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="smoker"
+                type="radio"
+                value="false"
+                checked={smoker === false}
+                onChange={() => setSmoker(false)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Tidak</p>
+            </span>
+          </section>
+
+          {/* ownPet */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="ownPet">Own a pet</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="ownPet"
+                type="radio"
+                value="true"
+                checked={ownPet === true}
+                onChange={() => setOwnPet(true)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Ya</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="ownPet"
+                type="radio"
+                value="false"
+                checked={ownPet === false}
+                onChange={() => setOwnPet(false)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Tidak</p>
+            </span>
+          </section>
+        </div>
+
+        <div className="flex flex-wrap w-full p-6 pt-0 bg-gray-100">
+          {/* Age */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="age">Age</label>
+
+            <input
+              className="block w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              placeholder="Your current age"
+              name="age"
+              id="age"
+              autoComplete="age"
+              type="number"
+              required
+              min={17}
+              max={70}
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
+          </section>
+
+          {/* occupation */}
+          <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
+            <label htmlFor="occupation">Occupation</label>
+
+            <input
+              className="block w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              placeholder="Your current job"
+              name="occupation"
+              id="occupation"
+              autoComplete="occupation"
+              required
+              minLength={3}
+              value={occupation}
+              onChange={(e) => setOccupation(e.target.value)}
+            />
+          </section>
+        </div>
+
+        {/* Introduce Yourself*/}
+        <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
+          <h6 className="px-6 text-2xl italic font-bold text-purple-500">
+            Introduce Yourself
+          </h6>
+        </div>
+
+        <div className="flex flex-wrap w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
+          {/* Weekly Budget */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="budget" className="">
+              Weekly Budget
+            </label>
+
+            <NumberFormat
+              className="w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              name="budget"
+              id="budget"
+              required
+              thousandSeparator
+              prefix="Rp "
+              value={budget}
+              onValueChange={(values) => setBudget(values.value)}
+            />
+          </section>
+
+          {/* Move Date */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="moveDate">Move Date</label>
+
+            <DatePicker
+              className="w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              placeholderText="Pick your move date plan"
+              dateFormat="dd/MM/yyyy"
+              isClearable
+              minDate={new Date()}
+              selected={moveDate}
+              onChange={(date: Date) => setMoveDate(date)}
+            />
+          </section>
+
+          {/* stayLength */}
+          <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
+            <label htmlFor="stayLength">Stay Length</label>
+
+            <input
+              className="block w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              name="stayLength"
+              id="stayLength"
+              type="number"
+              placeholder="In weeks"
+              required
+              min={1}
+              value={stayLength}
+              onChange={(e) => setStayLength(e.target.value)}
+            />
+          </section>
+        </div>
+
+        {/* Personal introduction */}
+        <div className="flex w-full p-6 pt-0 bg-gray-100">
+          <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
+            <label htmlFor="desc">Personal introduction</label>
+
+            <textarea
+              className="block w-full px-4 py-1 mt-2 bg-white border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              name="desc"
+              id="desc"
+              placeholder="Describe about yourself and your lifestyle. Mention some of the personal qualities that are important to you. If you're moving with your partner or friend, include them."
+              rows={6}
+              minLength={10}
+              required
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+            />
+          </section>
+        </div>
+
+        {/* Location Preferences*/}
+        <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
+          <h6 className="px-6 text-2xl italic font-bold text-purple-500">
+            Location Preferences
+          </h6>
+        </div>
+
+        {/* react-select locPref */}
+        <div className="flex w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
+          <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
+            <label htmlFor="desc" className="mb-2">
+              Pick your wanted locations
+            </label>
+
+            <Select
+              className="w-full border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+              placeholder="List of sub-districts"
+              isMulti
+              closeMenuOnSelect={false}
+              components={animatedComponents}
+              options={subDistrictsOptions}
+              onChange={setSelectedSubDistricts}
+            />
+          </section>
+        </div>
+
+        {/* Home Preferences*/}
+        <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
+          <h6 className="px-6 text-2xl italic font-bold text-purple-500">
+            Home Preferences
+          </h6>
+        </div>
+
+        <div className="flex flex-wrap w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
+          {/* roomType */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="roomType">Room Type</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="roomType"
+                type="radio"
+                value="Satu kamar"
+                checked={roomType === 'Satu kamar'}
+                onChange={(e) => setRoomType(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">
+                Satu kamar
+              </p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="roomType"
+                type="radio"
+                value="Satu rumah"
+                checked={roomType === 'Satu rumah'}
+                onChange={(e) => setRoomType(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">
+                Satu rumah
+              </p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="roomType"
+                type="radio"
+                value="Flex"
+                checked={roomType === 'Flex'}
+                onChange={(e) => setRoomType(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Fleksibel</p>
+            </span>
+          </section>
+
+          {/* parking */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="parking">Parking</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="parking"
+                type="radio"
+                value="Required"
+                checked={parking === 'Required'}
+                onChange={(e) => setParking(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Required</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="parking"
+                type="radio"
+                value="Flex"
+                checked={parking === 'Flex'}
+                onChange={(e) => setParking(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Fleksibel</p>
+            </span>
+          </section>
+
+          {/* wifi */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="wifi">Wifi</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="wifi"
+                type="radio"
+                value="Required"
+                checked={wifi === 'Required'}
+                onChange={(e) => setWifi(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Required</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="wifi"
+                type="radio"
+                value="Flex"
+                checked={wifi === 'Flex'}
+                onChange={(e) => setWifi(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Fleksibel</p>
+            </span>
+          </section>
+
+          {/* bathroom */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="bathroom">Bathroom</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="bathroom"
+                type="radio"
+                value="Dalam"
+                checked={bathroom === 'Dalam'}
+                onChange={(e) => setBathroom(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Dalam</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="bathroom"
+                type="radio"
+                value="Flex"
+                checked={bathroom === 'Flex'}
+                onChange={(e) => setBathroom(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Fleksibel</p>
+            </span>
+          </section>
+        </div>
+
+        {/* Roompies Preferences*/}
+        <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
+          <h6 className="px-6 text-2xl italic font-bold text-purple-500">
+            Roompies Preferences
+          </h6>
+        </div>
+
+        <div className="flex flex-wrap w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
+          {/* genderPref */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="genderPref">Their Gender</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="genderPref"
+                type="radio"
+                value="Pria"
+                checked={genderPref === 'Pria'}
+                onChange={(e) => setGenderPref(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Pria</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="genderPref"
+                type="radio"
+                value="Wanita"
+                checked={genderPref === 'Wanita'}
+                onChange={(e) => setGenderPref(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Wanita</p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="genderPref"
+                type="radio"
+                value="Flex"
+                checked={genderPref === 'Flex'}
+                onChange={(e) => setGenderPref(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Fleksibel</p>
+            </span>
+          </section>
+
+          {/* smokerPref */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="smokerPref">Their smoking</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="smokerPref"
+                type="radio"
+                value="Okay"
+                checked={smokerPref === 'Okay'}
+                onChange={(e) => setSmokerPref(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">
+                Tidak keberatan
+              </p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="smokerPref"
+                type="radio"
+                value="Not okay"
+                checked={smokerPref === 'Not okay'}
+                onChange={(e) => setSmokerPref(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Keberatan</p>
+            </span>
+          </section>
+
+          {/* petPref */}
+          <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
+            <label htmlFor="petPref">Their pet</label>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="petPref"
+                type="radio"
+                value="Okay"
+                checked={petPref === 'Okay'}
+                onChange={(e) => setPetPref(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">
+                Tidak keberatan
+              </p>
+            </span>
+
+            <span className="flex items-center w-full mt-2">
+              <input
+                className="mr-2"
+                name="petPref"
+                type="radio"
+                value="Not okay"
+                checked={petPref === 'Not okay'}
+                onChange={(e) => setPetPref(e.target.value)}
+              />
+
+              <p className="inline-flex font-medium text-gray-500">Keberatan</p>
+            </span>
+          </section>
+        </div>
+
+        {/* rc-slider ageFrom ageTo */}
+        <div className="flex w-full p-6 pt-0 bg-gray-100">
+          <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
+            <label htmlFor="desc" className="mb-2">
+              Their age range
+            </label>
+
+            <RangeWithTooltip
+              className="w-full"
+              min={17}
+              max={70}
+              allowCross={false}
+              tipFormatter={(value) => `${value} years old`}
+              defaultValue={agePref}
+              onChange={(val) => setAgePref(val)}
+            />
+          </section>
+        </div>
+
+        {/* Your Photos*/}
+        <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
+          <h6 className="px-6 text-2xl italic font-bold text-purple-500">
+            Your Photos{' '}
+            <small className="italic font-normal text-gray-900">
+              (only 1 for free user)
+            </small>
+          </h6>
+        </div>
+
+        {/* photos dropzone */}
+        <div className="flex w-full p-6 mt-6 bg-gray-100">
+          <section className="w-full bg-red-100 h-1/2">
+            <Dropzone images={images} setImages={setImages} isPremium={false} />
+          </section>
+        </div>
+
+        <div className="mx-6 mt-6">
+          <button
+            className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
+            type="submit"
+            disabled={busy}
+          >
+            {busy ? 'Loading' : 'Create'}
+          </button>
+        </div>
+      </form>
+    </article>
+  );
+}

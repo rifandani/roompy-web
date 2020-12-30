@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useState, MouseEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import validator from 'validator';
@@ -27,7 +27,7 @@ export default function AccountContent({ user }: { user: FireUser }) {
     }
   }
 
-  async function onUpdateProfile(e: MouseEvent) {
+  async function onUpdateProfile(e: FormEvent) {
     e.preventDefault();
 
     // validation input
@@ -111,7 +111,11 @@ export default function AccountContent({ user }: { user: FireUser }) {
 
       {/* form */}
       <div className="flex w-full p-6">
-        <form className="min-w-full" autoComplete="on">
+        <form
+          className="min-w-full"
+          autoComplete="on"
+          onSubmit={(e) => onUpdateProfile(e)}
+        >
           <label
             className="block text-base font-bold text-gray-700"
             htmlFor="username"
@@ -170,7 +174,6 @@ export default function AccountContent({ user }: { user: FireUser }) {
             <button
               className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-blue-700 rounded-md focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 hover:text-blue-700 hover:bg-blue-100"
               type="submit"
-              onClick={(e) => onUpdateProfile(e)}
               disabled={busy}
             >
               {busy ? 'Loading' : 'Update Profile'}

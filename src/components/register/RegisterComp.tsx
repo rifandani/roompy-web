@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState, MouseEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import validator from 'validator';
 // files
@@ -17,7 +17,7 @@ export default function RegisterComp({ user }: { user: FireUser }) {
   const { push } = useRouter();
 
   // custom functions
-  async function register(e: MouseEvent) {
+  async function register(e: FormEvent) {
     e.preventDefault();
 
     // validation input
@@ -115,7 +115,7 @@ export default function RegisterComp({ user }: { user: FireUser }) {
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-10">
-          <form autoComplete="on">
+          <form autoComplete="on" onSubmit={(e) => register(e)}>
             <label className="block text-sm text-gray-700" htmlFor="username">
               Username
               <input
@@ -197,7 +197,6 @@ export default function RegisterComp({ user }: { user: FireUser }) {
               <button
                 className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
                 type="submit"
-                onClick={(e) => register(e)}
                 disabled={user ? true : busy}
               >
                 {user ? 'You already logged in' : busy ? 'Loading' : 'Register'}

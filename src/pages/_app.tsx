@@ -6,8 +6,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import { FormspreeProvider } from '@formspree/react';
-import 'rodal/lib/rodal.css';
+import 'rodal/lib/rodal.css'; // react modal
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import 'react-phone-input-2/lib/style.css';
+import 'react-datepicker/dist/react-datepicker.css';
+import 'rc-slider/assets/index.css';
 // files
 import '../styles/index.css';
 import useAuth from '../hooks/useAuth';
