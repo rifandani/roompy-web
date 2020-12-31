@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from 'react';
 import { toast } from 'react-toastify';
 // files
 import UserContext from '../contexts/UserContext';
+import { FireUser } from '../utils/interfaces';
 
 function useCheckUser() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -23,7 +24,7 @@ function useCheckUser() {
     checkUser();
   }, []);
 
-  return [user, isLoading];
+  return [user, isLoading] as [FireUser, boolean];
 }
 
 export default useCheckUser;

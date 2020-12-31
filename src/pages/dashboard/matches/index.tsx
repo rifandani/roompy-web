@@ -2,7 +2,6 @@ import Loader from 'react-loader-spinner';
 // files
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import useCheckUser from '../../../hooks/useCheckUser';
-import { FireUser } from '../../../utils/interfaces';
 
 export default function MatchesPage() {
   const [user, isLoading] = useCheckUser();

@@ -1,12 +1,16 @@
+import { useContext } from 'react';
 import Loader from 'react-loader-spinner';
 // files
-import useCheckUser from '../../../hooks/useCheckUser';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
-import { FireUser } from '../../../utils/interfaces';
 import CreateRoompies from '../../../components/createRoompies/CreateRoompies';
+import useGetUser from '../../../hooks/useGetUser';
+import useCheckUser from '../../../hooks/useCheckUser';
+import UserContext from '../../../contexts/UserContext';
 
 export default function DashboardPage() {
-  const [user, isLoading] = useCheckUser();
+  const { user } = useContext(UserContext);
+  const [fireUser, isLoading] = useCheckUser();
+  const [userDetail] = useGetUser(user);
 
   return (
     <div className="">
@@ -22,7 +26,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <DashboardLayout ver2>
-          <CreateRoompies user={user as FireUser} />
+          <CreateRoompies user={fireUser} userDetail={userDetail} />
         </DashboardLayout>
       )}
     </div>

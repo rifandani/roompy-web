@@ -24,7 +24,7 @@ export interface Roompy {
   desc: string;
   gender: string;
   homePref: HomePref;
-  isSmoker: boolean;
+  smoker: boolean;
   locPref: string[];
   moveDate: number;
   name: string;

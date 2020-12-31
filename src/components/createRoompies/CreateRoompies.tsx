@@ -1,4 +1,5 @@
 import { useState, FormEvent } from 'react';
+import { FaQuestionCircle } from 'react-icons/fa';
 import PhoneInput from 'react-phone-input-2';
 import id from 'react-phone-input-2/lang/id.json';
 import DatePicker from 'react-datepicker';
@@ -6,21 +7,37 @@ import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import NumberFormat from 'react-number-format';
 import { Range, createSliderWithTooltip } from 'rc-slider';
+import Loader from 'react-loader-spinner';
+import validator from 'validator';
+import { toast } from 'react-toastify';
+import ReactTooltip from 'react-tooltip';
 // files
 import Dropzone from './Dropzone';
-import { FireUser } from '../../utils/interfaces';
+import { FireUser, User } from '../../utils/interfaces';
 import subDistrictsJson2 from '../../utils/sub-districts2.json';
+import { db, storage } from '../../configs/firebaseConfig';
+import { useRouter } from 'next/router';
 
-const animatedComponents = makeAnimated();
+const animatedComponents = makeAnimated(); // animation on react-select isMulti
 
+// filter sub-districts array so that it supports react-select
 const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
   label: el,
   value: el,
 }));
 
-const RangeWithTooltip = createSliderWithTooltip(Range);
+const RangeWithTooltip = createSliderWithTooltip(Range); // rc-slider with tooltip
 
-export default function CreateRoompies({ user }: { user: FireUser }) {
+export interface CreateRoompiesProps {
+  user: FireUser;
+  userDetail: User;
+}
+
+export default function CreateRoompies({
+  user,
+  userDetail,
+}: CreateRoompiesProps) {
+  const { push } = useRouter();
   const [busy, setBusy] = useState<boolean>(false);
   // contact info
   const [name, setName] = useState<string>('');
@@ -37,7 +54,7 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
   const [stayLength, setStayLength] = useState<string>('');
   const [desc, setDesc] = useState<string>('');
   // location preferences
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState(null); // array of object => karena isMulti
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState([]); // array of object => karena isMulti
   // home preferences
   const [roomType, setRoomType] = useState<string>('Flex'); // Satu kamar / Satu rumah / Flex
   const [parking, setParking] = useState<string>('Flex'); // Required / Flex
@@ -53,8 +70,17 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
   async function onCreateRoompies(e: FormEvent) {
     e.preventDefault();
-    // setBusy(true);
 
+    // validation
+    if (!validator.isLength(phone, { min: 9, max: 16 })) {
+      return toast.warning('Please input a valid phone numbers');
+    } else if (selectedSubDistricts.length < 1) {
+      return toast.warning('Please select minimal 1 location');
+    } else if (images.length < 1) {
+      return toast.warning('Please select minimal 1 photo');
+    }
+
+    // all required.
     const state = {
       name,
       phoneNumber: phone,
@@ -82,9 +108,63 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
         smoker: smokerPref,
         pet: petPref,
       },
-      photoUrl: images, // image object + preview: URL.createObjectURL(image)
+      photoURL: images, // array of image object + preview: URL.createObjectURL(image)
     };
-    console.log(state);
+    console.log('state => ', state);
+
+    try {
+      setBusy(true); // enable loading screen + disable button
+
+      // storage ref
+      const storageRef = storage.ref(`users/${user.uid}/${images[0].name}`);
+
+      // save to STORAGE
+      await storageRef.put(images[0]);
+
+      // get imageUrl
+      const url = await storageRef.getDownloadURL();
+
+      // save ke FIRESTORE, hanya ketika sudah upload semua image
+      if (url) {
+        // save ke 'roompies'
+        const postedRoompiesRef = await db.collection('roompies').add({
+          ...state,
+          photoURL: url, // convert images to just string when uploading to FIRESTORE
+        });
+
+        // update user document
+        const prevPostedRoompies = userDetail.postedRoompies;
+        await db
+          .collection('users')
+          .doc(user.uid)
+          .update({
+            postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id],
+          });
+
+        // after all done
+        await push('/dashboard');
+        setBusy(false);
+        return toast.success('Roompies created');
+      }
+    } catch (err) {
+      toast.error(err.message);
+      setBusy(false);
+      return console.error(err);
+    }
+  }
+
+  if (busy) {
+    return (
+      <div className="flex items-center justify-center w-full min-h-screen">
+        <Loader
+          type="ThreeDots"
+          color="Purple"
+          height={100}
+          width={100}
+          timeout={3000} //3 secs
+        />
+      </div>
+    );
   }
 
   return (
@@ -131,13 +211,19 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
           {/* phone number */}
           <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
             <label htmlFor="phone" className="mb-2">
-              Phone Numbers
+              Phone Number
+              <a className="inline-flex ml-2" data-tip data-for="phoneTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
             </label>
+
+            <ReactTooltip id="phoneTip">
+              <p className="text-white">Nomor HP anda yang bisa di WhatsApp</p>
+            </ReactTooltip>
 
             <PhoneInput
               inputProps={{
                 name: 'phone',
-                id: 'phone',
                 required: true,
               }}
               localization={id}
@@ -190,7 +276,16 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* smoker */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="smoker">Smoker</label>
+            <label htmlFor="smoker">
+              Smoker
+              <a className="inline-flex ml-2" data-tip data-for="smokerTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="smokerTip">
+              <p className="text-white">Apakah anda perokok?</p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -221,7 +316,18 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* ownPet */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="ownPet">Own a pet</label>
+            <label htmlFor="ownPet">
+              Own a pet
+              <a className="inline-flex ml-2" data-tip data-for="petTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="petTip">
+              <p className="text-white">
+                Apakah anda mempunyai/membawa hewan peliharaan?
+              </p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -301,7 +407,14 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
             <label htmlFor="budget" className="">
               Weekly Budget
+              <a className="inline-flex ml-2" data-tip data-for="budgetTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
             </label>
+
+            <ReactTooltip id="budgetTip">
+              <p className="text-white">Jumlah pendapatan anda perminggu</p>
+            </ReactTooltip>
 
             <NumberFormat
               className="w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
@@ -317,7 +430,18 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* Move Date */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="moveDate">Move Date</label>
+            <label htmlFor="moveDate">
+              Move Date
+              <a className="inline-flex ml-2" data-tip data-for="moveDateTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="moveDateTip">
+              <p className="text-white">
+                Perkiraan tanggal anda ingin pindah tempat
+              </p>
+            </ReactTooltip>
 
             <DatePicker
               className="w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
@@ -332,7 +456,18 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* stayLength */}
           <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
-            <label htmlFor="stayLength">Stay Length</label>
+            <label htmlFor="stayLength">
+              Stay Length
+              <a className="inline-flex ml-2" data-tip data-for="stayLengthTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="stayLengthTip">
+              <p className="text-white">
+                Seberapa lama anda ingin tinggal nantinya
+              </p>
+            </ReactTooltip>
 
             <input
               className="block w-full px-4 py-1 mt-2 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
@@ -351,7 +486,19 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
         {/* Personal introduction */}
         <div className="flex w-full p-6 pt-0 bg-gray-100">
           <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
-            <label htmlFor="desc">Personal introduction</label>
+            <label htmlFor="desc">
+              Personal introduction
+              <a className="inline-flex ml-2" data-tip data-for="descTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="descTip">
+              <p className="text-white">
+                Deskripsi tentang diri anda pribadi. Sebutkan apa saja sifat,
+                karakter, kebiasaan ataupun hobi anda sehari-hari.
+              </p>
+            </ReactTooltip>
 
             <textarea
               className="block w-full px-4 py-1 mt-2 bg-white border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
@@ -377,13 +524,25 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
         {/* react-select locPref */}
         <div className="flex w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
           <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
-            <label htmlFor="desc" className="mb-2">
+            <label htmlFor="locPref" className="mb-2">
               Pick your wanted locations
+              <a className="inline-flex ml-2" data-tip data-for="locPrefTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
             </label>
+
+            <ReactTooltip id="locPrefTip">
+              <p className="text-white">
+                Rencana lokasi tempat tinggal anda nantinya. Bisa pilih lebih
+                dari 1.
+              </p>
+            </ReactTooltip>
 
             <Select
               className="w-full border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
               placeholder="List of sub-districts"
+              name="locPref"
+              id="locPref"
               isMulti
               closeMenuOnSelect={false}
               components={animatedComponents}
@@ -403,7 +562,18 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
         <div className="flex flex-wrap w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
           {/* roomType */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="roomType">Room Type</label>
+            <label htmlFor="roomType">
+              Room Type
+              <a className="inline-flex ml-2" data-tip data-for="roomTypeTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="roomTypeTip">
+              <p className="text-white">
+                Pencarian kos untuk satu kamar / ngontrak satu rumah
+              </p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -451,7 +621,16 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* parking */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="parking">Parking</label>
+            <label htmlFor="parking">
+              Parking
+              <a className="inline-flex ml-2" data-tip data-for="parkingTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="parkingTip">
+              <p className="text-white">Apakah lahan parkir harus tersedia?</p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -482,7 +661,16 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* wifi */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="wifi">Wifi</label>
+            <label htmlFor="wifi">
+              Wifi
+              <a className="inline-flex ml-2" data-tip data-for="wifiTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="wifiTip">
+              <p className="text-white">Apakah internet wifi harus tersedia?</p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -513,7 +701,18 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* bathroom */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="bathroom">Bathroom</label>
+            <label htmlFor="bathroom">
+              Bathroom
+              <a className="inline-flex ml-2" data-tip data-for="bathroomTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="bathroomTip">
+              <p className="text-white">
+                Apakah harus kamar mandi dalam atau fleksibel
+              </p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -553,7 +752,18 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
         <div className="flex flex-wrap w-full px-6 pt-2 pb-6 mt-6 bg-gray-100">
           {/* genderPref */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="genderPref">Their Gender</label>
+            <label htmlFor="genderPref">
+              Their Gender
+              <a className="inline-flex ml-2" data-tip data-for="genderPrefTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="genderPrefTip">
+              <p className="text-white">
+                Preferensi jenis kelamin teman satu kamar / rumah nantinya
+              </p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -597,7 +807,19 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* smokerPref */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="smokerPref">Their smoking</label>
+            <label htmlFor="smokerPref">
+              Their smoking
+              <a className="inline-flex ml-2" data-tip data-for="smokerPrefTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="smokerPrefTip">
+              <p className="text-white">
+                Apakah anda keberatan jika teman satu kamar / rumah anda
+                nantinya merokok
+              </p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -630,7 +852,19 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
 
           {/* petPref */}
           <section className="flex flex-col flex-1 mt-2 mr-5 text-base font-bold text-gray-700 lg:mr-10 xl:mr-15">
-            <label htmlFor="petPref">Their pet</label>
+            <label htmlFor="petPref">
+              Their pet
+              <a className="inline-flex ml-2" data-tip data-for="petPrefTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
+            </label>
+
+            <ReactTooltip id="petPrefTip">
+              <p className="text-white">
+                Apakah anda keberatan jika teman satu kamar / rumah anda
+                nantinya membawa hewan peliharaan
+              </p>
+            </ReactTooltip>
 
             <span className="flex items-center w-full mt-2">
               <input
@@ -665,16 +899,25 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
         {/* rc-slider ageFrom ageTo */}
         <div className="flex w-full p-6 pt-0 bg-gray-100">
           <section className="flex flex-col flex-1 mt-2 text-base font-bold text-gray-700">
-            <label htmlFor="desc" className="mb-2">
+            <label htmlFor="agePref" className="mb-2">
               Their age range
+              <a className="inline-flex ml-2" data-tip data-for="agePrefTip">
+                <FaQuestionCircle className="text-sm text-gray-800" />
+              </a>
             </label>
+
+            <ReactTooltip id="agePrefTip">
+              <p className="text-white">
+                Preferensi rentang usia teman satu kamar / rumah anda nantinya
+              </p>
+            </ReactTooltip>
 
             <RangeWithTooltip
               className="w-full"
               min={17}
               max={70}
               allowCross={false}
-              tipFormatter={(value) => `${value} years old`}
+              tipFormatter={(value) => `${value} tahun`}
               defaultValue={agePref}
               onChange={(val) => setAgePref(val)}
             />
@@ -684,17 +927,25 @@ export default function CreateRoompies({ user }: { user: FireUser }) {
         {/* Your Photos*/}
         <div className="flex flex-wrap items-center w-full pt-8 md:justify-center">
           <h6 className="px-6 text-2xl italic font-bold text-purple-500">
-            Your Photos{' '}
-            <small className="italic font-normal text-gray-900">
-              (only 1 for free user)
-            </small>
+            Your Photos
+            <a className="inline-flex ml-2" data-tip data-for="yourPhotosTip">
+              <FaQuestionCircle className="text-sm text-gray-800" />
+            </a>
+            <ReactTooltip id="yourPhotosTip">
+              <p className="text-white">Hanya 1 foto untuk Free User</p>
+            </ReactTooltip>
           </h6>
         </div>
 
         {/* photos dropzone */}
         <div className="flex w-full p-6 mt-6 bg-gray-100">
-          <section className="w-full bg-red-100 h-1/2">
-            <Dropzone images={images} setImages={setImages} isPremium={false} />
+          <section className="w-full">
+            <Dropzone
+              images={images}
+              setImages={setImages}
+              single
+              isPremium={userDetail && userDetail.premium}
+            />
           </section>
         </div>
 

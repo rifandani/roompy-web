@@ -220,7 +220,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 <span className="flex items-center px-2 py-1 mb-2 mr-2 border border-green-500 rounded-md">
                   <HiCheck className="mr-1 text-xl text-green-500" />
 
-                  {roompy.isSmoker ? (
+                  {roompy.smoker ? (
                     <p className="text-base">Smoker</p>
                   ) : (
                     <p className="text-base">Non-smoker</p>

@@ -1,13 +1,23 @@
 import { useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-export default function Dropzone({ images, setImages, isPremium }: any) {
+export default function Dropzone({
+  images,
+  setImages,
+  single,
+  isPremium,
+}: any) {
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
-    maxFiles: isPremium ? 5 : 1,
-    onDrop: (acceptedImages: any) => {
+    maxFiles: single ? 1 : isPremium ? 5 : 1, // max gambar yg bisa diupload
+    onDrop: (acceptedImages) => {
+      const filteredAcceptedImages = acceptedImages.filter(
+        (image, i, images) =>
+          images.findIndex((t) => t.size === image.size) === i,
+      );
+
       setImages(
-        acceptedImages.map((image: any) =>
+        filteredAcceptedImages.map((image) =>
           // + preview di property image object
           // bisa jga pake spread operator
           Object.assign(image, {
@@ -21,6 +31,7 @@ export default function Dropzone({ images, setImages, isPremium }: any) {
   const removeImage = (name: any) => {
     // find the index of the item
     // remove the item from array
+    // const validImageIndex = images.findIndex((e: any) => e.name === name);
     const validImageIndex = images.findIndex((e: any) => e.name === name);
     images.splice(validImageIndex, 1);
 

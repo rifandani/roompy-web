@@ -9,11 +9,25 @@ import {
 // files
 import { FireUser, Roompies, User } from '../../utils/interfaces';
 import useGetPostedRoompies from '../../hooks/useGetPostedRoompies';
+import { toast } from 'react-toastify';
 
 export default function DashboardContent({ user }: { user: FireUser }) {
   // hooks
   const [userDetail, userPostedRoompies] = useGetPostedRoompies(user);
   const { push } = useRouter();
+
+  function onCreateRoompies() {
+    // check if the 'user' is premium, then can upload more than 1 post
+    let userData = userDetail as User;
+
+    if (userData?.postedRoompies.length < 1 || userData?.premium) {
+      return push('/dashboard/roompies/create');
+    } else {
+      return toast.warning(
+        'Sorry, free user can only create 1 roompies. Please, extend your subscription plan.',
+      );
+    }
+  }
 
   return (
     <div className="flex-1 pb-24 mt-12 bg-gray-100 md:mt-2 md:pb-5">
@@ -106,7 +120,7 @@ export default function DashboardContent({ user }: { user: FireUser }) {
 
           <button
             className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-purple-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-purple-50"
-            onClick={() => push('/dashboard/roompies/create')}
+            onClick={onCreateRoompies}
           >
             <FaUserPlus className="mr-2 text-lg text-purple-500" />
 

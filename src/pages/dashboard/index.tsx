@@ -3,7 +3,6 @@ import Loader from 'react-loader-spinner';
 import useCheckUser from '../../hooks/useCheckUser';
 import DashboardLayout from '../../components/dashboard/DashboardLayout';
 import DashboardContent from '../../components/dashboard/DashboardContent';
-import { FireUser } from '../../utils/interfaces';
 
 export default function DashboardPage() {
   const [user, isLoading] = useCheckUser();
@@ -22,7 +21,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         <DashboardLayout>
-          <DashboardContent user={user as FireUser} />
+          <DashboardContent user={user} />
         </DashboardLayout>
       )}
     </div>
