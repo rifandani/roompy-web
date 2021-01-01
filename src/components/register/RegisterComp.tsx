@@ -3,17 +3,15 @@ import { useRouter } from 'next/router';
 import { useState, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import validator from 'validator';
-// files
-import { auth, db } from '../../configs/firebaseConfig';
-import { FireUser } from '../../utils/interfaces';
+import axios from 'axios';
 
-export default function RegisterComp({ user }: { user: FireUser }) {
+export default function RegisterComp() {
   // hooks
+  const [busy, setBusy] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [password2, setPassword2] = useState<string>('');
-  const [busy, setBusy] = useState<boolean>(false);
   const { push } = useRouter();
 
   // custom functions
@@ -36,35 +34,30 @@ export default function RegisterComp({ user }: { user: FireUser }) {
       );
     }
 
-    setBusy(true); // disable register button
     try {
-      // save to firebase auth && update user profile
-      const newUser = await auth.createUserWithEmailAndPassword(
+      setBusy(true); // disable register button
+
+      // POST req
+      const res = await axios.post('http://localhost:3000/api/auth/register', {
+        username,
         email,
         password,
-      );
-      await newUser.user.updateProfile({ displayName: username });
-
-      // save to firestore Users collection
-      await db.collection('users').doc(newUser.user.uid).set({
-        createdAt: Date.now(),
-        email,
-        favorites: [],
-        messagesFrom: [],
-        messagesTo: [],
-        postedRoompies: [],
-        postedRooms: [],
-        premium: false,
-        premiumUntil: 0,
-        updatedAt: Date.now(),
-        username,
       });
 
-      // toast & push to home
+      // API response ERROR
+      if (res?.status !== 201) {
+        setBusy(false);
+        return console.error(res?.data);
+      }
+
+      // API response SUCCESS
+      const resData = res?.data;
+
+      // on SUCCESS
       await push('/dashboard');
-      return toast.success(`Welcome, ${newUser.user.displayName}`);
+      return toast.success(`Welcome, ${resData.displayName}`);
     } catch (err) {
-      // Handle Errors here.
+      // on ERROR
       if (err.code === 'auth/weak-password') {
         toast.error('The password is too weak.');
       } else {
@@ -106,9 +99,7 @@ export default function RegisterComp({ user }: { user: FireUser }) {
           </Link>
 
           <p className="mt-2 text-sm italic text-gray-500">
-            {user
-              ? 'You are already logged in'
-              : 'Gabung bersama komunitas kami'}
+            Gabung bersama komunitas kami
           </p>
         </div>
         {/* <!-- END Logo --> */}
@@ -129,7 +120,6 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 minLength={3}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                disabled={user ? true : false}
               />
             </label>
 
@@ -144,7 +134,6 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={user ? true : false}
               />
             </label>
 
@@ -163,7 +152,6 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={user ? true : false}
               />
             </label>
 
@@ -182,7 +170,6 @@ export default function RegisterComp({ user }: { user: FireUser }) {
                 minLength={6}
                 value={password2}
                 onChange={(e) => setPassword2(e.target.value)}
-                disabled={user ? true : false}
               />
             </label>
 
@@ -195,11 +182,13 @@ export default function RegisterComp({ user }: { user: FireUser }) {
 
             <div className="mt-6">
               <button
-                className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
+                className={`${
+                  busy ? 'opacity-50' : 'opacity-100'
+                } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
                 type="submit"
-                disabled={user ? true : busy}
+                disabled={busy}
               >
-                {user ? 'You already logged in' : busy ? 'Loading' : 'Register'}
+                {busy ? 'Loading' : 'Register'}
               </button>
             </div>
           </form>

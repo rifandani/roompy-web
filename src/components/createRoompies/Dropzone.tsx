@@ -42,7 +42,7 @@ export default function Dropzone({
   // image thumbnail component
   const thumbs = images.map((image: any) => (
     <div
-      className="box-border inline-flex w-32 h-32 p-2 mb-2 mr-2 border rounded-md cursor-pointer hover:bg-red-500 focus:bg-red-500"
+      className="box-border inline-flex w-32 h-32 p-2 mb-2 mr-2 border rounded-md cursor-pointer hover:bg-red-500 focus:bg-red-500 focus:outline-none"
       key={image.name}
       onClick={() => removeImage(image.name)}
     >
@@ -65,7 +65,7 @@ export default function Dropzone({
       <div
         {...getRootProps({
           className:
-            'dropzone bg-purple-500 py-4 rounded-md cursor-pointer hover:bg-purple-700 focus:ring-4 ring-purple-300',
+            'dropzone bg-purple-500 py-4 rounded-md cursor-pointer hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300',
         })}
       >
         <input {...getInputProps()} />

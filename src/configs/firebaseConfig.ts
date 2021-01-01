@@ -1,3 +1,5 @@
+// this all available in client-side
+
 import app from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
@@ -5,13 +7,13 @@ import 'firebase/storage';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyBf1dnAqc9N7EPGxXCtysVE-96oLcNNHIg',
-  authDomain: 'roompy-roompies.firebaseapp.com',
-  projectId: 'roompy-roompies',
-  storageBucket: 'roompy-roompies.appspot.com',
-  messagingSenderId: '963030164384',
-  appId: '1:963030164384:web:85ab56de068fb7d44a7ac5',
-  measurementId: 'G-VCE8864BGF',
+  apiKey: process.env.FIRE_API_KEY!,
+  authDomain: process.env.FIRE_AUTH_DOMAIN!,
+  projectId: process.env.FIRE_PROJECT_ID!,
+  storageBucket: process.env.FIRE_STORAGE_BUCKET!,
+  messagingSenderId: process.env.FIRE_MESSAGING_SENDER_ID!,
+  appId: process.env.FIRE_APP_ID!,
+  measurementId: process.env.FIRE_MEASUREMENT_ID!,
 };
 
 if (!app.apps.length) {

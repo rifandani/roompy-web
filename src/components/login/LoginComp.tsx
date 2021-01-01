@@ -3,11 +3,9 @@ import { FormEvent, useState } from 'react';
 import validator from 'validator';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-// files
-import { auth } from '../../configs/firebaseConfig';
-import { FireUser } from '../../utils/interfaces';
+import axios from 'axios';
 
-export default function LoginComp({ user }: { user: FireUser }) {
+export default function LoginComp() {
   // hooks
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -17,27 +15,39 @@ export default function LoginComp({ user }: { user: FireUser }) {
   // custom functions
   async function login(e: FormEvent) {
     e.preventDefault();
-    setBusy(true); // disable login button
 
     // validation
     if (!email || !password) {
-      setBusy(false); // enable login button
       return toast.warning('Please input all required field');
     } else if (!validator.isEmail(email)) {
-      setBusy(false); // enable login button
       return toast.warning('Please input a valid email');
     } else if (!validator.isLength(password, { min: 6 })) {
-      setBusy(false); // enable login button
       return toast.warning('Please input min 6 chars PASSWORD');
     }
 
     try {
-      const credential = await auth.signInWithEmailAndPassword(email, password);
+      setBusy(true); // disable login button
 
+      // POST req
+      const res = await axios.post('http://localhost:3000/api/auth/login', {
+        email,
+        password,
+      });
+
+      // API response ERROR
+      if (res?.status !== 200) {
+        setBusy(false);
+        return console.error(res?.data);
+      }
+
+      // API response SUCCESS
+      const resData = res?.data;
+
+      // on SUCCESS
       await push('/dashboard');
-      return toast.success(`Welcome Back, ${credential.user.displayName}`);
+      return toast.success(`Welcome Back, ${resData.displayName}`);
     } catch (err) {
-      // Handle Errors here.
+      // on ERROR
       if (err.code === 'auth/wrong-password') {
         toast.error('Wrong password.');
       } else {
@@ -79,7 +89,7 @@ export default function LoginComp({ user }: { user: FireUser }) {
           </Link>
 
           <p className="mt-2 text-sm italic text-gray-500">
-            {user ? 'You already logged in' : 'Please login to your account'}
+            Please login to your account
           </p>
         </div>
         {/* <!-- END Logo --> */}
@@ -100,7 +110,6 @@ export default function LoginComp({ user }: { user: FireUser }) {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                disabled={user ? true : false}
               />
             </label>
 
@@ -120,17 +129,18 @@ export default function LoginComp({ user }: { user: FireUser }) {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                disabled={user ? true : false}
               />
             </label>
 
             <div className="mt-6">
               <button
-                className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100"
+                className={`${
+                  busy ? 'opacity-50' : 'opacity-100'
+                } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
                 type="submit"
-                disabled={user ? true : busy}
+                disabled={busy}
               >
-                {user ? 'You already logged in' : busy ? 'Loading' : 'Login'}
+                {busy ? 'Loading' : 'Login'}
               </button>
             </div>
           </form>
