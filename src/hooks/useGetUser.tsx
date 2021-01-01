@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 // files
-import { FireUser, User } from '../utils/interfaces';
+import { User } from '../utils/interfaces';
 import { db } from '../configs/firebaseConfig';
 
-export default function useGetUser(userContext: FireUser) {
-  const userRef = db.collection('users').doc(userContext.uid);
+export default function useGetUser(userUid: string) {
+  const userRef = db.collection('users').doc(userUid);
 
   const [userDetail, setUserDetail] = useState<null | User>(null);
   // const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -19,7 +19,7 @@ export default function useGetUser(userContext: FireUser) {
 
     const userData = {
       ...userSnap.data(),
-      id: userContext.uid,
+      id: userUid,
     };
 
     setUserDetail(userData as User);

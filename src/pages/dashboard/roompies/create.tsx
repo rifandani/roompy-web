@@ -10,7 +10,7 @@ import UserContext from '../../../contexts/UserContext';
 export default function DashboardPage() {
   const { user } = useContext(UserContext);
   const [fireUser, isLoading] = useCheckUser();
-  const [userDetail] = useGetUser(user);
+  const [userDetail] = useGetUser(user?.uid);
 
   return (
     <div className="">
