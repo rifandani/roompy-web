@@ -4,20 +4,30 @@ import { FaCheck } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import validator from 'validator';
 // files
-import { FireUser } from '../../utils/interfaces';
-import { auth, db } from '../../configs/firebaseConfig';
+import { auth, db, emailAuthProvider } from '../../configs/firebaseConfig';
+import { FireUser, User } from '../../utils/interfaces';
 
-export default function AccountContent({ user }: { user: FireUser }) {
+export default function AccountContent({
+  dbUser,
+  user,
+}: {
+  dbUser: User;
+  user: FireUser;
+}) {
   console.log('last signin time => ', user.metadata.lastSignInTime);
 
   // hooks
   const [busy, setBusy] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>(user.displayName);
-  const [email, setEmail] = useState<string>(user.email);
+  const [username, setUsername] = useState<string>(dbUser.username);
+  const [email, setEmail] = useState<string>(dbUser.email);
+  const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const { push } = useRouter();
 
   async function onVerifyEmail() {
+    if (user.emailVerified)
+      return toast.warning('Your email is already verified');
+
     try {
       await user.sendEmailVerification();
       toast.info('Please check your email to verify your account');
@@ -38,27 +48,15 @@ export default function AccountContent({ user }: { user: FireUser }) {
     } else if (!validator.isLength(username, { min: 3 })) {
       return toast.warning('Please input min 3 chars for USERNAME');
     } else if (newPassword && !validator.isLength(newPassword, { min: 6 })) {
-      return toast.warning('Please input min 6 chars for PASSWORD');
+      return toast.warning('Please input min 6 chars for NEW PASSWORD');
     }
 
     try {
       setBusy(true); // disable button
 
-      // update profile items in firebase.auth
-      await user.updateProfile({
-        displayName: username,
-      });
-      await user.updateEmail(email);
-      if (newPassword) {
-        await user.updatePassword(newPassword);
-      }
-
-      // update profile items in users collection
-      await db.collection('users').doc(user.uid).update({
-        username,
-        email,
-        updatedAt: Date.now(),
-      });
+      // reauth and update profile items
+      await reauthenticate(currentPassword);
+      await updateProfileItems(username, email, newPassword);
 
       // sign in again to set userCredential to React Context
       await auth.signInWithEmailAndPassword(email, newPassword);
@@ -66,6 +64,57 @@ export default function AccountContent({ user }: { user: FireUser }) {
       toast.success('Account Profile Updated');
       return push('/dashboard');
     } catch (err) {
+      setBusy(false);
+      console.error('Update profile items error', err);
+      return toast.error(err.message);
+    }
+  }
+
+  async function reauthenticate(currentPassword: string) {
+    // get the user credentials
+    const credential = emailAuthProvider.credential(
+      dbUser.email,
+      currentPassword,
+    );
+
+    // check if user valid
+    try {
+      await user.reauthenticateWithCredential(credential);
+      console.log('Reauthenticate success');
+    } catch (err) {
+      setBusy(false);
+      console.error('Reauthenticate error', err);
+      return toast.error(err.message);
+    }
+  }
+
+  async function updateProfileItems(
+    name: string,
+    email: string,
+    newPassword: string,
+  ) {
+    try {
+      // update profile items in firebase.auth
+      await user.updateProfile({
+        displayName: name,
+      });
+      await user.updateEmail(email);
+
+      // kalau newPassword diisi
+      if (newPassword) {
+        await user.updatePassword(newPassword);
+      }
+
+      // update profile items in users collection
+      await db.collection('users').doc(dbUser.id).update({
+        username,
+        email,
+        updatedAt: Date.now(),
+      });
+
+      console.log('updateProfileItems success');
+    } catch (err) {
+      setBusy(false);
       console.error('Update profile items error', err);
       return toast.error(err.message);
     }
@@ -100,12 +149,15 @@ export default function AccountContent({ user }: { user: FireUser }) {
         </h6>
 
         <button
-          className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-blue-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-blue-50"
+          className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-blue-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-blue-50 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50"
           onClick={onVerifyEmail}
+          disabled={user.emailVerified}
         >
           <FaCheck className="mr-2 text-lg text-blue-500" />
 
-          <p className="flex-grow font-bold text-gray-900">Verify Email</p>
+          <p className="flex-grow font-bold text-gray-900">
+            {user.emailVerified ? 'Verified' : 'Verify Email'}
+          </p>
         </button>
       </div>
 
@@ -120,7 +172,7 @@ export default function AccountContent({ user }: { user: FireUser }) {
             className="block text-base font-bold text-gray-700"
             htmlFor="username"
           >
-            Username
+            New Username
             <input
               className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
               placeholder="Elon Musk"
@@ -138,7 +190,7 @@ export default function AccountContent({ user }: { user: FireUser }) {
             className="block mt-4 text-base font-bold text-gray-700"
             htmlFor="email"
           >
-            Email
+            New Email
             <input
               className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
               placeholder="elonmusk@email.com"
@@ -154,25 +206,43 @@ export default function AccountContent({ user }: { user: FireUser }) {
 
           <label
             className="block mt-4 text-base font-bold text-gray-700"
-            htmlFor="current-password"
+            htmlFor="new-password"
           >
             New Password
             <input
               className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
               type="password"
-              name="current-password"
-              id="current-password"
-              autoComplete="current-password"
-              required
+              name="new-password"
+              id="new-password"
+              autoComplete="new-password"
               minLength={6}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
             />
           </label>
 
+          <label
+            className="block mt-4 text-base font-bold text-gray-700"
+            htmlFor="current-password"
+          >
+            Current Password
+            <input
+              className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
+              type="password"
+              name="current-password"
+              id="current-password"
+              required
+              minLength={6}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+          </label>
+
           <div className="mt-6">
             <button
-              className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-blue-700 rounded-md focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 hover:text-blue-700 hover:bg-blue-100"
+              className={`${
+                busy ? 'opacity-50' : 'opacity-100'
+              } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-blue-700 rounded-md focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 hover:text-blue-700 hover:bg-blue-100`}
               type="submit"
               disabled={busy}
             >

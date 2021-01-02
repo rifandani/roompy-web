@@ -4,6 +4,8 @@ import { useState, FormEvent } from 'react';
 import { toast } from 'react-toastify';
 import validator from 'validator';
 import axios from 'axios';
+// files
+import axiosErrorHandle from '../../utils/axiosErrorHandle';
 
 export default function RegisterComp() {
   // hooks
@@ -44,12 +46,6 @@ export default function RegisterComp() {
         password,
       });
 
-      // API response ERROR
-      if (res?.status !== 201) {
-        setBusy(false);
-        return console.error(res?.data);
-      }
-
       // API response SUCCESS
       const resData = res?.data;
 
@@ -57,15 +53,10 @@ export default function RegisterComp() {
       await push('/dashboard');
       return toast.success(`Welcome, ${resData.displayName}`);
     } catch (err) {
-      // on ERROR
-      if (err.code === 'auth/weak-password') {
-        toast.error('The password is too weak.');
-      } else {
-        toast.error(err.message);
-      }
-
+      // on ERROR => Axios error response
       setBusy(false);
-      return console.error(err);
+
+      axiosErrorHandle(err);
     }
   }
 
@@ -157,15 +148,15 @@ export default function RegisterComp() {
 
             <label
               className="block mt-4 text-sm text-gray-700"
-              htmlFor="new-password"
+              htmlFor="confirm-password"
             >
               Confirm Password
               <input
                 className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
                 placeholder="******"
                 type="password"
-                name="new-password"
-                id="new-password"
+                name="confirm-password"
+                id="confirm-password"
                 required
                 minLength={6}
                 value={password2}

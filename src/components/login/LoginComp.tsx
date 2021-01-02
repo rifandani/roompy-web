@@ -4,6 +4,9 @@ import validator from 'validator';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+// files
+import { auth } from '../../configs/firebaseConfig';
+import axiosErrorHandle from '../../utils/axiosErrorHandle';
 
 export default function LoginComp() {
   // hooks
@@ -28,17 +31,14 @@ export default function LoginComp() {
     try {
       setBusy(true); // disable login button
 
+      // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
+      await auth.signInWithEmailAndPassword(email, password);
+
       // POST req
       const res = await axios.post('http://localhost:3000/api/auth/login', {
         email,
         password,
       });
-
-      // API response ERROR
-      if (res?.status !== 200) {
-        setBusy(false);
-        return console.error(res?.data);
-      }
 
       // API response SUCCESS
       const resData = res?.data;
@@ -47,15 +47,10 @@ export default function LoginComp() {
       await push('/dashboard');
       return toast.success(`Welcome Back, ${resData.displayName}`);
     } catch (err) {
-      // on ERROR
-      if (err.code === 'auth/wrong-password') {
-        toast.error('Wrong password.');
-      } else {
-        toast.error(err.message);
-      }
-
+      // on ERROR => Axios Response error
       setBusy(false); // enable login button
-      return console.error(err);
+
+      axiosErrorHandle(err);
     }
   }
 

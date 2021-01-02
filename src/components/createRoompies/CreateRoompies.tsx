@@ -13,10 +13,10 @@ import { toast } from 'react-toastify';
 import ReactTooltip from 'react-tooltip';
 // files
 import Dropzone from './Dropzone';
-import { FireUser, User } from '../../utils/interfaces';
 import subDistrictsJson2 from '../../utils/sub-districts2.json';
 import { db, storage } from '../../configs/firebaseConfig';
 import { useRouter } from 'next/router';
+import { CreateRoompiesProps } from '../../pages/dashboard/roompies/create';
 
 const animatedComponents = makeAnimated(); // animation on react-select isMulti
 
@@ -28,15 +28,7 @@ const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
 
 const RangeWithTooltip = createSliderWithTooltip(Range); // rc-slider with tooltip
 
-export interface CreateRoompiesProps {
-  user: FireUser;
-  userDetail: User;
-}
-
-export default function CreateRoompies({
-  user,
-  userDetail,
-}: CreateRoompiesProps) {
+export default function CreateRoompies({ user }: CreateRoompiesProps) {
   const { push } = useRouter();
   const [busy, setBusy] = useState<boolean>(false);
   // contact info
@@ -116,7 +108,7 @@ export default function CreateRoompies({
       setBusy(true); // enable loading screen + disable button
 
       // storage ref
-      const storageRef = storage.ref(`users/${user.uid}/${images[0].name}`);
+      const storageRef = storage.ref(`users/${user.id}/${images[0].name}`);
 
       // save to STORAGE
       await storageRef.put(images[0]);
@@ -133,12 +125,12 @@ export default function CreateRoompies({
         });
 
         // update user document
-        const prevPostedRoompies = userDetail.postedRoompies;
+        const prevPostedRoompies = user.postedRoompies;
         await db
           .collection('users')
-          .doc(user.uid)
+          .doc(user.id)
           .update({
-            postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id],
+            postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id], // array of string
           });
 
         // after all done
@@ -944,7 +936,7 @@ export default function CreateRoompies({
               images={images}
               setImages={setImages}
               single
-              isPremium={userDetail && userDetail.premium}
+              isPremium={user && user.premium}
             />
           </section>
         </div>

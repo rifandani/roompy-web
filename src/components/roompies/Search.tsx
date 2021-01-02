@@ -152,6 +152,7 @@ export default function Search() {
                 onChange={(sort) => {
                   setSelectedSort(sort);
 
+                  // sort descending prev Roompies
                   setRoompies2((prev) =>
                     prev.sort((a, b) => b[sort.value] - a[sort.value]),
                   );

@@ -43,7 +43,7 @@ export default function DashboardContent({ user, allRoompy }: DashboardProps) {
         </h6>
 
         <button
-          className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-yellow-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-yellow-50"
+          className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-yellow-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-yellow-50 focus:ring-4 focus:outline-none focus:ring-yellow-300"
           onClick={() => {}}
         >
           <FaShoppingCart className="mr-2 text-lg text-yellow-500" />
@@ -118,7 +118,7 @@ export default function DashboardContent({ user, allRoompy }: DashboardProps) {
           </h6>
 
           <button
-            className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-purple-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-purple-50"
+            className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-purple-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-purple-50 focus:ring-4 focus:outline-none focus:ring-purple-300"
             onClick={onCreateRoompies}
           >
             <FaUserPlus className="mr-2 text-lg text-purple-500" />
@@ -128,7 +128,7 @@ export default function DashboardContent({ user, allRoompy }: DashboardProps) {
         </div>
 
         {/* roompies cards */}
-        {allRoompy &&
+        {allRoompy.length > 0 ? (
           (allRoompy as Roompies).map((roompy, i) => (
             <div key={i} className="w-full p-6 md:w-1/2 xl:w-1/3">
               <div className="p-5 border-b-4 border-purple-500 rounded-lg shadow-xl bg-gradient-to-b from-purple-200 to-purple-100">
@@ -154,7 +154,28 @@ export default function DashboardContent({ user, allRoompy }: DashboardProps) {
                 </div>
               </div>
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="w-full p-6 md:w-1/2 xl:w-1/3">
+            <div className="p-5 border-b-4 border-purple-500 rounded-lg shadow-xl bg-gradient-to-b from-purple-200 to-purple-100">
+              <div className="flex flex-row items-center">
+                <div className="flex-shrink pr-4">
+                  <div className="p-4 bg-purple-500 rounded-full">
+                    <i className="fas fa-server fa-2x fa-inverse"></i>
+                  </div>
+                </div>
+
+                <div className="flex-1 text-right md:text-center">
+                  <h5 className="italic font-bold text-gray-500 uppercase">
+                    Total Listings
+                  </h5>
+
+                  <h3 className="text-2xl font-bold">0</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Rooms listings */}
         <div className="flex flex-wrap items-center justify-between w-full pt-4">
@@ -163,7 +184,7 @@ export default function DashboardContent({ user, allRoompy }: DashboardProps) {
           </h6>
 
           <button
-            className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-pink-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-pink-50"
+            className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-pink-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-pink-50 focus:ring-4 focus:outline-none focus:ring-pink-300"
             onClick={() => {}}
           >
             <FaDoorOpen className="mr-2 text-lg text-pink-500" />

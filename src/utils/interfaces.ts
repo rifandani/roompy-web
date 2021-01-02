@@ -60,7 +60,7 @@ export interface User {
 }
 
 export interface UserContextState {
-  user: AuthUser;
+  user: FireUser | null;
   setUser: firebase.User | Dispatch<SetStateAction<firebase.User>>;
 }
 
@@ -74,7 +74,6 @@ export interface Postal {
 
 export type Roompies = Roompy[];
 export type Users = User[];
-export type AuthUser = firebase.User | null;
 export type Postals = Postal[];
 
 // firebase type

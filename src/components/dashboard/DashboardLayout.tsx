@@ -5,7 +5,9 @@ import { toast } from 'react-toastify';
 import { AiFillSetting, AiFillHeart } from 'react-icons/ai';
 import { FaEnvelope, FaUserCircle, FaLink } from 'react-icons/fa';
 import { HiSearch, HiOutlineLogout } from 'react-icons/hi';
+import axios from 'axios';
 // files
+import axiosErrorHandle from '../../utils/axiosErrorHandle';
 import { auth } from '../../configs/firebaseConfig';
 
 export default function DashboardLayout({
@@ -20,10 +22,19 @@ export default function DashboardLayout({
   const { push, pathname } = useRouter();
 
   async function logout() {
-    await push('/');
-    await auth.signOut();
+    try {
+      await push('/');
 
-    return toast.info('Logout success');
+      // logout from firebase auth di client-side, biar UserContext/useAuth ke trigger
+      await auth.signOut();
+
+      // delete cookie from server
+      const res = await axios.get('http://localhost:3000/api/auth/logout');
+
+      return toast.info(res?.data.message);
+    } catch (err) {
+      axiosErrorHandle(err);
+    }
   }
 
   return (

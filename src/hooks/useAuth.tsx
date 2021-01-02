@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 // files
 import { auth } from '../configs/firebaseConfig';
-import { AuthUser } from '../utils/interfaces';
+import { FireUser } from '../utils/interfaces';
 
 function useAuth() {
-  const [authUser, setAuthUser] = useState<AuthUser>(null);
+  const [authUser, setAuthUser] = useState<FireUser | null>(null);
 
   useEffect(() => {
     // triggered ketika user signed in / signed out
@@ -22,7 +22,10 @@ function useAuth() {
     return () => unsubscribe();
   }, []);
 
-  return [authUser, setAuthUser];
+  return [authUser, setAuthUser] as [
+    FireUser | null,
+    Dispatch<SetStateAction<FireUser>>,
+  ];
 }
 
 export default useAuth;

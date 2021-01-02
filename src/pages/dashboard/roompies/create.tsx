@@ -10,7 +10,7 @@ export interface CreateRoompiesProps {
   user: User;
 }
 
-export default function CreateRoompiesPage({ user }) {
+export default function CreateRoompiesPage({ user }: CreateRoompiesProps) {
   return (
     <div className="">
       <DashboardLayout ver2>

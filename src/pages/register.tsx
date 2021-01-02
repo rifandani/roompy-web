@@ -1,8 +1,17 @@
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 // files
 import RegisterComp from '../components/register/RegisterComp';
 
 export default function RegisterPage() {
+  const { prefetch } = useRouter();
+
+  useEffect(() => {
+    // Prefetch the dashboard page for USER
+    prefetch('/dashboard');
+  }, []);
+
   return (
     <div className="">
       <RegisterComp />
