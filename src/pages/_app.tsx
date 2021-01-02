@@ -11,10 +11,17 @@ import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 import 'react-phone-input-2/lib/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'rc-slider/assets/index.css';
+import axios from 'axios';
 // files
 import '../styles/index.css';
 import useAuth from '../hooks/useAuth';
 import UserContext from '../contexts/UserContext';
+
+// axios BASE URL
+axios.defaults.baseURL =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000'
+    : 'https://roompy.vercel.app';
 
 // create a custom progress bar
 NProgress.configure({ showSpinner: false });
