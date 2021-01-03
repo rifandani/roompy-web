@@ -29,9 +29,9 @@ export default function DashboardLayout({
       await auth.signOut();
 
       // delete cookie from server
-      const res = await axios.get('/api/auth/logout');
+      await axios.get('/api/auth/logout');
 
-      return toast.info(res?.data.message);
+      toast.info('Logout success');
     } catch (err) {
       axiosErrorHandle(err);
     }

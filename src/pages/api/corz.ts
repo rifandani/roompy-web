@@ -17,7 +17,7 @@ export default async function Corz(req: NextApiRequest, res: NextApiResponse) {
     await cors(req, res);
 
     // Rest of the API logic
-    res.status(200).json({ message: 'Hello Everyone!' });
+    res.status(200).json({ message: 'enable CORS for GET, POST requests' });
   } catch (err) {
     res.status(500).json(err);
   }

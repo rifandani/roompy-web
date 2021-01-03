@@ -76,6 +76,7 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
     const state = {
       name,
       phoneNumber: phone,
+      gender,
       age: ~~age,
       occupation,
       smoker,
