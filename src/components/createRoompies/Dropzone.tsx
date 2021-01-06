@@ -28,11 +28,10 @@ export default function Dropzone({
     },
   });
 
-  const removeImage = (name: any) => {
+  const removeImage = (size: any) => {
     // find the index of the item
     // remove the item from array
-    // const validImageIndex = images.findIndex((e: any) => e.name === name);
-    const validImageIndex = images.findIndex((e: any) => e.name === name);
+    const validImageIndex = images.findIndex((e: any) => e.size === size);
     images.splice(validImageIndex, 1);
 
     // update images array
@@ -44,7 +43,7 @@ export default function Dropzone({
     <div
       className="box-border inline-flex w-32 h-32 p-2 mb-2 mr-2 border rounded-md cursor-pointer hover:bg-red-500 focus:bg-red-500 focus:outline-none"
       key={image.name}
-      onClick={() => removeImage(image.name)}
+      onClick={() => removeImage(image.size)}
     >
       <div className="flex min-w-0 overflow-hidden">
         <img className="block w-auto h-full" src={image.preview} />
