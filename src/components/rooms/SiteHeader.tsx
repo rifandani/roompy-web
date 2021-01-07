@@ -78,7 +78,7 @@ export default function SiteHeader() {
 
           <input
             className="block w-full py-2 pl-10 pr-4 text-gray-900 bg-gray-200 border border-transparent rounded-lg form-input focus:outline-none focus:bg-white focus:border-gray-300"
-            placeholder="Search by keywords"
+            placeholder="Search by locations"
             type="search"
           />
         </div>
@@ -165,7 +165,7 @@ export default function SiteHeader() {
                   <div className="absolute right-0 z-40">
                     <div className="w-48 py-2 mt-3 bg-white rounded-lg shadow-xl xl:border">
                       <Link href="/dashboard">
-                        <a className="block px-4 py-2 text-gray-800 hover:text-white hover:bg-purple-500">
+                        <a className="block px-4 py-2 text-gray-800 hover:text-white hover:bg-gray-800 xl:hover:text-gray-800 xl:hover:bg-gray-200">
                           Dashboard
                         </a>
                       </Link>

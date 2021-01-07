@@ -2,7 +2,7 @@ import { useState, FormEvent } from 'react';
 import { HiOutlineSearch } from 'react-icons/hi';
 import { IoFilter } from 'react-icons/io5';
 
-export default function SearchFilters() {
+export default function RoomsFilters() {
   const [isOpen, setIsOpen] = useState(false);
 
   const onSubmit = async (e: FormEvent) => {
