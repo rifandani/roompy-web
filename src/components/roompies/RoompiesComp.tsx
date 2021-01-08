@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import Select from 'react-select';
 // files
 import SiteHeader from '../rooms/SiteHeader';
 import RoompiesFilters from './RoompiesFilters';
 import RoompyCard2 from './RoompyCard2';
+import Pagination from './Pagination';
 import { Roompies, RoompiesProps } from '../../utils/interfaces';
 
 const sorts = [
@@ -23,12 +23,13 @@ export default function RoompiesComp({ roompies }: RoompiesProps) {
       <SiteHeader />
 
       <div className="w-full min-h-screen xl:flex-1 xl:flex">
-        {/* search filters */}
+        {/* sidebar search filters */}
         <RoompiesFilters />
 
+        {/* main content */}
         <main className="py-6 bg-gray-200 xl:flex-1 xl:overflow-x-hidden">
           {/* total results & sort */}
-          <section className="flex items-center justify-between px-4 xl:px-8">
+          <section className="flex items-center justify-between px-4">
             <span className="px-3 py-1 text-gray-500 bg-white border border-gray-300 rounded-md">
               {roompies.length} results
             </span>
@@ -47,65 +48,27 @@ export default function RoompiesComp({ roompies }: RoompiesProps) {
           </section>
 
           {/* roompies cards */}
-          <section className="flex-wrap justify-center gap-5 px-4 mt-6 sm:inline-flex sm:pt-2 sm:pb-8 xl:px-8">
-            {(roompies as Roompies).map((roompy, i) => (
-              <div
-                key={roompy.id}
-                className={`${
-                  i > 0 ? 'mt-10 sm:ml-4' : ''
-                } sm:mt-0 sm:w-80 sm:flex-shrink-0`}
-              >
-                <RoompyCard2 roompy={roompy} />
-              </div>
-            ))}
+          <section className="flex-wrap justify-center gap-5 px-4 mt-6 sm:inline-flex sm:pt-2 sm:pb-8">
+            {roompies.length === 0 ? (
+              <h3 className="font-bold">No Data</h3>
+            ) : (
+              (roompies as Roompies).map((roompy, i) => (
+                <div
+                  key={roompy.id}
+                  className={`${
+                    i > 0 ? 'mt-10 sm:ml-4' : ''
+                  } sm:mt-0 sm:w-80 sm:flex-shrink-0`}
+                >
+                  <RoompyCard2 roompy={roompy} />
+                </div>
+              ))
+            )}
           </section>
 
           {/* pagination */}
           <Pagination />
         </main>
       </div>
-    </div>
-  );
-}
-
-function Pagination() {
-  return (
-    <div className="flex flex-col items-center my-10">
-      <article className="flex text-gray-500">
-        <section className="flex items-center justify-center w-12 h-12 mr-1 bg-white border border-gray-300 rounded-full cursor-pointer hover:bg-purple-500 hover:text-white">
-          <FiChevronLeft className="w-6 h-6" />
-        </section>
-
-        <section className="flex h-12 font-medium bg-white border border-gray-300 rounded-full">
-          <div className="items-center justify-center hidden w-12 leading-5 transition duration-150 ease-in rounded-full cursor-pointer md:flex hover:bg-purple-500 hover:text-white">
-            1
-          </div>
-          <div className="items-center justify-center hidden w-12 leading-5 transition duration-150 ease-in rounded-full cursor-pointer md:flex hover:bg-purple-500 hover:text-white">
-            2
-          </div>
-          <div className="items-center justify-center hidden w-12 leading-5 transition duration-150 ease-in rounded-full cursor-pointer md:flex hover:bg-purple-500 hover:text-white">
-            3
-          </div>
-
-          <div className="items-center justify-center hidden w-12 leading-5 transition duration-150 ease-in rounded-full cursor-pointer md:flex hover:bg-purple-500 hover:text-white">
-            ...
-          </div>
-
-          <div className="items-center justify-center hidden w-12 leading-5 transition duration-150 ease-in rounded-full cursor-pointer md:flex hover:bg-purple-500 hover:text-white">
-            13
-          </div>
-          <div className="items-center justify-center hidden w-12 leading-5 transition duration-150 ease-in rounded-full cursor-pointer md:flex hover:bg-purple-500 hover:text-white">
-            14
-          </div>
-          <div className="items-center justify-center hidden w-12 leading-5 transition duration-150 ease-in rounded-full cursor-pointer md:flex hover:bg-purple-500 hover:text-white">
-            15
-          </div>
-        </section>
-
-        <section className="flex items-center justify-center w-12 h-12 ml-1 bg-white border border-gray-300 rounded-full cursor-pointer hover:bg-purple-500 hover:text-white">
-          <FiChevronRight className="w-6 h-6" />
-        </section>
-      </article>
     </div>
   );
 }

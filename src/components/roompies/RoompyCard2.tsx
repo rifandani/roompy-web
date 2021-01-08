@@ -23,16 +23,37 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
         </section>
 
         <section className="relative px-4 -mt-16">
-          <div className="px-4 py-4 rounded-lg shadow-lg bg-yellow-50">
+          <div
+            // premium user check bg-color
+            className={`${
+              false ? 'bg-yellow-50' : 'bg-white'
+            } px-4 py-4 rounded-lg shadow-lg`}
+          >
             <div className="flex items-baseline">
               {/* badge */}
-              <span className="inline-block px-2 py-1 text-xs font-semibold leading-none tracking-wide text-yellow-800 uppercase bg-yellow-200 rounded-full">
-                Premium
-              </span>
+              {true && (
+                <span className="inline-block px-2 py-1 text-xs font-semibold leading-none tracking-wide text-yellow-800 uppercase bg-yellow-200 rounded-full">
+                  Premium
+                </span>
+              )}
 
-              <span className="inline-block px-2 py-1 ml-2 text-xs font-semibold leading-none tracking-wide text-purple-800 uppercase bg-purple-200 rounded-full">
-                Verified
-              </span>
+              {true && (
+                <span className="inline-block px-2 py-1 ml-2 text-xs font-semibold leading-none tracking-wide text-purple-800 uppercase bg-purple-200 rounded-full">
+                  Verified
+                </span>
+              )}
+
+              {true && (
+                <span className="inline-block px-2 py-1 ml-2 text-xs font-semibold leading-none tracking-wide text-pink-800 uppercase bg-pink-200 rounded-full">
+                  New
+                </span>
+              )}
+
+              {false && (
+                <span className="inline-block px-2 py-1 ml-2 text-xs font-semibold leading-none tracking-wide text-pink-800 uppercase bg-pink-200 rounded-full">
+                  Updated
+                </span>
+              )}
             </div>
 
             {/* title */}
@@ -50,6 +71,12 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
               )}
 
               <span className="text-gray-900">{roompy.age} thn</span>
+              <span className="ml-2 italic text-purple-800">
+                {roompy.smoker ? 'Smoker' : 'Not Smoker'}
+              </span>
+              <span className="ml-2 italic text-pink-800">
+                {roompy.ownPet ? 'Own Pet' : 'Not Own Pet'}
+              </span>
             </div>
 
             <div className="flex items-center mt-1 text-sm">
