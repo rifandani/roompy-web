@@ -17,15 +17,6 @@ export default function RoompiesFilters() {
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
-    // const data = {
-    //   ageQue,
-    //   budgetQue,
-    //   genderQue,
-    //   smokerQue,
-    //   ownPetQue,
-    // };
-    // console.log(data);
-
     await push({
       pathname: '/roompies',
       query: {

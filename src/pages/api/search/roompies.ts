@@ -9,7 +9,7 @@ import initMiddleware from '../../../utils/initMiddleware';
 // more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
-    methods: ['GET', 'POST'], // Only allow requests
+    methods: 'GET', // Only allow requests
   }),
 );
 
@@ -33,12 +33,14 @@ export default async function SearchRoompies(
       }));
 
       // kalo query kosong => return all roompies
-      if (!name && !gender && !loc && !ageFrom && !ageTo) {
+      if (Object.keys(req.query).length === 0) {
         return res.status(200).json(arr);
       }
 
       if (name) {
-        const fName = (arr as Roompies).filter((el) => el.name === name);
+        const fName = (arr as Roompies).filter((el) =>
+          el.name.includes(name as string),
+        );
         result.push(...fName);
       } else if (gender) {
         const fGender = (arr as Roompies).filter((el) => el.gender === gender);

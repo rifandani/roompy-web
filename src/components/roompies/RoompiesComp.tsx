@@ -4,8 +4,8 @@ import Select from 'react-select';
 import SiteHeader from '../rooms/SiteHeader';
 import RoompiesFilters from './RoompiesFilters';
 import RoompyCard2 from './RoompyCard2';
-import Pagination from './Pagination';
-import { Roompies, RoompiesProps } from '../../utils/interfaces';
+import Pagination from '../Pagination';
+import { RoompiesProps } from '../../utils/interfaces';
 
 const sorts = [
   { value: 'createdAt', label: 'Newest' },
@@ -16,6 +16,23 @@ const sorts = [
 
 export default function RoompiesComp({ roompies }: RoompiesProps) {
   const [selectedSort, setSelectedSort] = useState(null); // object
+  const [currentPage, setCurrentPage] = useState<number>(0); // number => for pagination
+  const [limit] = useState<number>(12); // number => for pagination
+
+  const offset = currentPage * limit;
+
+  const currentRoompies = roompies
+    .slice(offset, offset + limit)
+    .map((roompy, i) => (
+      <div
+        key={roompy.id}
+        className={`${
+          i > 0 ? 'mt-10 sm:ml-4' : ''
+        } sm:mt-0 sm:w-80 sm:flex-shrink-0`}
+      >
+        <RoompyCard2 roompy={roompy} />
+      </div>
+    ));
 
   return (
     <div className="min-h-full antialiased xl:flex xl:flex-col xl:h-screen">
@@ -52,21 +69,17 @@ export default function RoompiesComp({ roompies }: RoompiesProps) {
             {roompies.length === 0 ? (
               <h3 className="font-bold">No Data</h3>
             ) : (
-              (roompies as Roompies).map((roompy, i) => (
-                <div
-                  key={roompy.id}
-                  className={`${
-                    i > 0 ? 'mt-10 sm:ml-4' : ''
-                  } sm:mt-0 sm:w-80 sm:flex-shrink-0`}
-                >
-                  <RoompyCard2 roompy={roompy} />
-                </div>
-              ))
+              currentRoompies
             )}
           </section>
 
           {/* pagination */}
-          <Pagination />
+          <Pagination
+            roompies={roompies}
+            currentPage={currentPage}
+            setCurrentPage={setCurrentPage}
+            limit={limit}
+          />
         </main>
       </div>
     </div>

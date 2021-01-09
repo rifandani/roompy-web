@@ -69,62 +69,69 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     // destructure query objects
     const { ageQue, budgetQue, genderQue, ownPetQue, smokerQue } = ctx.query;
-    // let result = [];
+    let result = [];
 
     if (ageQue) {
       // ageQue => string '20', '30', '40', '50', '51'
       switch (ageQue) {
         case '51':
-          (arr as Roompies) = (arr as Roompies).filter(
+          const fAgeQueDiatas = (arr as Roompies).filter(
             (el) => el.age >= Number(ageQue),
           );
+          result.push(...fAgeQueDiatas);
           break; // kalo gak di break eksekusi code berlanjut ke default statement
 
         default:
-          (arr as Roompies) = (arr as Roompies).filter(
+          const fAgeQueDibawah = (arr as Roompies).filter(
             (el) => el.age <= Number(ageQue),
           );
+          result.push(...fAgeQueDibawah);
       }
     } else if (budgetQue) {
       // budgetQue => string '500000', '1000000', '2000000', '3000000', '3100000'
       switch (budgetQue) {
         case '3100000':
-          (arr as Roompies) = (arr as Roompies).filter(
+          const fBudgetQueDiatas = (arr as Roompies).filter(
             (el) => el.budget >= Number(budgetQue),
           );
+          result.push(...fBudgetQueDiatas);
           break; // kalo gak di break eksekusi code berlanjut ke default statement
 
         default:
-          (arr as Roompies) = (arr as Roompies).filter(
+          const fBudgetQueDibawah = (arr as Roompies).filter(
             (el) => el.budget <= Number(budgetQue),
           );
+          result.push(...fBudgetQueDibawah);
       }
     } else if (ownPetQue) {
       // ownPetQue => string 'true', ''
-      (arr as Roompies) = (arr as Roompies).filter(
+      const fOwnPetQue = (arr as Roompies).filter(
         (el) => el.ownPet === (ownPetQue === 'true'),
       );
+      result.push(...fOwnPetQue);
     } else if (smokerQue) {
       // smokerQue => string 'true', ''
-      (arr as Roompies) = (arr as Roompies).filter(
+      const fSmokerQue = (arr as Roompies).filter(
         (el) => el.smoker === (smokerQue === 'true'),
       );
+      result.push(...fSmokerQue);
     } else if (genderQue) {
       // genderQue => string 'Pria', 'Wanita'
-      (arr as Roompies) = (arr as Roompies).filter(
+      const fGenderQue = (arr as Roompies).filter(
         (el) => el.gender === genderQue,
       );
+      result.push(...fGenderQue);
     }
 
     // filter duplicate value in array
-    // const final = result.filter(
-    //   (el, i, arr) => i === arr.findIndex((elem) => elem.id === el.id),
-    // );
+    const final = result.filter(
+      (el, i, arr) => i === arr.findIndex((elem) => elem.id === el.id),
+    );
 
     return {
       props: {
         error: false,
-        roompies: arr, // hasil filtered query roompies
+        roompies: final, // hasil filtered query roompies
         err: null,
       },
     };
