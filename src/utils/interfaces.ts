@@ -72,9 +72,21 @@ export interface Postal {
   postal_code: string;
 }
 
+export interface PhotoURL {
+  lastModified: number;
+  lastModifiedDate: Date;
+  name: string;
+  path: string;
+  preview?: string; // hasil URL.createObjectURL(image)
+  size: number;
+  type: string;
+  webkitRelativePath: string;
+}
+
 export type Roompies = Roompy[];
 export type Users = User[];
 export type Postals = Postal[];
+export type PhotoURLs = PhotoURL[];
 
 // firebase type
 export type DocRef = firebase.firestore.DocumentReference;

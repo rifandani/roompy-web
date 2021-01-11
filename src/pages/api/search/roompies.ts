@@ -3,7 +3,7 @@ import Cors from 'cors';
 // files
 import { db } from '../../../configs/firebaseConfig';
 import { Roompies } from '../../../utils/interfaces';
-import initMiddleware from '../../../utils/initMiddleware';
+import initMiddleware from '../../../../middlewares/initMiddleware';
 
 // Initialize the cors middleware
 // more available options here: https://github.com/expressjs/cors#configuration-options

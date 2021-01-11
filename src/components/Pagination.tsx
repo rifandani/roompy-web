@@ -17,13 +17,13 @@ export default function Pagination({
   limit,
 }: PaginationProps) {
   const classNames =
-    'bg-white text-purple-500 hover:bg-purple-100 px-2 py-1 border rounded-md appearance-none focus:outline-none focus:ring focus:border-purple-300 list-none';
+    'bg-white text-purple-500 hover:bg-purple-100 px-2 py-1 border cursor-pointer rounded-md appearance-none focus:outline-none focus:ring focus:border-purple-300 list-none';
 
   const pageCount = Math.ceil(roompies.length / limit);
 
   return (
     <div className="flex flex-col items-center my-10">
-      <article className="flex justify-center">
+      <article className="flex justify-center text-gray-500">
         Showing {limit * currentPage + 1} - {limit * (currentPage + 1)} of{' '}
         {roompies.length} Roompies
       </article>

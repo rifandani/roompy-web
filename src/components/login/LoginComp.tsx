@@ -35,7 +35,7 @@ export default function LoginComp() {
       await auth.signInWithEmailAndPassword(email, password);
 
       // POST req
-      const res = await axios.post('/api/auth/login', {
+      const res = await axios.post('/auth/login', {
         email,
         password,
       });

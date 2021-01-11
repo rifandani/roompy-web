@@ -6,7 +6,7 @@ import 'firebase/auth';
 import 'firebase/storage';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: process.env.FIRE_API_KEY!,
   authDomain: process.env.FIRE_AUTH_DOMAIN!,
   projectId: process.env.FIRE_PROJECT_ID!,

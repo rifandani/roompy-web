@@ -1,26 +1,34 @@
-import { useState, MouseEvent } from 'react';
+import { useState, useContext, MouseEvent } from 'react';
 import { IoMenu, IoClose } from 'react-icons/io5';
 import { HiOutlineSearch } from 'react-icons/hi';
+import { FaUserCircle } from 'react-icons/fa';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 // files
-import { auth } from '../../configs/firebaseConfig';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
+import { auth } from '../configs/firebaseConfig';
+import axiosErrorHandle from '../utils/axiosErrorHandle';
+import UserContext from '../contexts/UserContext';
 
 export default function SiteHeader() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [searchQue, setSearchQue] = useState<string>('');
+  const { user } = useContext(UserContext);
+  const { push } = useRouter();
 
   const onLogout = async (e: MouseEvent) => {
     e.preventDefault();
 
     try {
+      await push('/');
+
       // logout from firebase auth di client-side, biar UserContext/useAuth ke trigger
       await auth.signOut();
 
       // delete cookie from server
-      await axios.get('/api/auth/logout');
+      await axios.get('/auth/logout');
 
       toast.info('Logout success');
     } catch (err) {
@@ -71,6 +79,7 @@ export default function SiteHeader() {
           isOpen ? 'block' : 'hidden'
         } sm:flex sm:items-center sm:px-4 xl:flex-1 xl:justify-between`}
       >
+        {/* search input */}
         <div className="hidden xl:block xl:relative xl:max-w-xs xl:w-full">
           <div className="absolute inset-y-0 left-0 flex items-center pl-3">
             <HiOutlineSearch className="w-6 h-6 text-gray-600" />
@@ -80,10 +89,21 @@ export default function SiteHeader() {
             className="block w-full py-2 pl-10 pr-4 text-gray-900 bg-gray-200 border border-transparent rounded-lg form-input focus:outline-none focus:bg-white focus:border-gray-300"
             placeholder="Search by locations"
             type="search"
+            name="searchLoc"
+            id="searchLoc"
+            autoComplete="searchLoc"
+            value={searchQue}
+            onChange={(e) => setSearchQue(e.target.value)}
+            onKeyDown={(e) =>
+              e.key === 'Enter'
+                ? console.log('Enter pressed')
+                : console.log(e.key)
+            }
           />
         </div>
 
         <div className="sm:flex sm:items-center">
+          {/* links */}
           <div className="px-2 pt-2 pb-5 border-b border-gray-800 sm:flex sm:border-b-0 sm:py-0 sm:px-0">
             <Link href="/roompies">
               <a className="block px-3 py-1 font-semibold text-white rounded hover:bg-gray-800 sm:text-sm sm:px-2 xl:text-gray-900 xl:hover:bg-gray-200">
@@ -99,18 +119,16 @@ export default function SiteHeader() {
           </div>
 
           {/* user hamburger if logged in */}
-          <article className="relative px-5 py-5 sm:py-0 sm:ml-4 sm:px-0">
+          <article
+            className={`${
+              user ? 'relative' : 'hidden'
+            } px-5 py-5 sm:py-0 sm:ml-4 sm:px-0`}
+          >
             <section className="flex items-center sm:hidden">
-              <Image
-                className="object-cover w-10 h-10 border-2 border-gray-600 rounded-full"
-                src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
-                alt=""
-                height={30}
-                width={30}
-              />
+              <FaUserCircle className="w-10 h-10 text-gray-600 border-2 border-gray-600 rounded-full" />
 
               <span className="ml-4 font-semibold text-gray-200 sm:hidden">
-                Isla Schoger
+                {user ? user.displayName : 'Guest'}
               </span>
             </section>
 
@@ -143,13 +161,7 @@ export default function SiteHeader() {
                         : 'border-gray-600 xl:border-gray-300'
                     } block h-8 w-8 overflow-hidden rounded-full border-2`}
                   >
-                    <Image
-                      className="object-cover w-full h-full"
-                      src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=256&q=80"
-                      alt=""
-                      height={40}
-                      width={40}
-                    />
+                    <FaUserCircle className="w-full h-full text-gray-600 border-2 border-gray-600 rounded-full" />
                   </span>
                 </button>
 

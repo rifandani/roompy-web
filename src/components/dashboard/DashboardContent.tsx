@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import { MdTimelapse } from 'react-icons/md';
@@ -129,31 +130,38 @@ export default function DashboardContent({ user, allRoompy }: DashboardProps) {
 
         {/* roompies cards */}
         {allRoompy.length > 0 ? (
-          (allRoompy as Roompies).map((roompy, i) => (
-            <div key={i} className="w-full p-6 md:w-1/2 xl:w-1/3">
-              <div className="p-5 border-b-4 border-purple-500 rounded-lg shadow-xl bg-gradient-to-b from-purple-200 to-purple-100">
-                <div className="flex flex-row items-center">
-                  <div className="flex-shrink pr-4">
-                    <div className="">
-                      <Image
-                        className="rounded-full"
-                        src={roompy.photoURL}
-                        width={60}
-                        height={60}
-                        quality={50}
-                      />
+          (allRoompy as Roompies).map((roompy) => (
+            <Link
+              key={roompy.id}
+              href={`/dashboard/roompies/edit/${roompy.id}`}
+            >
+              <a className="w-full p-6 transition duration-500 transform cursor-pointer md:w-1/2 xl:w-1/3 hover:scale-125">
+                <div className="p-5 border-b-4 border-purple-500 rounded-lg shadow-xl bg-gradient-to-b from-purple-200 to-purple-100">
+                  <div className="flex flex-row items-center">
+                    <div className="flex-shrink pr-4">
+                      <div className="">
+                        <Image
+                          className="rounded-full"
+                          src={roompy.photoURL}
+                          width={60}
+                          height={60}
+                          quality={50}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex-1 text-right md:text-center">
+                      <h5 className="italic font-bold text-gray-500 uppercase">
+                        {roompy.name}
+                      </h5>
+
+                      <h3 className="text-2xl font-bold">
+                        {roompy.locPref[0]}
+                      </h3>
                     </div>
                   </div>
-                  <div className="flex-1 text-right md:text-center">
-                    <h5 className="italic font-bold text-gray-500 uppercase">
-                      {roompy.name}
-                    </h5>
-
-                    <h3 className="text-2xl font-bold">{roompy.locPref[0]}</h3>
-                  </div>
                 </div>
-              </div>
-            </div>
+              </a>
+            </Link>
           ))
         ) : (
           <div className="w-full p-6 md:w-1/2 xl:w-1/3">

@@ -1,5 +1,5 @@
 // files
-import SiteHeader from './SiteHeader';
+import SiteHeader from '../SiteHeader';
 import SearchFilters from './RoomsFilters';
 import RoomCard from './RoomCard';
 

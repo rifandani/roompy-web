@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Select from 'react-select';
 // files
-import SiteHeader from '../rooms/SiteHeader';
+import SiteHeader from '../SiteHeader';
 import RoompiesFilters from './RoompiesFilters';
 import RoompyCard2 from './RoompyCard2';
 import Pagination from '../Pagination';

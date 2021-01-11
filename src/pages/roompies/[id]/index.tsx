@@ -7,6 +7,7 @@ import RoompyDetail from '../../../components/profile/RoompyDetail';
 import Footer from '../../../components/Footer';
 import { db } from '../../../configs/firebaseConfig';
 import { RoompyProps } from '../../../utils/interfaces';
+import { getAsString } from '../../../utils/getAsString';
 
 export default function RoompyPage({ roompy }: RoompyProps) {
   const { isFallback } = useRouter();
@@ -39,13 +40,7 @@ export default function RoompyPage({ roompy }: RoompyProps) {
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  let id: string | string[];
-
-  if (Array.isArray(ctx.params?.id)) {
-    id = ctx.params?.id[0];
-  } else {
-    id = ctx.params?.id;
-  }
+  const id = getAsString(ctx.params?.id);
 
   const roompiesRef = db.collection('roompies').doc(id);
   const roompiesSnap = await roompiesRef.get();

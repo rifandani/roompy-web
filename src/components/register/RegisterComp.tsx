@@ -40,7 +40,7 @@ export default function RegisterComp() {
       setBusy(true); // disable register button
 
       // POST req
-      const res = await axios.post('/api/auth/register', {
+      const res = await axios.post('/auth/register', {
         username,
         email,
         password,

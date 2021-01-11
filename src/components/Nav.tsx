@@ -27,7 +27,7 @@ export default function Nav() {
       await auth.signOut();
 
       // delete cookie from server
-      await axios.get('/api/auth/logout');
+      await axios.get('/auth/logout');
 
       toast.info('Logout success');
     } catch (err) {

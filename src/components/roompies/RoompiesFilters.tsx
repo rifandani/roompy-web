@@ -142,7 +142,7 @@ export default function RoompiesFilters() {
           </section>
 
           {/* gender */}
-          <section className="px-4 py-4 border-t border-gray-900 lg:w-1/3 xl:border-t-0 xl:w-full">
+          <section className="px-4 py-4 border-t border-gray-900 lg:w-1/3 lg:border-l xl:w-full">
             <span className="block text-sm font-semibold text-gray-500">
               Jenis Kelamin
             </span>

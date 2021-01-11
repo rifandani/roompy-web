@@ -20,8 +20,8 @@ import UserContext from '../contexts/UserContext';
 // axios BASE URL
 axios.defaults.baseURL =
   process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000'
-    : 'https://roompy.vercel.app';
+    ? 'http://localhost:3000/api'
+    : 'https://roompy.vercel.app/api';
 
 // create a custom progress bar
 NProgress.configure({ showSpinner: false });
@@ -47,6 +47,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
+        <meta name="twitter:title" content="Roompy | Find your soul roommate" />
+        <meta name="twitter:card" content="summary" />
+        <meta property="og:type" content="website" />
+        <meta
+          name="description"
+          content="Temukan roommate sejati anda, dalam beberapa menit."
+        />
+        <meta property="og:image" content="favicon.ico" />
+        <meta name="twitter:image" content="favicon.ico" />
         {/* link */}
         <link rel="icon" href="favicon.ico" />
       </Head>
