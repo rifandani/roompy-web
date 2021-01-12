@@ -10,10 +10,10 @@ export default function Dropzone({
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
     maxFiles: single ? 1 : isPremium ? 5 : 1, // max gambar yg bisa diupload
-    onDrop: (acceptedImages) => {
+    onDrop: (acceptedImages: File[]) => {
       const filteredAcceptedImages = acceptedImages.filter(
         (image, i, images) =>
-          images.findIndex((t) => t.size === image.size) === i,
+          images.findIndex((blob) => blob.size === image.size) === i,
       );
 
       setImages(

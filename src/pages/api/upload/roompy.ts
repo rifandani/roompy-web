@@ -59,14 +59,6 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
       //     photoURL: url,
       //   });
 
-      //   // get user document, then update user 'postedRoompies'
-      //   const userRef = db.collection('users').doc(req.body?.userId);
-      //   // const userSnap = await userRef.get();
-      //   // const prevPostedRoompies = userSnap.get('postedRoompies'); // array
-      //   await userRef.update({
-      //     postedRoompies: [postedRoompiesRef.id],
-      //   });
-
       // POST SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,

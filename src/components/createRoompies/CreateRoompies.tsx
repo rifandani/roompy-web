@@ -47,7 +47,12 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
   const [stayLength, setStayLength] = useState<string>('');
   const [desc, setDesc] = useState<string>('');
   // location preferences
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState([]); // array of object => karena isMulti
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState([
+    {
+      label: 'Sleman',
+      value: 'Sleman',
+    },
+  ]); // array of object => karena isMulti
   // home preferences
   const [roomType, setRoomType] = useState<string>('Flex'); // Satu kamar / Satu rumah / Flex
   const [parking, setParking] = useState<string>('Flex'); // Required / Flex
@@ -111,10 +116,12 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
       // create x-www-form-urlencoded => enctype: application/x-www-form-urlencoded
       // const params = new URLSearchParams();
       // params.append('param1', 'value1');
+
       // create form-data => enctype: multipart/form-data
       const formData = new FormData();
-      formData.append('file', photoURL);
+      formData.append('photo', photoURL[0]);
       formData.append('roompy', JSON.stringify(state));
+      formData.append('userId', user.id);
 
       // POST Form Data
       const res = await axios.post('/roompies', formData, {
@@ -122,6 +129,11 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
           'Content-Type': 'multipart/form-data',
         },
       });
+
+      console.log(photoURL);
+      console.log(state);
+      console.log(user.id);
+      setBusy(false);
 
       // if POST success
       if (res.status === 201) {

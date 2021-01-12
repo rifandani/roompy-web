@@ -47,15 +47,7 @@ export default async function SearchRoompies(
   const roompyId = splittedUrl[3];
   const name = splittedUrl[4].split('?')[0];
 
-  if (req.method === 'GET') {
-    try {
-      // GET SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json(roompy);
-    } catch (err) {
-      // GET ERROR -----------------------------------------------------------------
-      res.status(500).json({ error: true, err });
-    }
-  } else if (req.method === 'PUT') {
+  if (req.method === 'PUT') {
     try {
       const data = {
         name: req.body?.name,

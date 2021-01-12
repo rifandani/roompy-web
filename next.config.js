@@ -22,5 +22,6 @@ module.exports = {
     FIRE_MESSAGING_SENDER_ID: '963030164384',
     FIRE_API_ID: '1:963030164384:web:85ab56de068fb7d44a7ac5',
     FIRE_MEASUREMENT_ID: 'G-VCE8864BGF',
+    FIRE_DATABASE_URL: 'https://roompy-roompies-default-rtdb.firebaseio.com',
   },
 };
