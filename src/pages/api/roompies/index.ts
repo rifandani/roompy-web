@@ -55,7 +55,9 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } catch (err) {
     // GET ERROR -----------------------------------------------------------------
-    res.status(500).json({ error: true, message: err.message, err });
+    res
+      .status(500)
+      .json({ error: true, name: err.name, message: err.message, err });
   }
 });
 
@@ -73,47 +75,49 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     const state = JSON.parse(req.body.roompy);
     const userId = state.postedBy;
 
-    // console.log('file => ', file);
-    // console.log('JSON.parse req.body.roompy => ', state);
-    // console.log('string req.body.userId => ', userId);
-    // res.status(201).json({ file, body: req.body });
+    console.log('file => ', file);
+    console.log('JSON.parse req.body.roompy => ', state);
+    console.log('string req.body.userId => ', userId);
+    res.status(201).json({ file, body: req.body });
 
     // save to firestore with empty photoURL & get the roompiesId first
-    const postedRoompiesRef = await roompiesRef.add({
-      ...state,
-      photoURL: '',
-    });
+    // const postedRoompiesRef = await roompiesRef.add({
+    //   ...state,
+    //   photoURL: '',
+    // });
 
-    // storageRef => /users/{userId}/roompies/{roompiesId}/img.png
-    const storageRef = storage.ref(
-      `users/${userId}/roompies/${postedRoompiesRef.id}/${file.originalname}`,
-    );
-    await storageRef.put(file.buffer); // save to storage => File / Blob
-    const url = await storageRef.getDownloadURL(); // get fileUrl from uploaded file
+    // // storageRef => /users/{userId}/roompies/{roompiesId}/img.png
+    // const storageRef = storage.ref(
+    //   `users/${userId}/roompies/${postedRoompiesRef.id}/${file.originalname}`,
+    // );
+    // await storageRef.put(file.buffer); // save to storage => File / Blob
+    // const url = await storageRef.getDownloadURL(); // get fileUrl from uploaded file
 
-    if (url) {
-      // update photoURL the previous roompies
-      await roompiesRef.doc(postedRoompiesRef.id).update({
-        photoURL: url,
-      });
+    // if (url) {
+    //   // update photoURL the previous roompies
+    //   await roompiesRef.doc(postedRoompiesRef.id).update({
+    //     photoURL: url,
+    //   });
 
-      // get user document, then update user 'postedRoompies'
-      const userRef = db.collection('users').doc(userId);
-      const userSnap = await userRef.get();
-      const prevPostedRoompies = userSnap.get('postedRoompies'); // array
-      await userRef.update({
-        postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id],
-      });
+    //   // get user document, then update user 'postedRoompies'
+    //   const userRef = db.collection('users').doc(userId);
+    //   const userSnap = await userRef.get();
+    //   const prevPostedRoompies = userSnap.get('postedRoompies'); // array
+    //   await userRef.update({
+    //     postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id],
+    //   });
 
-      // POST SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(201).json({
-        error: false,
-        message: 'Roompies created successfully',
-      });
-    }
+    //   // POST SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    //   res.status(201).json({
+    //     error: false,
+    //     message: 'Roompy created successfully',
+    //   });
+    // }
   } catch (err) {
     // POST ERROR -----------------------------------------------------------------
-    return res.status(500).json({ error: true, message: err.message, err });
+    return res
+      .status(500)
+      .json({ error: true, name: err.name, message: err.message, err });
   }
 });
 
@@ -166,12 +170,14 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
       // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
-        message: 'Roompies updated successfully',
+        message: 'Roompy updated successfully',
       });
     }
   } catch (err) {
     // PUT ERROR -----------------------------------------------------------------
-    res.status(500).json({ error: true, message: err.message, err });
+    res
+      .status(500)
+      .json({ error: true, name: err.name, message: err.message, err });
   }
 });
 
@@ -213,11 +219,13 @@ handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
     // DELETE SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json({
       error: false,
-      message: 'roompies deleted successfully',
+      message: 'Roompy deleted successfully',
     });
   } catch (err) {
     // DELETE ERROR -----------------------------------------------------------------
-    res.status(501).json({ error: true, message: err.message, err });
+    res
+      .status(501)
+      .json({ error: true, name: err.name, message: err.message, err });
   }
 });
 

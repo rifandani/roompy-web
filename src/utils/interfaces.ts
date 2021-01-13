@@ -51,10 +51,13 @@ export interface User {
   createdAt: number;
   email: string;
   favorites: string[];
-  premium: boolean;
+  messagesFrom: string[];
+  messagesTo: string[];
   postedRoompies: string[] | []; // awalnya DocRef
   postedRooms: string[] | []; // awalnya DocRef
+  premium: boolean;
   premiumUntil: number;
+  token: string;
   updatedAt: number;
   username: string;
 }
