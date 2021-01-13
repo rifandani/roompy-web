@@ -75,44 +75,46 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     const state = JSON.parse(req.body.roompy);
     const userId = state.postedBy;
 
-    console.log('file => ', file);
-    console.log('JSON.parse req.body.roompy => ', state);
-    console.log('string req.body.userId => ', userId);
-    res.status(201).json({ file, body: req.body });
+    // console.log('file => ', file);
+    // console.log('JSON.parse req.body.roompy => ', state);
+    // console.log('string req.body.userId => ', userId);
+    // res.status(201).json({ file, body: req.body });
 
     // save to firestore with empty photoURL & get the roompiesId first
-    // const postedRoompiesRef = await roompiesRef.add({
-    //   ...state,
-    //   photoURL: '',
-    // });
+    const postedRoompiesRef = await roompiesRef.add({
+      ...state,
+      photoURL: '',
+    });
 
-    // // storageRef => /users/{userId}/roompies/{roompiesId}/img.png
-    // const storageRef = storage.ref(
-    //   `users/${userId}/roompies/${postedRoompiesRef.id}/${file.originalname}`,
-    // );
-    // await storageRef.put(file.buffer); // save to storage => File / Blob
-    // const url = await storageRef.getDownloadURL(); // get fileUrl from uploaded file
+    // storageRef => /users/{userId}/roompies/{roompiesId}/img.png
+    const storageRef = storage.ref(
+      `users/${userId}/roompies/${postedRoompiesRef.id}/${
+        file.originalname || file.name || file.filename
+      }`,
+    );
+    await storageRef.put(file.buffer || file); // save to storage => File / Blob
+    const url = await storageRef.getDownloadURL(); // get fileUrl from uploaded file
 
-    // if (url) {
-    //   // update photoURL the previous roompies
-    //   await roompiesRef.doc(postedRoompiesRef.id).update({
-    //     photoURL: url,
-    //   });
+    if (url) {
+      // update photoURL the previous roompies
+      await roompiesRef.doc(postedRoompiesRef.id).update({
+        photoURL: url,
+      });
 
-    //   // get user document, then update user 'postedRoompies'
-    //   const userRef = db.collection('users').doc(userId);
-    //   const userSnap = await userRef.get();
-    //   const prevPostedRoompies = userSnap.get('postedRoompies'); // array
-    //   await userRef.update({
-    //     postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id],
-    //   });
+      // get user document, then update user 'postedRoompies'
+      const userRef = db.collection('users').doc(userId);
+      const userSnap = await userRef.get();
+      const prevPostedRoompies = userSnap.get('postedRoompies'); // array
+      await userRef.update({
+        postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id],
+      });
 
-    //   // POST SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-    //   res.status(201).json({
-    //     error: false,
-    //     message: 'Roompy created successfully',
-    //   });
-    // }
+      // POST SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.status(201).json({
+        error: false,
+        message: 'Roompy created successfully',
+      });
+    }
   } catch (err) {
     // POST ERROR -----------------------------------------------------------------
     return res
