@@ -157,9 +157,11 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
 
     // POST new photo to storage => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(
-      `users/${userId}/roompies/${roompy.id}/${file.originalname}`,
+      `users/${userId}/roompies/${roompy.id}/${
+        file?.originalname ?? file?.name ?? file?.filename
+      }`,
     );
-    await storageRef.put(file.buffer); // save to storage => File / Blob
+    await storageRef.put(file?.buffer ?? file); // save to storage => File / Blob
     const url = await storageRef.getDownloadURL(); // get fileUrl from uploaded file
 
     if (url) {

@@ -49,7 +49,7 @@ export default function RoompiesPage({
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     // initial roompies
-    const roompiesRef = db.collection('roompies').orderBy('createdAt', 'desc'); // roompies firestore Ref
+    const roompiesRef = db.collection('roompies'); // roompies firestore Ref
     const snap = await roompiesRef.get();
     let arr = snap.docs.map((el) => ({
       ...el.data(),

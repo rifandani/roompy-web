@@ -1,15 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Cors from 'cors';
-// Polyfills required for Firebase
-import XHR from 'xhr2';
-import WS from 'ws';
 // import formidable from 'formidable';
 import nc from 'next-connect';
 // files
 import initMiddleware from '../../../../middlewares/initMiddleware';
 import { auth, db } from '../../../configs/firebaseConfig';
 import getUser from '../../../utils/getUser';
-import { getAsString } from '../../../utils/getAsString';
 import axios from 'axios';
 
 const handler = nc();
