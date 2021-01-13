@@ -89,10 +89,10 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     // storageRef => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(
       `users/${userId}/roompies/${postedRoompiesRef.id}/${
-        file.originalname || file.name || file.filename
+        file?.originalname ?? file?.name ?? file?.filename
       }`,
     );
-    await storageRef.put(file.buffer || file); // save to storage => File / Blob
+    await storageRef.put(file?.buffer ?? file); // save to storage => File / Blob
     const url = await storageRef.getDownloadURL(); // get fileUrl from uploaded file
 
     if (url) {
