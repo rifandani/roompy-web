@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { serialize } from 'cookie';
 // files
-import { auth } from '../../../configs/firebaseConfig';
 
 export default async function logout(
   req: NextApiRequest,
@@ -9,13 +8,10 @@ export default async function logout(
 ) {
   if (req.method === 'GET') {
     try {
-      // logout from firebase auth
-      await auth.signOut();
-
       /* remove cookies from request header */
       res.setHeader('Set-Cookie', [
         serialize('auth', '', {
-          maxAge: -1,
+          maxAge: 1,
           path: '/',
         }),
       ]);

@@ -19,9 +19,9 @@ const NavHome = () => {
       await auth.signOut();
 
       // delete cookie from server
-      const res = await axios.get('/auth/logout');
+      await axios.get('/auth/logout');
 
-      return toast.info(res?.data.message);
+      return toast.info('Logout success');
     } catch (err) {
       axiosErrorHandle(err);
     }

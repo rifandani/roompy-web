@@ -2,9 +2,11 @@ import Link from 'next/link';
 import { useContext, useState } from 'react';
 import { JackInTheBox } from 'react-awesome-reveal';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 // files
 import UserContext from '../../contexts/UserContext';
 import { auth } from '../../configs/firebaseConfig';
+import axiosErrorHandle from '../../utils/axiosErrorHandle';
 
 const NavFAQ = () => {
   const [toggleMenu, setToggleMenu] = useState(false);
@@ -13,9 +15,17 @@ const NavFAQ = () => {
   const { user } = useContext(UserContext);
 
   async function logout() {
-    await auth.signOut();
+    try {
+      // logout from firebase auth di client-side, biar UserContext/useAuth ke trigger
+      await auth.signOut();
 
-    toast.info('Logout success');
+      // delete cookie from the server
+      await axios.get('/auth/logout');
+
+      toast.info('Logout success');
+    } catch (err) {
+      axiosErrorHandle(err);
+    }
   }
 
   return (

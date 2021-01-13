@@ -1,10 +1,12 @@
+import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, MouseEvent } from 'react';
 import { FaCheck } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import validator from 'validator';
 // files
 import { auth, db, emailAuthProvider } from '../../configs/firebaseConfig';
+import axiosErrorHandle from '../../utils/axiosErrorHandle';
 import { FireUser, User } from '../../utils/interfaces';
 
 export default function AccountContent({
@@ -81,10 +83,12 @@ export default function AccountContent({
     try {
       await user.reauthenticateWithCredential(credential);
       console.log('Reauthenticate success');
+      return true;
     } catch (err) {
       setBusy(false);
       console.error('Reauthenticate error', err);
-      return toast.error(err.message);
+      toast.error(err.message);
+      return false;
     }
   }
 
@@ -117,6 +121,50 @@ export default function AccountContent({
       setBusy(false);
       console.error('Update profile items error', err);
       return toast.error(err.message);
+    }
+  }
+
+  async function onDeleteAccount(e: MouseEvent) {
+    e.preventDefault();
+
+    if (!currentPassword || !validator.isLength(currentPassword, { min: 6 })) {
+      toast.warning(
+        'Please input your current valid password to reauthenticate',
+      );
+      return;
+    }
+
+    const userAgree = window.confirm(
+      'Are you sure you want to delete this account? \nThis action cannot be undone!',
+    );
+    if (!userAgree) return;
+
+    try {
+      setBusy(true); // disable button
+
+      // reauthenticate first
+      const isAuth = await reauthenticate(currentPassword);
+
+      if (isAuth) {
+        // DELETE in users collection + postedRoompies
+        await axios.delete(`/users?id=${user.uid}`);
+
+        // delete in auth & signOut the user (move this to client-side)
+        await user.delete();
+
+        // delete cookies in header
+        await axios.get('/auth/logout');
+
+        // on SUCCESS
+        setBusy(false);
+        await push('/');
+        toast('Your account deleted successfully');
+      }
+    } catch (err) {
+      // on ERROR => Axios Response error
+      setBusy(false); // enable button
+
+      axiosErrorHandle(err);
     }
   }
 
@@ -247,6 +295,18 @@ export default function AccountContent({
               disabled={busy}
             >
               {busy ? 'Loading' : 'Update Profile'}
+            </button>
+          </div>
+
+          <div className="mt-6">
+            <button
+              className={`${
+                busy ? 'opacity-50' : 'opacity-100'
+              } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-red-700 rounded-md focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 hover:text-red-700 hover:bg-red-100`}
+              disabled={busy}
+              onClick={(e) => onDeleteAccount(e)}
+            >
+              {busy ? 'Loading' : 'Delete Account'}
             </button>
           </div>
         </form>

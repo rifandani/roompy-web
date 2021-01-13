@@ -1,10 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Cors from 'cors';
-// import formidable from 'formidable';
 import nc from 'next-connect';
 // files
 import initMiddleware from '../../../../middlewares/initMiddleware';
-import { auth, db } from '../../../configs/firebaseConfig';
+import { db } from '../../../configs/firebaseConfig';
 import getUser from '../../../utils/getUser';
 import axios from 'axios';
 
@@ -91,10 +90,6 @@ handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
 
     // delete in users collection
     await userRef.delete();
-
-    // delete in auth & signOut the user (move this to client-side)
-    // const currUser = auth.currentUser;
-    // await currUser.delete();
 
     // DELETE SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json({
