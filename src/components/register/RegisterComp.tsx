@@ -6,6 +6,7 @@ import validator from 'validator';
 import axios from 'axios';
 // files
 import axiosErrorHandle from '../../utils/axiosErrorHandle';
+import { auth } from '../../configs/firebaseConfig';
 
 export default function RegisterComp() {
   // hooks
@@ -39,19 +40,23 @@ export default function RegisterComp() {
     try {
       setBusy(true); // disable register button
 
-      // POST req
-      const res = await axios.post('/auth/register', {
-        username,
+      // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
+      const newUser = await auth.createUserWithEmailAndPassword(
         email,
         password,
-      });
+      );
+      await newUser.user.updateProfile({ displayName: username }); // update user profile
 
-      // API response SUCCESS
-      const resData = res?.data;
+      // POST req
+      await axios.post('/auth/register', {
+        id: newUser.user.uid,
+        username,
+        email,
+      });
 
       // on SUCCESS
       await push('/dashboard');
-      return toast.success(`Welcome, ${resData.displayName}`);
+      return toast.success(`Welcome, ${newUser.user.displayName}`);
     } catch (err) {
       // on ERROR => Axios error response
       setBusy(false);

@@ -69,14 +69,17 @@ handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
     const postedRoompies = user.postedRoompies;
     // const postedRooms = user.postedRooms;
 
-    for (const roompyId of postedRoompies) {
-      const resp = await axios.delete(`/roompies?id=${roompyId}`);
+    if (postedRoompies.length > 0) {
+      for (const roompyId of postedRoompies) {
+        const resp = await axios.delete(`/roompies?id=${roompyId}`);
 
-      if (resp.status !== 200) {
-        return res.status(500).json(resp);
+        if (resp.status !== 200) {
+          return res.status(500).json(resp);
+        }
       }
     }
 
+    // if (postedRooms.length > 0) {
     // for (const roomId of postedRooms) {
     //   const resp = await axios.delete(`/rooms?id=${roomId}`);
 
@@ -84,13 +87,14 @@ handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
     //     return res.status(500).json(resp)
     //   }
     // }
+    // }
 
     // delete in users collection
     await userRef.delete();
 
-    // delete in auth & signOut the user
-    const currUser = auth.currentUser;
-    await currUser.delete();
+    // delete in auth & signOut the user (move this to client-side)
+    // const currUser = auth.currentUser;
+    // await currUser.delete();
 
     // DELETE SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json({

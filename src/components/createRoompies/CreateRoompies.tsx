@@ -69,6 +69,8 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
       return toast.warning('Please input a valid phone numbers');
     } else if (selectedSubDistricts.length < 1) {
       return toast.warning('Please select minimal 1 location');
+    } else if (~~budget < 1) {
+      return toast.warning('Please input your budget');
     } else if (images.length < 1) {
       return toast.warning('Please select minimal 1 photo');
     }

@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 // files
 import setCookie from '../../../utils/setCookie';
-import { auth, db } from '../../../configs/firebaseConfig';
+import { db } from '../../../configs/firebaseConfig';
 
 export default async function register(
   req: NextApiRequest,
@@ -9,20 +9,13 @@ export default async function register(
 ) {
   if (req.method === 'POST') {
     // destructure request body form
-    const { username, email, password } = req.body;
+    const { id, username, email } = req.body;
 
     // TODO: clean/filter req.body
 
     try {
-      // save to firebase auth
-      const newUser = await auth.createUserWithEmailAndPassword(
-        email,
-        password,
-      );
-      await newUser.user.updateProfile({ displayName: username }); // update user profile
-
       // save to firestore Users collection
-      await db.collection('users').doc(newUser.user.uid).set({
+      await db.collection('users').doc(id).set({
         createdAt: Date.now(),
         email,
         favorites: [],
@@ -38,17 +31,20 @@ export default async function register(
       });
 
       // set JWT token to cookie in headers
-      setCookie({ sub: newUser.user.uid }, res);
+      setCookie({ sub: id }, res);
 
       // register SUCCESS --------------------------
-      return res.status(201).json(newUser.user);
+      res.status(201).json({
+        error: false,
+        message: 'User created successfully',
+      });
     } catch (err) {
-      return res.status(500).json({ error: true, err }); // register ERROR
+      res
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message, err }); // register ERROR
     }
   } else {
     // error => invalid req method
-    return res
-      .status(405)
-      .json({ error: true, message: 'Only support POST req' });
+    res.status(405).json({ error: true, message: 'Only support POST req' });
   }
 }

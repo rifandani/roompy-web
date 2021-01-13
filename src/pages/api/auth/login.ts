@@ -1,27 +1,24 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 // files
 import setCookie from '../../../utils/setCookie';
-import { auth } from '../../../configs/firebaseConfig';
 
 export default async function login(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     // destructure request body form
-    const { email, password } = req.body;
+    const { id } = req.body;
 
     try {
-      // save to firebase auth
-      const userCredential = await auth.signInWithEmailAndPassword(
-        email,
-        password,
-      );
-
       // set JWT token to cookie in headers
-      setCookie({ sub: userCredential.user.uid }, res);
+      setCookie({ sub: id }, res);
 
       // login SUCCESS --------------------------
-      return res.status(200).json(userCredential.user);
+      return res
+        .status(200)
+        .json({ error: false, message: 'Cookie set to the response headers' });
     } catch (err) {
-      return res.status(500).json({ error: true, err }); // login ERROR
+      return res
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message, err }); // login ERROR
     }
   } else {
     // error => invalid req method

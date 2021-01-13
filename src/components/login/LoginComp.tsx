@@ -32,20 +32,16 @@ export default function LoginComp() {
       setBusy(true); // disable login button
 
       // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
-      await auth.signInWithEmailAndPassword(email, password);
+      const userCred = await auth.signInWithEmailAndPassword(email, password);
 
       // POST req
-      const res = await axios.post('/auth/login', {
-        email,
-        password,
+      await axios.post('/auth/login', {
+        id: userCred.user.uid,
       });
-
-      // API response SUCCESS
-      const resData = res?.data;
 
       // on SUCCESS
       await push('/dashboard');
-      return toast.success(`Welcome Back, ${resData.displayName}`);
+      return toast.success(`Welcome Back, ${userCred.user.displayName}`);
     } catch (err) {
       // on ERROR => Axios Response error
       setBusy(false); // enable login button
