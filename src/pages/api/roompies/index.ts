@@ -38,7 +38,7 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (Object.keys(req.query).length === 0) {
       // get all roompies
-      const roompiesSnap = await roompiesRef.orderBy('createdAt', 'desc').get();
+      const roompiesSnap = await roompiesRef.get();
       const roompies = roompiesSnap.docs.map((el) => ({
         ...el.data(),
         id: el.id,

@@ -26,7 +26,7 @@ export default async function SearchRoompies(
 
     try {
       // get all roompies docs
-      const snap = await db.collection('roompies').orderBy('name', 'asc').get();
+      const snap = await db.collection('roompies').get();
       let arr = snap.docs.map((el) => ({
         ...el.data(),
         id: el.id,

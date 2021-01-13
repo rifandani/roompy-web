@@ -46,7 +46,6 @@ export default function Search() {
     // get latest roompies
     const snap = await db
       .collection('roompies')
-      .orderBy('createdAt', 'desc')
       .limit(user ? limit : 12)
       .get();
 

@@ -26,7 +26,7 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (Object.keys(req.query).length === 0) {
       // get all users
-      const usersSnap = await usersRef.orderBy('createdAt', 'desc').get();
+      const usersSnap = await usersRef.get();
       const users = usersSnap.docs.map((el) => ({
         ...el.data(),
         id: el.id,
