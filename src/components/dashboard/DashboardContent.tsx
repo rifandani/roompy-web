@@ -135,7 +135,7 @@ export default function DashboardContent({ user, allRoompy }: DashboardProps) {
               key={roompy.id}
               href={`/dashboard/roompies/edit/${roompy.id}`}
             >
-              <a className="w-full p-6 transition duration-500 transform cursor-pointer md:w-1/2 xl:w-1/3 hover:scale-125">
+              <a className="w-full p-6 transition duration-500 transform cursor-pointer md:w-1/2 xl:w-1/3 hover:scale-110">
                 <div className="p-5 border-b-4 border-purple-500 rounded-lg shadow-xl bg-gradient-to-b from-purple-200 to-purple-100">
                   <div className="flex flex-row items-center">
                     <div className="flex-shrink pr-4">

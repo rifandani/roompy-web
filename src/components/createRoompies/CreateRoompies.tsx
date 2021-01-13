@@ -47,12 +47,7 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
   const [stayLength, setStayLength] = useState<string>('');
   const [desc, setDesc] = useState<string>('');
   // location preferences
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState([
-    {
-      label: 'Sleman',
-      value: 'Sleman',
-    },
-  ]); // array of object => karena isMulti
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState([]); // array of object => karena isMulti
   // home preferences
   const [roomType, setRoomType] = useState<string>('Flex'); // Satu kamar / Satu rumah / Flex
   const [parking, setParking] = useState<string>('Flex'); // Required / Flex
@@ -107,8 +102,10 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
         smoker: smokerPref,
         pet: petPref,
       },
+      postedBy: user.id, // userId disini
     };
-    const photoURL = images; // array of image object + preview: URL.createObjectURL(image)
+    const photoURL = images[0]; // array of image object + preview: URL.createObjectURL(image)
+    delete photoURL.preview;
 
     try {
       setBusy(true); // enable loading screen + disable button
@@ -119,9 +116,8 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
 
       // create form-data => enctype: multipart/form-data
       const formData = new FormData();
-      formData.append('photo', photoURL[0]);
+      formData.append('photo', photoURL);
       formData.append('roompy', JSON.stringify(state));
-      formData.append('userId', user.id);
 
       // POST Form Data
       const res = await axios.post('/roompies', formData, {
@@ -130,10 +126,8 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
         },
       });
 
-      console.log(photoURL);
-      console.log(state);
-      console.log(user.id);
-      setBusy(false);
+      // console.log(photoURL);
+      // console.log(state);
 
       // if POST success
       if (res.status === 201) {
@@ -176,6 +170,8 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
       <form
         className="w-full min-h-screen bg-white"
         autoComplete="on"
+        method="POST"
+        encType="multipart/form-data"
         onSubmit={(e) => onCreateRoompies(e)}
       >
         {/* contact info*/}

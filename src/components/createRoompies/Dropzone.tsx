@@ -67,10 +67,12 @@ export default function Dropzone({
             'dropzone bg-purple-500 py-4 rounded-md cursor-pointer hover:bg-purple-700 focus:outline-none focus:ring-4 focus:ring-purple-300',
         })}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} name="photo" />
+
         <p className="text-sm italic font-bold text-center text-white">
           Drag 'n' drop your photos HERE, or click to select files
         </p>
+
         <p className="text-xs italic text-center text-white">
           Click on the image to remove it
         </p>

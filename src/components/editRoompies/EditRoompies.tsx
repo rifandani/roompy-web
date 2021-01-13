@@ -12,11 +12,12 @@ import Loader from 'react-loader-spinner';
 import validator from 'validator';
 import { toast } from 'react-toastify';
 import ReactTooltip from 'react-tooltip';
+import axios from 'axios';
 // files
 import Dropzone from '../createRoompies/Dropzone';
 import subDistrictsJson2 from '../../utils/sub-districts2.json';
-import { db, storage } from '../../configs/firebaseConfig';
 import { EditRoompiesProps } from '../../pages/dashboard/roompies/edit/[id]';
+import axiosErrorHandle from '../../utils/axiosErrorHandle';
 
 const animatedComponents = makeAnimated(); // animation on react-select isMulti
 
@@ -29,14 +30,6 @@ const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
 const RangeWithTooltip = createSliderWithTooltip(Range); // rc-slider with tooltip
 
 export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
-  // refactor roompy.loc + roompy.roompiesPref.age + roompy.photoURL
-  const locs = roompy.locPref.map((el) => ({
-    label: el,
-    value: el,
-  }));
-  const ages = [roompy.roompiesPref.ageFrom, roompy.roompiesPref.ageTo];
-  const photos = [];
-
   const { push } = useRouter();
   const [busy, setBusy] = useState<boolean>(false);
   // contact info
@@ -58,7 +51,12 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
   );
   const [desc, setDesc] = useState<string>(roompy.desc || '');
   // location preferences
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState(locs || []); // array of object => karena isMulti
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState([
+    {
+      label: 'July',
+      value: 'July',
+    },
+  ]); // array of object => karena isMulti
   // home preferences
   const [roomType, setRoomType] = useState<string>(
     roompy.homePref.room || 'Flex',
@@ -80,7 +78,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
   const [petPref, setPetPref] = useState<string>(
     roompy.roompiesPref.pet || 'Okay',
   ); // Okay / Not okay
-  const [agePref, setAgePref] = useState<number[]>(ages || [17, 70]); // [ageFrom, ageTo]
+  const [agePref, setAgePref] = useState<number[]>([17, 70]); // [ageFrom, ageTo]
   // your photos
   const [images, setImages] = useState<any>([]); // images FIRESTORAGE
 
@@ -125,48 +123,69 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
         smoker: smokerPref,
         pet: petPref,
       },
-      photoURL: images, // array of image object + preview: URL.createObjectURL(image)
+      postedBy: user.id, // userId disini
     };
-    console.log('state => ', state);
+    const photoURL = images[0]; // array of image object + preview: URL.createObjectURL(image)
+    delete photoURL.preview;
 
     try {
       setBusy(true); // enable loading screen + disable button
 
-      // storage ref
-      const storageRef = storage.ref(`users/${user.id}/${images[0].name}`);
+      // create x-www-form-urlencoded => enctype: application/x-www-form-urlencoded
+      // const params = new URLSearchParams();
+      // params.append('param1', 'value1');
 
-      // save to STORAGE
-      await storageRef.put(images[0]);
+      // create form-data => enctype: multipart/form-data
+      const formData = new FormData();
+      formData.append('photo', photoURL);
+      formData.append('roompy', JSON.stringify(state));
 
-      // get imageUrl
-      const url = await storageRef.getDownloadURL();
+      // PUT Form Data
+      const res = await axios.put(`/roompies?id=${roompy.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-      // save ke FIRESTORE, hanya ketika sudah upload semua image
-      if (url) {
-        // save ke 'roompies'
-        const postedRoompiesRef = await db.collection('roompies').add({
-          ...state,
-          photoURL: url, // convert images to just string when uploading to FIRESTORE
-        });
+      // console.log(photoURL);
+      // console.log(state);
 
-        // update user document
-        const prevPostedRoompies = user.postedRoompies;
-        await db
-          .collection('users')
-          .doc(user.id)
-          .update({
-            postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id], // array of string
-          });
-
-        // after all done
+      // if PUT success
+      if (res.status === 201) {
         await push('/dashboard');
         setBusy(false);
-        return toast.success('Roompies created');
+        return toast.success('Roompies updated');
       }
     } catch (err) {
-      toast.error(err.message);
-      setBusy(false);
-      return console.error(err);
+      // on ERROR => Axios Response error
+      setBusy(false); // enable login button
+
+      axiosErrorHandle(err);
+    }
+  }
+
+  async function onDeleteRoompies(e: FormEvent) {
+    e.preventDefault();
+    const userAgree = window.confirm('Are you sure you want to delete this?');
+
+    if (!userAgree) return;
+
+    try {
+      setBusy(true);
+
+      const res = await axios.delete(`/roompies?id=${roompy.id}`);
+
+      // if DELETE success
+      if (res.status === 200) {
+        await push('/dashboard');
+        setBusy(false);
+        return toast.success('Roompies deleted');
+      }
+    } catch (err) {
+      // on ERROR => Axios Response error
+      setBusy(false); // enable login button
+
+      axiosErrorHandle(err);
     }
   }
 
@@ -189,7 +208,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
       {/* content title */}
       <div className="pt-4 bg-gray-800">
         <div className="p-4 text-2xl text-white shadow rounded-tl-3xl bg-gradient-to-r from-purple-700 to-gray-800">
-          <h3 className="pl-2 font-bold">Create Roompies</h3>
+          <h3 className="pl-2 font-bold">Update Roompies</h3>
         </div>
       </div>
       {/* all form */}
@@ -197,6 +216,8 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
       <form
         className="w-full min-h-screen bg-white"
         autoComplete="on"
+        method="POST"
+        encType="multipart/form-data"
         onSubmit={(e) => onEditRoompies(e)}
       >
         {/* contact info*/}
@@ -973,6 +994,16 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
             disabled={busy}
           >
             {busy ? 'Loading' : 'Update'}
+          </button>
+        </div>
+
+        <div className="mx-6 mt-6">
+          <button
+            className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-red-700 rounded-md focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 hover:text-red-700 hover:bg-red-100"
+            disabled={busy}
+            onClick={(e) => onDeleteRoompies(e)}
+          >
+            {busy ? 'Loading' : 'Delete this roompy'}
           </button>
         </div>
       </form>

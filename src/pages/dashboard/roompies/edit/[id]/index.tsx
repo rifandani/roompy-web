@@ -13,6 +13,8 @@ export interface EditRoompiesProps {
 }
 
 export default function EditRoompiesPage({ user, roompy }: EditRoompiesProps) {
+  console.log(roompy);
+
   return (
     <div className="">
       <DashboardLayout ver2>
