@@ -25,8 +25,9 @@ export default function AccountContent({
 
   // hooks
   const [busy, setBusy] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>(dbUser.username);
-  const [email, setEmail] = useState<string>(dbUser.email);
+  const [username, setUsername] = useState<string>('');
+  const [newEmail, setEmail] = useState<string>('');
+  const [currentEmail, setCurrentEmail] = useState<string>(user.email);
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const { push } = useRouter();
@@ -48,13 +49,13 @@ export default function AccountContent({
     e.preventDefault();
 
     // validation input
-    if (!username || !email) {
+    if (!username || !newEmail || !newPassword) {
       return toast.warning("Don't empty the input field");
-    } else if (!validator.isEmail(email)) {
+    } else if (!validator.isEmail(newEmail)) {
       return toast.warning('Please input a valid email');
     } else if (!validator.isLength(username, { min: 3 })) {
       return toast.warning('Please input min 3 chars for USERNAME');
-    } else if (newPassword && !validator.isLength(newPassword, { min: 6 })) {
+    } else if (!validator.isLength(newPassword, { min: 6 })) {
       return toast.warning('Please input min 6 chars for NEW PASSWORD');
     }
 
@@ -63,10 +64,10 @@ export default function AccountContent({
 
       // reauth and update profile items
       await reauthenticate(currentPassword);
-      await updateProfileItems(username, email, newPassword);
+      await updateProfileItems(username, newEmail, newPassword);
 
       // sign in again to set userCredential to React Context
-      await auth.signInWithEmailAndPassword(email, newPassword);
+      await auth.signInWithEmailAndPassword(newEmail, newPassword);
 
       toast.success('Account Profile Updated');
       return push('/dashboard');
@@ -80,7 +81,7 @@ export default function AccountContent({
   async function reauthenticate(currentPassword: string) {
     // get the user credentials
     const credential = emailAuthProvider.credential(
-      dbUser.email,
+      currentEmail,
       currentPassword,
     );
 
@@ -98,26 +99,22 @@ export default function AccountContent({
   }
 
   async function updateProfileItems(
-    name: string,
-    email: string,
+    username: string,
+    newEmail: string,
     newPassword: string,
   ) {
     try {
       // update profile items in firebase.auth
       await user.updateProfile({
-        displayName: name,
+        displayName: username,
       });
-      await user.updateEmail(email);
-
-      // kalau newPassword diisi
-      if (newPassword) {
-        await user.updatePassword(newPassword);
-      }
+      await user.updateEmail(newEmail);
+      await user.updatePassword(newPassword);
 
       // update profile items in users collection
-      await db.collection('users').doc(dbUser.id).update({
+      await db.collection('users').doc(user.uid).update({
         username,
-        email,
+        email: newEmail,
         updatedAt: nowMillis,
       });
 
@@ -185,7 +182,8 @@ export default function AccountContent({
       {/* creation time status */}
       <div className="flex flex-wrap items-center w-full pt-4">
         <h6 className="pl-6 text-2xl font-bold text-gray-900">
-          Joined since{' '}
+          <p className="inline-flex italic text-blue-500">{user.displayName}</p>{' '}
+          , joined since{' '}
           <p className="inline-flex italic text-blue-500">
             {user.metadata.creationTime}
           </p>
@@ -228,7 +226,6 @@ export default function AccountContent({
             New Username
             <input
               className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
-              placeholder="Elon Musk"
               name="username"
               id="username"
               autoComplete="username"
@@ -246,13 +243,12 @@ export default function AccountContent({
             New Email
             <input
               className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
-              placeholder="elonmusk@email.com"
               type="email"
               name="email"
               id="email"
-              autoComplete="username" // "username" is recognized by password managers in modern browsers
+              autoComplete="email" // "username" is recognized by password managers in modern browsers
               required
-              value={email}
+              value={newEmail}
               onChange={(e) => setEmail(e.target.value)}
             />
           </label>
@@ -268,9 +264,28 @@ export default function AccountContent({
               name="new-password"
               id="new-password"
               autoComplete="new-password"
+              required
               minLength={6}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </label>
+
+          <label
+            className="block mt-4 text-base font-bold text-gray-700"
+            htmlFor="currentEmail"
+          >
+            Current Email
+            <input
+              className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
+              placeholder="elonmusk@email.com"
+              type="email"
+              name="currentEmail"
+              id="currentEmail"
+              autoComplete="email" // "username" is recognized by password managers in modern browsers
+              value={currentEmail}
+              onChange={(e) => setCurrentEmail(e.target.value)}
+              disabled
             />
           </label>
 

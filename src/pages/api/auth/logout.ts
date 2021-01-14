@@ -1,11 +1,21 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { serialize } from 'cookie';
+import Cors from 'cors';
 // files
+import initMiddleware from '../../../middlewares/initMiddleware';
+
+const cors = initMiddleware(
+  Cors({
+    methods: ['PUT'],
+  }),
+);
 
 export default async function logout(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  await cors(req, res); // Run cors
+
   if (req.method === 'GET') {
     try {
       /* remove cookies from request header */

@@ -52,10 +52,10 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
     const prevPhotoName = splitted[splitted.length - 1].split('?')[0]; // [0] = elon.png, [1] = alt=media&token=
 
     // delete previous photo
-    const photoRef = storage.ref(
+    const prevPhotoRef = storage.ref(
       `users/${roompy.postedBy}/roompies/${roompy.id}/${prevPhotoName}`,
     );
-    await photoRef.delete();
+    await prevPhotoRef.delete();
 
     // POST new photo to storage => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(

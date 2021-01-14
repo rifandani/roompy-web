@@ -7,7 +7,7 @@ import WS from 'ws';
 import nc from 'next-connect';
 // files
 import initMiddleware from '../../../middlewares/initMiddleware';
-import { db, nowMillis, storage } from '../../../configs/firebaseConfig';
+import { nowMillis } from '../../../configs/firebaseConfig';
 import getRoompy from '../../../utils/getRoompy';
 
 const handler = nc();
@@ -15,7 +15,7 @@ const handler = nc();
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
-    methods: 'PUT',
+    methods: ['PUT'],
   }),
 );
 

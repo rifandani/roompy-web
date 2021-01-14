@@ -46,7 +46,11 @@ export default function LoginComp() {
       // on ERROR => Axios Response error
       setBusy(false); // enable login button
 
-      axiosErrorHandle(err);
+      if (err.message) {
+        toast.error(err.message);
+      } else {
+        axiosErrorHandle(err);
+      }
     }
   }
 
