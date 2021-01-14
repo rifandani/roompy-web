@@ -7,8 +7,8 @@ import WS from 'ws';
 import nc from 'next-connect';
 import multer from 'multer';
 // files
-import initMiddleware from '../../../../middlewares/initMiddleware';
-import { storage } from '../../../configs/firebaseConfig';
+import initMiddleware from '../../../middlewares/initMiddleware';
+import { nowMillis, storage } from '../../../configs/firebaseConfig';
 import getRoompy from '../../../utils/getRoompy';
 
 // handle files upload middleware
@@ -70,6 +70,7 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
       // update all previous roompy data
       await roompyRef.update({
         photoURL: url,
+        updatedAt: nowMillis,
       });
 
       // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

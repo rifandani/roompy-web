@@ -3,7 +3,7 @@ import Cors from 'cors';
 import nc from 'next-connect';
 import axios from 'axios';
 // files
-import initMiddleware from '../../../../middlewares/initMiddleware';
+import initMiddleware from '../../../middlewares/initMiddleware';
 import { db, nowMillis } from '../../../configs/firebaseConfig';
 import getUser from '../../../utils/getUser';
 import { getAsString } from '../../../utils/getAsString';

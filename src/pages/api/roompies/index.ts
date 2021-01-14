@@ -7,12 +7,11 @@ import WS from 'ws';
 import nc from 'next-connect';
 import multer from 'multer';
 // files
-import initMiddleware from '../../../../middlewares/initMiddleware';
-import { db, storage } from '../../../configs/firebaseConfig';
-import { getAsString } from '../../../utils/getAsString';
+import initMiddleware from '../../../middlewares/initMiddleware';
+import { db, nowMillis, storage } from '../../../configs/firebaseConfig';
 import getRoompy from '../../../utils/getRoompy';
 
-const upload = multer();
+const upload = multer(); // will ONLY support form-data
 const handler = nc();
 handler.use(upload.single('photo'));
 
@@ -169,6 +168,7 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
       await roompyRef.update({
         ...state,
         photoURL: url,
+        updatedAt: nowMillis,
       });
 
       // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
