@@ -1,18 +1,19 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Cors from 'cors';
 import nc from 'next-connect';
+import axios from 'axios';
 // files
 import initMiddleware from '../../../../middlewares/initMiddleware';
-import { db } from '../../../configs/firebaseConfig';
+import { db, nowMillis } from '../../../configs/firebaseConfig';
 import getUser from '../../../utils/getUser';
-import axios from 'axios';
+import { getAsString } from '../../../utils/getAsString';
 
 const handler = nc();
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
-    methods: ['GET', 'DELETE'],
+    methods: ['GET', 'PUT', 'DELETE'],
   }),
 );
 
@@ -40,6 +41,35 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
       // GET roompy SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json(user);
     }
+  } catch (err) {
+    // GET ERROR -----------------------------------------------------------------
+    res
+      .status(500)
+      .json({ error: true, name: err.name, message: err.message, err });
+  }
+});
+
+// PUT req => /users?id=userId
+handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
+  await cors(req, res); // run cors
+
+  try {
+    // get request query and body
+    const userId = getAsString(req.query.id);
+    const { username, email } = req.body;
+
+    // update user document
+    const userRef = usersRef.doc(userId);
+    await userRef.update({
+      username,
+      email,
+      updatedAt: nowMillis,
+    });
+
+    // GET roompy SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    res
+      .status(200)
+      .json({ error: false, message: 'User updated successfully' });
   } catch (err) {
     // GET ERROR -----------------------------------------------------------------
     res

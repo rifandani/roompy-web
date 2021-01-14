@@ -5,7 +5,12 @@ import { FaCheck } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import validator from 'validator';
 // files
-import { auth, db, emailAuthProvider } from '../../configs/firebaseConfig';
+import {
+  auth,
+  db,
+  emailAuthProvider,
+  nowMillis,
+} from '../../configs/firebaseConfig';
 import axiosErrorHandle from '../../utils/axiosErrorHandle';
 import { FireUser, User } from '../../utils/interfaces';
 
@@ -113,7 +118,7 @@ export default function AccountContent({
       await db.collection('users').doc(dbUser.id).update({
         username,
         email,
-        updatedAt: Date.now(),
+        updatedAt: nowMillis,
       });
 
       console.log('updateProfileItems success');

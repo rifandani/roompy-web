@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 // files
 import setCookie from '../../../utils/setCookie';
-import { db } from '../../../configs/firebaseConfig';
+import { db, nowMillis } from '../../../configs/firebaseConfig';
 
 export default async function register(
   req: NextApiRequest,
@@ -16,7 +16,7 @@ export default async function register(
     try {
       // save to firestore Users collection
       await db.collection('users').doc(id).set({
-        createdAt: Date.now(),
+        createdAt: nowMillis,
         email,
         favorites: [],
         messagesFrom: [],
@@ -26,7 +26,7 @@ export default async function register(
         premium: false,
         premiumUntil: 0,
         token: '',
-        updatedAt: Date.now(),
+        updatedAt: nowMillis,
         username,
       });
 
