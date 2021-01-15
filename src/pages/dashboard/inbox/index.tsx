@@ -6,8 +6,13 @@ import Loader from 'react-loader-spinner';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import InboxContent from '../../../components/inbox/InboxContent';
 import { db } from '../../../configs/firebaseConfig';
+import { User } from '../../../utils/interfaces';
 
-export default function InboxPage() {
+export interface InboxPageProps {
+  dbUser: User;
+}
+
+export default function InboxPage({ dbUser }: InboxPageProps) {
   const [busy, setBusy] = useState<boolean>(false);
 
   return (
@@ -24,7 +29,7 @@ export default function InboxPage() {
         </div>
       ) : (
         <DashboardLayout ver2>
-          <InboxContent />
+          <InboxContent busy={busy} setBusy={setBusy} dbUser={dbUser} />
         </DashboardLayout>
       )}
     </div>
@@ -56,8 +61,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       .doc((decoded as { sub: string })?.sub)
       .get();
 
+    const dbUser = {
+      ...userSnap.data(),
+      id: userSnap.id,
+    };
+
     return {
-      props: {},
+      props: {
+        dbUser,
+      },
     };
   } catch (err) {
     // kalau auth cookie ada tapi tidak valid / verify error

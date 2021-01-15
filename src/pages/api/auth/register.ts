@@ -3,10 +3,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import setCookie from '../../../utils/setCookie';
 import { db, nowMillis } from '../../../configs/firebaseConfig';
 
-export default async function register(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     // destructure request body form
     const { id, username, email } = req.body;
@@ -47,4 +44,4 @@ export default async function register(
     // error => invalid req method
     res.status(405).json({ error: true, message: 'Only support POST req' });
   }
-}
+};
