@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState } from 'react';
 import Select from 'react-select';
 // files
@@ -30,7 +31,9 @@ export default function RoompiesComp({ roompies }: RoompiesProps) {
           i > 0 ? 'mt-10 sm:ml-4' : ''
         } sm:mt-0 sm:w-80 sm:flex-shrink-0`}
       >
-        <RoompyCard2 roompy={roompy} />
+        <Link href={`/roompies/${roompy.id}`}>
+          <RoompyCard2 roompy={roompy} />
+        </Link>
       </div>
     ));
 

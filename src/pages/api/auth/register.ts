@@ -12,20 +12,26 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     try {
       // save to firestore Users collection
-      await db.collection('users').doc(id).set({
-        createdAt: nowMillis,
-        email,
-        favorites: [],
-        messagesFrom: [],
-        messagesTo: [],
-        postedRoompies: [],
-        postedRooms: [],
-        premium: false,
-        premiumUntil: 0,
-        token: '',
-        updatedAt: nowMillis,
-        username,
-      });
+      await db
+        .collection('users')
+        .doc(id)
+        .set({
+          createdAt: nowMillis,
+          email,
+          favorites: {
+            roompies: [],
+            rooms: [],
+          },
+          messagesFrom: [],
+          messagesTo: [],
+          postedRoompies: [],
+          postedRooms: [],
+          premium: false,
+          premiumUntil: 0,
+          token: '',
+          updatedAt: nowMillis,
+          username,
+        });
 
       // set JWT token to cookie in headers
       setCookie({ sub: id }, res);

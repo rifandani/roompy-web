@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useState, useContext, MouseEvent } from 'react';
 import {
@@ -34,6 +35,7 @@ import { IoLogoWhatsapp } from 'react-icons/io';
 import { toast } from 'react-toastify';
 // files
 import UserContext from '../../contexts/UserContext';
+import axiosErrorHandle from '../../utils/axiosErrorHandle';
 import { Roompy } from '../../utils/interfaces';
 import MyModal from '../MyModal';
 
@@ -69,6 +71,31 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
     toast.success('Message delivered. Please wait for the reply.');
   }
 
+  async function onAddToFavorite() {
+    if (!user) {
+      return toast.warning('Please login first');
+    }
+
+    try {
+      const resp = await axios.post('/favorites/roompies', {
+        userId: user.uid,
+        roompyId: roompy.id,
+      });
+
+      if (resp.status === 400) {
+        // on ALREADY FAVORITED
+        toast.warning('This roompy is already favorited');
+      } else {
+        // on SUCCESS
+        toast.success('Added to your favorites list');
+      }
+    } catch (err) {
+      // on ERROR
+      axiosErrorHandle(err);
+      toast.error(err.message);
+    }
+  }
+
   return (
     <article className="mx-auto bg-white max-w-7xl">
       {/* report modal */}
@@ -97,7 +124,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
         {/* add to favorite */}
         <div
-          onClick={() => {}}
+          onClick={onAddToFavorite}
           className="absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer hover:scale-125"
         >
           <HiStar className="text-lg text-yellow-500" />

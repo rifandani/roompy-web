@@ -6,13 +6,17 @@ import { verify } from 'jsonwebtoken';
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import FavoritesContent from '../../../components/favorites/FavoritesContent';
 import { db } from '../../../configs/firebaseConfig';
-import { User } from '../../../utils/interfaces';
+import { Roompies, User } from '../../../utils/interfaces';
 
 export interface FavoritesPageProps {
   dbUser: User;
+  favRoompies: Roompies | [];
 }
 
-export default function FavoritesPage({ dbUser }: FavoritesPageProps) {
+export default function FavoritesPage({
+  dbUser,
+  favRoompies,
+}: FavoritesPageProps) {
   const [busy, setBusy] = useState<boolean>(false);
 
   return (
@@ -29,7 +33,11 @@ export default function FavoritesPage({ dbUser }: FavoritesPageProps) {
         </div>
       ) : (
         <DashboardLayout ver2>
-          <FavoritesContent busy={busy} setBusy={setBusy} dbUser={dbUser} />
+          <FavoritesContent
+            setBusy={setBusy}
+            dbUser={dbUser}
+            favRoompies={favRoompies}
+          />
         </DashboardLayout>
       )}
     </div>
@@ -66,9 +74,39 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       id: userSnap.id,
     };
 
+    // get all favorited roompies + rooms
+    const favoritedRoompies = (dbUser as User).favorites.roompies;
+    // const favoritedRooms = (dbUser as User).favorites.rooms;
+    let favRoompies = [];
+    // let favRooms = [];
+
+    if (favoritedRoompies.length > 0) {
+      for (const roompyId of favoritedRoompies) {
+        const roompySnap = await db.collection('roompies').doc(roompyId).get();
+
+        favRoompies.push({
+          ...roompySnap.data(),
+          id: roompySnap.id,
+        });
+      }
+    }
+
+    // if (favoritedRooms.length > 0) {
+    //   for (const roomId of favoritedRooms) {
+    //     const roomSnap = await db.collection('rooms').doc(roomId).get();
+
+    // favRooms.push({
+    //   ...roomSnap.data(),
+    //   id: roomSnap.id,
+    // });
+    //   }
+    // }
+
     return {
       props: {
         dbUser,
+        favRoompies,
+        // favRooms,
       },
     };
   } catch (err) {

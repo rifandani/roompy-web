@@ -1,6 +1,11 @@
 import firebase from 'firebase';
 import { Dispatch, SetStateAction } from 'react';
 
+export interface Favorites {
+  roompies: string[];
+  rooms: string[];
+}
+
 export interface HomePref {
   room: string;
   parking: string;
@@ -50,7 +55,7 @@ export interface User {
   id?: string;
   createdAt: number;
   email: string;
-  favorites: string[];
+  favorites: Favorites;
   messagesFrom: string[];
   messagesTo: string[];
   postedRoompies: string[] | []; // awalnya DocRef
