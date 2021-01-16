@@ -1,21 +1,45 @@
 import Link from 'next/link';
-import React, { useState, Dispatch, SetStateAction } from 'react';
+import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
 import { FaWindowClose } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 // files
 import RoompyCard2 from '../roompies/RoompyCard2';
 import { FavoritesPageProps } from '../../pages/dashboard/favorites';
-import { Roompies } from '../../utils/interfaces';
+import { db } from '../../configs/firebaseConfig';
+import { Roompies, User } from '../../utils/interfaces';
 import axiosErrorHandle from '../../utils/axiosErrorHandle';
 
 interface Props extends FavoritesPageProps {
   setBusy: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function InboxContent({ setBusy, dbUser, favRoompies }: Props) {
+export default function InboxContent({ setBusy, dbUser }: Props) {
   // hooks
-  const [isAsc, setIsAsc] = useState<boolean>(false);
+  const [favRoompies, setFavRoompies] = useState<[] | Roompies>([]);
+
+  useEffect(() => {
+    getFav();
+  }, []);
+
+  async function getFav() {
+    // get all favorited roompies + rooms
+    const favoritedRoompies = (dbUser as User).favorites.roompies;
+    let favRoompies = [];
+
+    if (favoritedRoompies.length > 0) {
+      for (const roompyId of favoritedRoompies) {
+        const roompySnap = await db.collection('roompies').doc(roompyId).get();
+
+        favRoompies.push({
+          ...roompySnap.data(),
+          id: roompySnap.id,
+        });
+      }
+    }
+
+    setFavRoompies(favRoompies);
+  }
 
   const onDeleteFav = async (userId: string, roompyId: string) => {
     try {
@@ -26,7 +50,7 @@ export default function InboxContent({ setBusy, dbUser, favRoompies }: Props) {
       );
 
       // on SUCCESS
-      toast.info('Delete successful');
+      toast.info('Delete successful, please refresh to see the changes');
       setBusy(false);
     } catch (err) {
       // on ERROR

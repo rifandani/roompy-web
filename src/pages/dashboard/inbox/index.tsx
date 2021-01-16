@@ -29,7 +29,7 @@ export default function InboxPage({ dbUser }: InboxPageProps) {
         </div>
       ) : (
         <DashboardLayout ver2>
-          <InboxContent busy={busy} setBusy={setBusy} dbUser={dbUser} />
+          <InboxContent setBusy={setBusy} dbUser={dbUser} />
         </DashboardLayout>
       )}
     </div>

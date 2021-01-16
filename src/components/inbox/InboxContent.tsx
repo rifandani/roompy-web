@@ -1,6 +1,11 @@
-import { useRouter } from 'next/router';
 import { useState, Dispatch, SetStateAction, FormEvent } from 'react';
-import { FaSortAmountUp, FaSortAmountDown, FaEllipsisV } from 'react-icons/fa';
+import {
+  FaSortAmountUp,
+  FaSortAmountDown,
+  FaEllipsisV,
+  FaPaperclip,
+} from 'react-icons/fa';
+import { IoSend } from 'react-icons/io5';
 import { toast } from 'react-toastify';
 // files
 import { InboxPageProps } from '../../pages/dashboard/inbox';
@@ -13,14 +18,12 @@ const chat = {
 };
 
 interface Props extends InboxPageProps {
-  busy: boolean;
   setBusy: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function InboxContent({ busy, setBusy, dbUser }: Props) {
+export default function InboxContent({ setBusy, dbUser }: Props) {
   // hooks
   const [isAsc, setIsAsc] = useState<boolean>(false);
-  const { push } = useRouter();
 
   return (
     <div className="flex-1 pb-20 mt-12 overflow-hidden bg-gray-100 md:mt-2 md:pb-0">
@@ -33,7 +36,7 @@ export default function InboxContent({ busy, setBusy, dbUser }: Props) {
 
       {/* main content */}
       <main className="flex flex-1 h-screen bg-gray-200">
-        <div className="relative flex flex-col flex-grow w-full max-w-xs overflow-y-auto bg-gray-200 border-r">
+        <div className="relative flex flex-col flex-grow w-full max-w-xs bg-gray-200 border-r">
           {/* sorting */}
           <div className="flex items-center justify-between flex-shrink-0 px-6 py-2 border-b">
             <p className="flex items-center text-xs font-semibold text-gray-600">
@@ -41,7 +44,7 @@ export default function InboxContent({ busy, setBusy, dbUser }: Props) {
             </p>
 
             <button
-              className="w-6 h-6 outline-none focus:outline-none"
+              className="w-6 h-6 rounded-full outline-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
               onClick={() => setIsAsc(!isAsc)}
             >
               {isAsc ? (
@@ -54,7 +57,7 @@ export default function InboxContent({ busy, setBusy, dbUser }: Props) {
 
           {/* chat list */}
           <div className="flex-1 overflow-y-auto">
-            {Array(10)
+            {Array(3)
               .fill(chat)
               .map((el, i) => (
                 <span key={i} className="block px-6 py-3 bg-white">
@@ -75,10 +78,10 @@ export default function InboxContent({ busy, setBusy, dbUser }: Props) {
         </div>
 
         {/* message list container */}
-        <div className="flex flex-col flex-1 w-0 overflow-y-auto">
-          <div className="relative shadow-md">
-            <section className="flex items-center justify-between p-3 bg-gray-100 border-b">
-              <div className="flex items-center gap-3">
+        <div className="flex flex-col justify-between w-full bg-gray-200">
+          <article className="relative shadow-md">
+            <div className="flex items-center justify-between p-3 border-b">
+              <section className="flex items-center gap-3">
                 <img
                   className="object-cover w-8 h-8 rounded-full"
                   src="https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=3.5&w=144&q=60"
@@ -91,19 +94,19 @@ export default function InboxContent({ busy, setBusy, dbUser }: Props) {
                   </p>
                   <p className="text-xs text-gray-600">Active 2 minutes ago</p>
                 </div>
-              </div>
+              </section>
 
-              <div className="flex items-center">
-                <span className="leading-normal">
+              <section className="flex items-center">
+                <button className="rounded-full outline-none focus:outline-none focus:ring-2 focus:ring-indigo-500">
                   <FaEllipsisV className="w-6 h-6 text-gray-900" />
-                </span>
-              </div>
-            </section>
-          </div>
+                </button>
+              </section>
+            </div>
+          </article>
 
           {/* message content */}
-          <div className="flex flex-col flex-1 p-3 overflow-y-auto">
-            <article className="w-3/4 px-10 py-6 mb-3 bg-white rounded-lg shadow">
+          <article className="flex flex-col flex-grow p-3 overflow-y-auto">
+            <section className="w-3/4 px-10 py-6 mb-3 bg-white rounded-lg shadow">
               <div className="flex flex-col justify-center">
                 <p className="mb-1 text-sm text-gray-900">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -116,9 +119,9 @@ export default function InboxContent({ busy, setBusy, dbUser }: Props) {
                   {new Date().toISOString()}
                 </p>
               </div>
-            </article>
+            </section>
 
-            <article className="self-end w-3/4 px-10 py-6 bg-indigo-200 rounded-lg shadow">
+            <section className="self-end w-3/4 px-10 py-6 bg-indigo-200 rounded-lg shadow">
               <div className="flex flex-col justify-center">
                 <p className="mb-1 text-sm text-gray-900">
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
@@ -131,8 +134,28 @@ export default function InboxContent({ busy, setBusy, dbUser }: Props) {
                   {new Date().toISOString()}
                 </p>
               </div>
-            </article>
-          </div>
+            </section>
+          </article>
+
+          {/* input message */}
+          <form className="relative flex items-center justify-between w-full p-3 bg-gray-200 border-t shadow">
+            <button className="p-1 rounded-full outline-none focus:outline-none focus:ring-2 focus:ring-indigo-500">
+              <FaPaperclip className="w-6 h-6 text-gray-900" />
+            </button>
+
+            <input
+              className="flex-grow px-3 py-2 mx-3 rounded-full outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Type a message..."
+              required
+            />
+
+            <button
+              className="p-1 rounded-full outline-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              type="submit"
+            >
+              <IoSend className="w-6 h-6 text-gray-900 " />
+            </button>
+          </form>
         </div>
       </main>
     </div>

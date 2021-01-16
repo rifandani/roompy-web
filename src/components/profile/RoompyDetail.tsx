@@ -43,6 +43,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
   // state
   const [message, setMessage] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isAlreadyFav, setIsAlreadyFav] = useState<boolean>(false);
 
   // useRouter
   const { back } = useRouter();
@@ -89,6 +90,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         // on SUCCESS
         toast.success('Added to your favorites list');
       }
+
+      setIsAlreadyFav(true);
     } catch (err) {
       // on ERROR
       axiosErrorHandle(err);
@@ -113,24 +116,27 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         </div>
 
         {/* back button */}
-        <div
+        <button
           onClick={() => back()}
-          className="absolute top-0 left-0 flex items-center px-3 py-1 mt-5 ml-5 transition duration-500 transform border border-red-500 rounded-md cursor-pointer hover:scale-125"
+          className="absolute top-0 left-0 flex items-center px-3 py-1 mt-5 ml-5 transition duration-500 transform border border-red-500 rounded-md cursor-pointer hover:scale-110"
         >
           <FaHandPointLeft className="text-lg text-red-500" />
 
           <p className="ml-1 text-base text-gray-500">Go back</p>
-        </div>
+        </button>
 
         {/* add to favorite */}
-        <div
+        <button
           onClick={onAddToFavorite}
-          className="absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer hover:scale-125"
+          className="absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer hover:scale-110"
+          disabled={isAlreadyFav}
         >
           <HiStar className="text-lg text-yellow-500" />
 
-          <p className="ml-1 text-base text-gray-500">Add to favorite</p>
-        </div>
+          <p className="ml-1 text-base text-gray-500">
+            {isAlreadyFav ? 'Already Favorited' : 'Add to favorite'}
+          </p>
+        </button>
       </header>
 
       {/* details */}

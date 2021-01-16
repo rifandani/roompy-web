@@ -57,7 +57,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         .status(501)
         .json({ error: true, name: err.name, message: err.message, err });
     }
-    // DELETE req => /favorites/roompies
+    // DELETE req => /favorites/roompies?userId=userId&roompyId=roompyId
   } else if (req.method === 'DELETE') {
     try {
       // destructuring
