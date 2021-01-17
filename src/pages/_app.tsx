@@ -12,6 +12,7 @@ import 'react-phone-input-2/lib/style.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import 'rc-slider/assets/index.css';
 import axios from 'axios';
+import { SWRConfig } from 'swr';
 // files
 import '../styles/index.css';
 import useAuth from '../hooks/useAuth';
@@ -64,8 +65,15 @@ export default function MyApp({ Component, pageProps }: AppProps) {
       <FormspreeProvider project="1571395310305935055">
         {/* @ts-ignore: Unreachable code error */}
         <UserContext.Provider value={{ user, setUser }}>
-          <Component {...pageProps} />
-          <ToastContainer />
+          <SWRConfig
+            value={{
+              // refreshInterval: 3000, // automatic re-fetching data in API every 3s
+              fetcher: (url: string) => axios.get(url).then((res) => res.data),
+            }}
+          >
+            <Component {...pageProps} />
+            <ToastContainer />
+          </SWRConfig>
         </UserContext.Provider>
       </FormspreeProvider>
     </>

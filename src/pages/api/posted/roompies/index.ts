@@ -16,10 +16,10 @@ const cors = initMiddleware(
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res); // run cors
 
-  // GET req => /matches/roompies?userId=userId
+  // GET req => /posted/roompies?userId=userId
   if (req.method === 'GET') {
     try {
-      const userId = getAsString(req.query.userId); // destructure req.query
+      const userId = getAsString(req.query.userId);
 
       // get all roompies
       const roompiesSnap = await db.collection('roompies').get();
@@ -39,48 +39,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         // GET SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         return res.status(200).json({
           error: false,
-          matchRoompies: [],
+          postedRoompies: [],
           havePostedRoompies: false,
           message: 'There is no posted roompies in this user document',
         });
       }
 
-      // current user roompiesPreferences
-      const userPref = {
-        gender: userPostedRoompies[0].roompiesPref.gender,
-        ageFrom: userPostedRoompies[0].roompiesPref.ageFrom,
-        ageTo: userPostedRoompies[0].roompiesPref.ageTo,
-        pet: userPostedRoompies[0].roompiesPref.pet,
-        smoker: userPostedRoompies[0].roompiesPref.smoker,
-        loc: userPostedRoompies[0].locPref,
-      };
-
-      // roompies except user postedRoompies
-      const roompiesExcept = (roompies as Roompies).filter(
-        (el) => el.postedBy !== userId,
-      );
-
-      // filter all roompies based on userPref
-      const matchRoompies = (roompiesExcept as Roompies).filter((roompy) => {
-        const isPetOkay = userPref.pet === 'Okay';
-        const isSmokerOkay = userPref.smoker === 'Okay';
-        const isGenderFlex = userPref.gender === 'Flex';
-
-        const selected =
-          roompy.locPref.includes(userPref.loc[0]) &&
-          roompy.ownPet === isPetOkay &&
-          roompy.smoker === isSmokerOkay &&
-          (isGenderFlex ? true : roompy.gender === userPref.gender) &&
-          roompy.age >= userPref.ageFrom &&
-          roompy.age <= userPref.ageTo;
-
-        return selected;
-      });
-
-      // GET SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
-        matchRoompies,
+        postedRoompies: userPostedRoompies,
         havePostedRoompies: true,
       });
     } catch (err) {

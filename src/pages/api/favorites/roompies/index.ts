@@ -9,15 +9,54 @@ import { getAsString } from '../../../../utils/getAsString';
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
-    methods: ['POST', 'DELETE'],
+    methods: ['GET', 'POST', 'DELETE'],
   }),
 );
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res); // run cors
 
-  // POST req => /favorites/roompies
-  if (req.method === 'POST') {
+  // GET req => /favorites/roompies?userId=userId
+  if (req.method === 'GET') {
+    try {
+      const userId = getAsString(req.query.userId);
+
+      // get user from firestore
+      const userSnap = await db.collection('users').doc(userId).get();
+
+      const dbUser = {
+        ...userSnap.data(),
+        id: userSnap.id,
+      };
+
+      // get all favorited roompies
+      const favoritedRoompies = (dbUser as User).favorites.roompies;
+      let favRoompies = [];
+
+      if (favoritedRoompies.length > 0) {
+        for (const roompyId of favoritedRoompies) {
+          const roompySnap = await db
+            .collection('roompies')
+            .doc(roompyId)
+            .get();
+
+          favRoompies.push({
+            ...roompySnap.data(),
+            id: roompySnap.id,
+          });
+        }
+      }
+
+      // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.status(200).json({ dbUser, favRoompies });
+    } catch (err) {
+      // GET ERROR -----------------------------------------------------------------
+      res
+        .status(501)
+        .json({ error: true, name: err.name, message: err.message, err });
+    }
+    // POST req => /favorites/roompies
+  } else if (req.method === 'POST') {
     try {
       const { userId, roompyId } = req.body; // destructure req.body
       const userRef = db.collection('users').doc(userId); // user ref
@@ -47,6 +86,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
+      // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
         message: 'Success adding to the favorites list',
@@ -109,6 +149,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // error => invalid req method
     res
       .status(405)
-      .json({ error: true, message: 'Only support POST and DELETE req' });
+      .json({ error: true, message: 'Only support GET, POST and DELETE req' });
   }
 };

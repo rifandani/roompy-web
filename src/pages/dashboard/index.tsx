@@ -4,18 +4,17 @@ import { verify } from 'jsonwebtoken';
 import DashboardLayout from '../../components/dashboard/DashboardLayout';
 import DashboardContent from '../../components/dashboard/DashboardContent';
 import { db } from '../../configs/firebaseConfig';
-import { Roompies, User } from '../../utils/interfaces';
+import { User } from '../../utils/interfaces';
 
 export interface DashboardProps {
-  user: User;
-  allRoompy: Roompies | [];
+  dbUser: User;
 }
 
-export default function DashboardPage({ user, allRoompy }: DashboardProps) {
+export default function DashboardPage({ dbUser }: DashboardProps) {
   return (
     <div className="">
       <DashboardLayout>
-        <DashboardContent user={user} allRoompy={allRoompy} />
+        <DashboardContent dbUser={dbUser} />
       </DashboardLayout>
     </div>
   );
@@ -46,39 +45,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       .doc((decoded as { sub: string })?.sub)
       .get();
 
-    const user = {
+    const dbUser = {
       ...userSnap.data(),
       id: userSnap.id,
     };
 
-    // get user postedRoompies
-    const userPostedRoompies = (user as User).postedRoompies;
-    const userPostedRoompiesLength = (user as User).postedRoompies.length;
-    let allRoompy = [];
-
-    if (userPostedRoompiesLength === 0) {
-      allRoompy = [];
-    } else {
-      for (let i = 0; i < userPostedRoompiesLength; i++) {
-        // get list postedRoompies
-        const postedRoompiesSnap = await db
-          .collection('roompies')
-          .doc(userPostedRoompies[i])
-          .get();
-
-        // push ke allRoompy array
-        postedRoompiesSnap &&
-          allRoompy.push({
-            ...postedRoompiesSnap.data(),
-            id: postedRoompiesSnap.id,
-          });
-      }
-    }
-
     return {
       props: {
-        user,
-        allRoompy,
+        dbUser,
       },
     };
   } catch (err) {

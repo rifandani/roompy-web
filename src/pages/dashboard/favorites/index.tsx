@@ -5,34 +5,32 @@ import { verify } from 'jsonwebtoken';
 // files
 import DashboardLayout from '../../../components/dashboard/DashboardLayout';
 import FavoritesContent from '../../../components/favorites/FavoritesContent';
-import { db } from '../../../configs/firebaseConfig';
-import { User } from '../../../utils/interfaces';
 
 export interface FavoritesPageProps {
-  dbUser: User;
+  userId: string;
 }
 
-export default function FavoritesPage({ dbUser }: FavoritesPageProps) {
+export default function FavoritesPage({ userId }: FavoritesPageProps) {
   // hooks
   const [busy, setBusy] = useState<boolean>(false);
 
   return (
     <div className="">
-      {busy ? (
-        <div className="flex items-center justify-center w-full min-h-screen">
-          <Loader
-            type="ThreeDots"
-            color="Purple"
-            height={100}
-            width={100}
-            timeout={3000} //3 secs
-          />
-        </div>
-      ) : (
-        <DashboardLayout ver2>
-          <FavoritesContent setBusy={setBusy} dbUser={dbUser} />
-        </DashboardLayout>
-      )}
+      <DashboardLayout ver2>
+        {busy ? (
+          <div className="flex items-center justify-center w-full min-h-screen">
+            <Loader
+              type="ThreeDots"
+              color="Purple"
+              height={100}
+              width={100}
+              timeout={3000} //3 secs
+            />
+          </div>
+        ) : (
+          <FavoritesContent setBusy={setBusy} userId={userId} />
+        )}
+      </DashboardLayout>
     </div>
   );
 }
@@ -56,20 +54,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     // decoded === payload { sub: user.uid }
     const decoded = verify(authCookie!, process.env.MY_SECRET_KEY);
 
-    // get user from firestore
-    const userSnap = await db
-      .collection('users')
-      .doc((decoded as { sub: string })?.sub)
-      .get();
-
-    const dbUser = {
-      ...userSnap.data(),
-      id: userSnap.id,
-    };
-
     return {
       props: {
-        dbUser,
+        userId: (decoded as { sub: string })?.sub,
       },
     };
   } catch (err) {

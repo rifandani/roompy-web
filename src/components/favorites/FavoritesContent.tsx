@@ -1,56 +1,34 @@
 import Link from 'next/link';
-import React, { useState, Dispatch, SetStateAction, useEffect } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { FaWindowClose } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import useSWR, { mutate } from 'swr';
 // files
 import RoompyCard2 from '../roompies/RoompyCard2';
 import { FavoritesPageProps } from '../../pages/dashboard/favorites';
-import { db } from '../../configs/firebaseConfig';
-import { Roompies, User } from '../../utils/interfaces';
+import { Roompies } from '../../utils/interfaces';
 import axiosErrorHandle from '../../utils/axiosErrorHandle';
 
 interface Props extends FavoritesPageProps {
   setBusy: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function InboxContent({ setBusy, dbUser }: Props) {
+export default function InboxContent({ setBusy, userId }: Props) {
   // hooks
-  const [favRoompies, setFavRoompies] = useState<[] | Roompies>([]);
+  const { data, error } = useSWR(`/favorites/roompies?userId=${userId}`);
 
-  useEffect(() => {
-    getFav();
-  }, []);
-
-  async function getFav() {
-    // get all favorited roompies + rooms
-    const favoritedRoompies = (dbUser as User).favorites.roompies;
-    let favRoompies = [];
-
-    if (favoritedRoompies.length > 0) {
-      for (const roompyId of favoritedRoompies) {
-        const roompySnap = await db.collection('roompies').doc(roompyId).get();
-
-        favRoompies.push({
-          ...roompySnap.data(),
-          id: roompySnap.id,
-        });
-      }
-    }
-
-    setFavRoompies(favRoompies);
-  }
-
-  const onDeleteFav = async (userId: string, roompyId: string) => {
+  const onDeleteFav = async (_userId: string, _roompyId: string) => {
     try {
       setBusy(true);
 
       await axios.delete(
-        `/favorites/roompies?userId=${userId}&roompyId=${roompyId}`,
+        `/favorites/roompies?userId=${_userId}&roompyId=${_roompyId}`,
       );
 
       // on SUCCESS
-      toast.info('Delete successful, please refresh to see the changes');
+      mutate(`/favorites/roompies?userId=${userId}`); // re-fetch
+      toast.info('Delete successful');
       setBusy(false);
     } catch (err) {
       // on ERROR
@@ -76,13 +54,17 @@ export default function InboxContent({ setBusy, dbUser }: Props) {
             <h3 className="text-2xl italic font-bold text-purple-500">
               Roompies
             </h3>
+
+            <p className="text-sm italic text-gray-600">
+              List of all your favorited roompies
+            </p>
           </div>
 
           {/* favorited roompies list */}
           <div className="mt-6 sm:overflow-x-auto sm:overflow-y-hidden">
             <div className="px-4 sm:inline-flex sm:pt-2 sm:pb-8">
-              {favRoompies.length > 0 ? (
-                (favRoompies as Roompies).map((roompy, i) => (
+              {data?.favRoompies.length > 0 ? (
+                (data.favRoompies as Roompies).map((roompy, i) => (
                   <div
                     key={roompy.id}
                     className={`${
@@ -95,14 +77,20 @@ export default function InboxContent({ setBusy, dbUser }: Props) {
 
                     <button
                       className="absolute flex items-center justify-center rounded-md shadow-xl top-1 right-1 focus:outline-none focus:ring-4 focus:ring-red-200"
-                      onClick={() => onDeleteFav(dbUser.id, roompy.id)}
+                      onClick={() => onDeleteFav(userId, roompy.id)}
                     >
                       <FaWindowClose className="text-3xl text-red-500 hover:text-red-800" />
                     </button>
                   </div>
                 ))
               ) : (
-                <h3 className="mt-6 font-bold">No Data</h3>
+                <h3 className="mt-6 font-bold">
+                  {error
+                    ? 'Error fetching data'
+                    : !data
+                    ? 'Loading...'
+                    : 'No data'}
+                </h3>
               )}
             </div>
           </div>
@@ -112,13 +100,16 @@ export default function InboxContent({ setBusy, dbUser }: Props) {
         <div className="pl-2 mt-6">
           <div className="px-4">
             <h3 className="text-2xl italic font-bold text-pink-500">Rooms</h3>
+            <p className="text-sm italic text-gray-600">
+              List of all your favorited rooms
+            </p>
           </div>
 
           {/* favorited rooms list */}
           <div className="mt-6 sm:overflow-x-auto sm:overflow-y-hidden">
             <div className="px-4 sm:inline-flex sm:pt-2 sm:pb-8">
-              {favRoompies.length > 0 ? (
-                (favRoompies as Roompies).map((roompy, i) => (
+              {data?.favRoompies.length > 0 ? (
+                (data.favRoompies as Roompies).map((roompy, i) => (
                   <div
                     key={roompy.id}
                     className={`${
@@ -129,7 +120,13 @@ export default function InboxContent({ setBusy, dbUser }: Props) {
                   </div>
                 ))
               ) : (
-                <h3 className="mt-6 font-bold">No Data</h3>
+                <h3 className="mt-6 font-bold">
+                  {error
+                    ? 'Error fetching data'
+                    : !data
+                    ? 'Loading...'
+                    : 'No data'}
+                </h3>
               )}
             </div>
           </div>
