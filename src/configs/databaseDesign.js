@@ -33,3 +33,26 @@ const roompies = {
   desc: 'Saya adalah orang yang baik dan mudah diajak berkomunikasi', // penjelasan kelebihan/keuntungan satu roommate bersama user + alamat rinci tempat pencarian
   photoURL: 'https://firebasestorage.googleapis.com//users/userId/foto.png', // string => url link ke storage
 },
+
+const chats = {
+  idUserPengirim1: {
+    idUserTujuan1: {
+      text: 'isi pesan',
+      createdAt: Date.now()
+    },
+    idUserTujuan2: {
+      text: 'isi pesan',
+      createdAt: Date.now()
+    }
+  },
+  userIdPengirim2: {
+    idUserTujuan1: {
+      text: 'isi pesan',
+      createdAt: Date.now()
+    },
+    idUserTujuan2: {
+      text: 'isi pesan',
+      createdAt: Date.now()
+    }
+  }
+}

@@ -9,26 +9,31 @@ import { db } from '../../../configs/firebaseConfig';
 import { User } from '../../../utils/interfaces';
 import UserContext from '../../../contexts/UserContext';
 
-export default function AccountPage({ dbUser }: { dbUser: User }) {
+export interface AccountPageProps {
+  dbUser: User;
+}
+
+export default function AccountPage({ dbUser }: AccountPageProps) {
+  // hooks
   const { user } = useContext(UserContext);
 
   return (
     <div className="">
-      {!user ? (
-        <div className="flex items-center justify-center w-full min-h-screen">
-          <Loader
-            type="ThreeDots"
-            color="Purple"
-            height={100}
-            width={100}
-            timeout={3000} //3 secs
-          />
-        </div>
-      ) : (
-        <DashboardLayout ver2>
+      <DashboardLayout ver2>
+        {!user ? (
+          <div className="flex items-center justify-center w-full min-h-screen">
+            <Loader
+              type="ThreeDots"
+              color="Purple"
+              height={100}
+              width={100}
+              timeout={3000} //3 secs
+            />
+          </div>
+        ) : (
           <AccountContent dbUser={dbUser} user={user} />
-        </DashboardLayout>
-      )}
+        )}
+      </DashboardLayout>
     </div>
   );
 }
