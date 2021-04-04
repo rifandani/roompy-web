@@ -3,8 +3,8 @@ import { FaMapMarkerAlt, FaCrown } from 'react-icons/fa';
 import { FcMoneyTransfer } from 'react-icons/fc';
 import { GiFemale, GiMale } from 'react-icons/gi';
 // files
-import { Roompy } from '../utils/interfaces';
-import { nowMillis } from '../configs/firebaseConfig';
+import { Roompy } from '../../utils/interfaces';
+import { nowMillis } from '../../configs/firebaseConfig';
 
 export default function RoompyCard({ roompy }: { roompy: Roompy }) {
   // milliseconds

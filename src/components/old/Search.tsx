@@ -3,7 +3,7 @@ import { Flip } from 'react-awesome-reveal';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 // files
-import RoompyCard from '../RoompyCard';
+import RoompyCard from './RoompyCard';
 import { db } from '../../configs/firebaseConfig';
 import { Roompies } from '../../utils/interfaces';
 import UserContext from '../../contexts/UserContext';
