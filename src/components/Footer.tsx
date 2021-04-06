@@ -94,10 +94,10 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
                 </ul>
               </section>
 
-              {/* Company */}
+              {/* Website */}
               <section className="w-full px-4 mt-3 lg:w-4/12 lg:mt-0">
                 <span className="block mb-2 text-sm font-semibold text-purple-700 uppercase">
-                  Company
+                  Website
                 </span>
                 <ul className="list-unstyled">
                   <li>
@@ -132,7 +132,7 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
         <section className="flex flex-wrap items-center justify-center md:justify-between">
           <div className="w-full px-4 mx-auto text-center md:w-4/12">
             <div className="py-1 text-sm font-semibold text-gray-500">
-              {new Date().getFullYear()} -{' '}
+              © {new Date().getFullYear()} -{' '}
               <span className="text-purple-700">Roompy</span>
             </div>
           </div>
