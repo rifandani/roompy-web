@@ -1,78 +1,78 @@
-import { useState, FormEvent } from 'react';
-import { FaQuestionCircle } from 'react-icons/fa';
-import PhoneInput from 'react-phone-input-2';
-import id from 'react-phone-input-2/lang/id.json';
-import DatePicker from 'react-datepicker';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
-import NumberFormat from 'react-number-format';
-import { Range, createSliderWithTooltip } from 'rc-slider';
-import Loader from 'react-loader-spinner';
-import validator from 'validator';
-import { toast } from 'react-toastify';
-import ReactTooltip from 'react-tooltip';
-import axios from 'axios';
+import { useState, FormEvent } from 'react'
+import { FaQuestionCircle } from 'react-icons/fa'
+import PhoneInput from 'react-phone-input-2'
+import id from 'react-phone-input-2/lang/id.json'
+import DatePicker from 'react-datepicker'
+import Select from 'react-select'
+import makeAnimated from 'react-select/animated'
+import NumberFormat from 'react-number-format'
+import { Range, createSliderWithTooltip } from 'rc-slider'
+import Loader from 'react-loader-spinner'
+import validator from 'validator'
+import { toast } from 'react-toastify'
+import ReactTooltip from 'react-tooltip'
+import axios from 'axios'
 // files
-import Dropzone from './Dropzone';
-import subDistrictsJson2 from '../../utils/sub-districts2.json';
-import { useRouter } from 'next/router';
-import { CreateRoompiesProps } from '../../pages/dashboard/roompies/create';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
+import Dropzone from './Dropzone'
+import subDistrictsJson2 from '../../utils/sub-districts2.json'
+import { useRouter } from 'next/router'
+import { CreateRoompiesProps } from '../../pages/dashboard/roompies/create'
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
 
-const animatedComponents = makeAnimated(); // animation on react-select isMulti
+const animatedComponents = makeAnimated() // animation on react-select isMulti
 
 // filter sub-districts array so that it supports react-select
 const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
   label: el,
   value: el,
-}));
+}))
 
-const RangeWithTooltip = createSliderWithTooltip(Range); // rc-slider with tooltip
+const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
 
 export default function CreateRoompies({ user }: CreateRoompiesProps) {
-  const { push } = useRouter();
-  const [busy, setBusy] = useState<boolean>(false);
+  const { push } = useRouter()
+  const [busy, setBusy] = useState<boolean>(false)
   // contact info
-  const [name, setName] = useState<string>('');
-  const [phone, setPhone] = useState<string>(''); // '62822...'
+  const [name, setName] = useState<string>('')
+  const [phone, setPhone] = useState<string>('') // '62822...'
   // descriptions
-  const [gender, setGender] = useState<string>('Pria'); // Pria / Wanita
-  const [age, setAge] = useState<string>(''); // min 17
-  const [occupation, setOccupation] = useState<string>('');
-  const [smoker, setSmoker] = useState<boolean>(false);
-  const [ownPet, setOwnPet] = useState<boolean>(false);
+  const [gender, setGender] = useState<string>('Pria') // Pria / Wanita
+  const [age, setAge] = useState<string>('') // min 17
+  const [occupation, setOccupation] = useState<string>('')
+  const [smoker, setSmoker] = useState<boolean>(false)
+  const [ownPet, setOwnPet] = useState<boolean>(false)
   // introduce yourself
-  const [budget, setBudget] = useState<string>('');
-  const [moveDate, setMoveDate] = useState<Date>(new Date()); // Date
-  const [stayLength, setStayLength] = useState<string>('');
-  const [desc, setDesc] = useState<string>('');
+  const [budget, setBudget] = useState<string>('')
+  const [moveDate, setMoveDate] = useState<Date>(new Date()) // Date
+  const [stayLength, setStayLength] = useState<string>('')
+  const [desc, setDesc] = useState<string>('')
   // location preferences
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState([]); // array of object => karena isMulti
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState([]) // array of object => karena isMulti
   // home preferences
-  const [roomType, setRoomType] = useState<string>('Flex'); // Satu kamar / Satu rumah / Flex
-  const [parking, setParking] = useState<string>('Flex'); // Required / Flex
-  const [wifi, setWifi] = useState<string>('Flex'); // Required / Flex
-  const [bathroom, setBathroom] = useState<string>('Flex'); // Dalam / Flex
+  const [roomType, setRoomType] = useState<string>('Flex') // Satu kamar / Satu rumah / Flex
+  const [parking, setParking] = useState<string>('Flex') // Required / Flex
+  const [wifi, setWifi] = useState<string>('Flex') // Required / Flex
+  const [bathroom, setBathroom] = useState<string>('Flex') // Dalam / Flex
   // roompies preferences
-  const [genderPref, setGenderPref] = useState<string>('Flex'); // Pria / Wanita / Flex
-  const [smokerPref, setSmokerPref] = useState<string>('Okay'); // Okay / Not okay
-  const [petPref, setPetPref] = useState<string>('Okay'); // Okay / Not okay
-  const [agePref, setAgePref] = useState<number[]>([17, 70]); // [ageFrom, ageTo]
+  const [genderPref, setGenderPref] = useState<string>('Flex') // Pria / Wanita / Flex
+  const [smokerPref, setSmokerPref] = useState<string>('Okay') // Okay / Not okay
+  const [petPref, setPetPref] = useState<string>('Okay') // Okay / Not okay
+  const [agePref, setAgePref] = useState<number[]>([17, 70]) // [ageFrom, ageTo]
   // your photos
-  const [images, setImages] = useState<any>([]); // images FIRESTORAGE
+  const [images, setImages] = useState<any>([]) // images FIRESTORAGE
 
   async function onCreateRoompies(e: FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // validation
     if (!validator.isLength(phone, { min: 9, max: 16 })) {
-      return toast.warning('Please input a valid phone numbers');
+      return toast.warning('Please input a valid phone numbers')
     } else if (selectedSubDistricts.length < 1) {
-      return toast.warning('Please select minimal 1 location');
+      return toast.warning('Please select minimal 1 location')
     } else if (~~budget < 1) {
-      return toast.warning('Please input your budget');
+      return toast.warning('Please input your budget')
     } else if (images.length < 1) {
-      return toast.warning('Please select minimal 1 photo');
+      return toast.warning('Please select minimal 1 photo')
     }
 
     // all required.
@@ -89,7 +89,7 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
       stayLength: ~~stayLength,
       desc,
       locPref: selectedSubDistricts.map(
-        (el: { label: string; value: string }) => el.value, // only return string
+        (el: { label: string; value: string }) => el.value // only return string
       ),
       homePref: {
         room: roomType,
@@ -105,43 +105,43 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
         pet: petPref,
       },
       postedBy: user.id, // userId disini
-    };
-    const photoURL = images[0]; // array of image object + preview: URL.createObjectURL(image)
-    delete photoURL.preview;
+    }
+    const photoURL = images[0] // array of image object + preview: URL.createObjectURL(image)
+    delete photoURL.preview
 
     try {
-      setBusy(true); // enable loading screen + disable button
+      setBusy(true) // enable loading screen + disable button
 
       // create x-www-form-urlencoded => enctype: application/x-www-form-urlencoded
       // const params = new URLSearchParams();
       // params.append('param1', 'value1');
 
       // create form-data => enctype: multipart/form-data
-      const formData = new FormData();
-      formData.append('photo', photoURL);
-      formData.append('roompy', JSON.stringify(state));
+      const formData = new FormData()
+      formData.append('photo', photoURL)
+      formData.append('roompy', JSON.stringify(state))
 
       // POST Form Data
       const res = await axios.post('/roompies', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      });
+      })
 
       // console.log(photoURL);
       // console.log(state);
 
       // if POST success
       if (res.status === 201) {
-        await push('/dashboard');
-        setBusy(false);
-        return toast.success('Roompies created');
+        await push('/dashboard')
+        setBusy(false)
+        return toast.success('Roompies created')
       }
     } catch (err) {
       // on ERROR => Axios Response error
-      setBusy(false); // enable login button
+      setBusy(false) // enable login button
 
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
   }
 
@@ -156,7 +156,7 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
           timeout={3000} //3 secs
         />
       </div>
-    );
+    )
   }
 
   return (
@@ -954,5 +954,5 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
         </div>
       </form>
     </article>
-  );
+  )
 }

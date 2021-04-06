@@ -1,21 +1,21 @@
-import { useRouter } from 'next/router';
-import { useState, FormEvent } from 'react';
-import { HiOutlineSearch } from 'react-icons/hi';
-import { IoFilter } from 'react-icons/io5';
+import { useRouter } from 'next/router'
+import { useState, FormEvent } from 'react'
+import { HiOutlineSearch } from 'react-icons/hi'
+import { IoFilter } from 'react-icons/io5'
 // files
 
 export default function RoompiesFilters() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [searchQue, setSearchQue] = useState<string>('');
-  const [ageQue, setAgeQue] = useState<string>(''); // '', '20' atau '30' atau '40' atau '50' atau '51'
-  const [budgetQue, setBudgetQue] = useState<string>(''); // '', '500000' atau '1000000' atau '2000000' atau '3000000' atau '3100000'
-  const [genderQue, setGenderQue] = useState<string>(''); // '', 'Pria' atau 'Wanita'
-  const [smokerQue, setSmokerQue] = useState<string>(''); // '', 'true'
-  const [ownPetQue, setOwnPetQue] = useState<string>(''); // '', 'true'
-  const { push } = useRouter();
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [searchQue, setSearchQue] = useState<string>('')
+  const [ageQue, setAgeQue] = useState<string>('') // '', '20' atau '30' atau '40' atau '50' atau '51'
+  const [budgetQue, setBudgetQue] = useState<string>('') // '', '500000' atau '1000000' atau '2000000' atau '3000000' atau '3100000'
+  const [genderQue, setGenderQue] = useState<string>('') // '', 'Pria' atau 'Wanita'
+  const [smokerQue, setSmokerQue] = useState<string>('') // '', 'true'
+  const [ownPetQue, setOwnPetQue] = useState<string>('') // '', 'true'
+  const { push } = useRouter()
 
   const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     await push({
       pathname: '/roompies',
@@ -26,14 +26,14 @@ export default function RoompiesFilters() {
         smokerQue,
         ownPetQue,
       },
-    });
-  };
+    })
+  }
 
   const onSearchLoc = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    console.log(searchQue);
-  };
+    console.log(searchQue)
+  }
 
   return (
     <div className="bg-gray-800 xl:w-72">
@@ -191,8 +191,8 @@ export default function RoompiesFilters() {
                   name="smokerQue"
                   onChange={() =>
                     setSmokerQue((prev) => {
-                      if (prev === '') return prev + 'true';
-                      if (prev === 'true') return prev.replace('true', '');
+                      if (prev === '') return prev + 'true'
+                      if (prev === 'true') return prev.replace('true', '')
                     })
                   }
                 />
@@ -209,8 +209,8 @@ export default function RoompiesFilters() {
                   name="ownPetQue"
                   onChange={() =>
                     setOwnPetQue((prev) => {
-                      if (prev === '') return prev + 'true';
-                      if (prev === 'true') return prev.replace('true', '');
+                      if (prev === '') return prev + 'true'
+                      if (prev === 'true') return prev.replace('true', '')
                     })
                   }
                 />
@@ -230,5 +230,5 @@ export default function RoompiesFilters() {
         </div>
       </form>
     </div>
-  );
+  )
 }

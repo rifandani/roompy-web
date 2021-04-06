@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { FaGooglePlay } from 'react-icons/fa';
+import Link from 'next/link'
+import { FaGooglePlay } from 'react-icons/fa'
 
 export default function CTA() {
   return (
@@ -59,5 +59,5 @@ export default function CTA() {
         </div>
       </div>
     </article>
-  );
+  )
 }

@@ -2,22 +2,26 @@ const faqs = [
   {
     id: 1,
     q: 'How does it work?',
-    a: 'Our platform works with your content to provides insights and metrics on how you can grow your business and scale your infastructure.',
+    a:
+      'Our platform works with your content to provides insights and metrics on how you can grow your business and scale your infastructure.',
   },
   {
     id: 2,
     q: 'How do I make changes and configure my site?',
-    a: 'You can easily change your site settings inside of your site dashboard by clicking the top right menu and clicking the settings button.',
+    a:
+      'You can easily change your site settings inside of your site dashboard by clicking the top right menu and clicking the settings button.',
   },
   {
     id: 3,
     q: 'Do you offer team pricing?',
-    a: 'Yes, we do! Team pricing is available for any plan. You can take advantage of 30% off for signing up for team pricing of 10 users or more.',
+    a:
+      'Yes, we do! Team pricing is available for any plan. You can take advantage of 30% off for signing up for team pricing of 10 users or more.',
   },
   {
     id: 4,
     q: 'How do I add a custom domain?',
-    a: 'You can easily change your site settings inside of your site dashboard by clicking the top right menu and clicking the settings button.',
+    a:
+      'You can easily change your site settings inside of your site dashboard by clicking the top right menu and clicking the settings button.',
   },
 ]
 
@@ -38,21 +42,19 @@ export default function FAQ() {
         </section>
 
         <section className="flex flex-wrap -mx-2 lg:w-4/5 sm:mx-auto sm:mb-2">
-          {faqs.map(faq => (
+          {faqs.map((faq) => (
             <div className="w-full px-4 py-2 lg:w-1/2">
               <details key={faq.id} className="mb-4 bg-gray-100">
                 <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer focus:ring-2 focus:outline-none focus:ring-purple-300">
                   {faq.q}
                 </summary>
 
-                <p className="px-4 py-2">
-                  {faq.a}
-                </p>
+                <p className="px-4 py-2">{faq.a}</p>
               </details>
             </div>
           ))}
         </section>
       </div>
     </article>
-  );
+  )
 }

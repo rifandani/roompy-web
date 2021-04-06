@@ -1,7 +1,7 @@
 // files
-import NavFAQ from '../../components/faq/NavFAQ';
-import FAQ from '../../components/faq/FAQ';
-import Footer from '../../components/Footer';
+import NavFAQ from '../../components/faq/NavFAQ'
+import FAQ from '../../components/faq/FAQ'
+import Footer from '../../components/Footer'
 
 export default function FAQPage() {
   return (
@@ -12,5 +12,5 @@ export default function FAQPage() {
 
       <Footer />
     </div>
-  );
+  )
 }

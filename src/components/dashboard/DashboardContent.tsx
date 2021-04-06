@@ -1,18 +1,13 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { MdTimelapse } from 'react-icons/md';
-import {
-  FaCrown,
-  FaShoppingCart,
-  FaUserPlus,
-  FaDoorOpen,
-} from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import useSWR from 'swr';
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import Image from 'next/image'
+import { MdTimelapse } from 'react-icons/md'
+import { FaCrown, FaShoppingCart, FaUserPlus, FaDoorOpen } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import useSWR from 'swr'
 // files
-import { DashboardProps } from '../../pages/dashboard';
-import { Roompies } from '../../utils/interfaces';
+import { DashboardProps } from '../../pages/dashboard'
+import { Roompies } from '../../utils/interfaces'
 
 function NoListings({ color }: { color: string }) {
   return (
@@ -37,7 +32,7 @@ function NoListings({ color }: { color: string }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 // interface Props extends DashboardProps {
@@ -46,19 +41,19 @@ function NoListings({ color }: { color: string }) {
 
 export default function DashboardContent({ dbUser }: DashboardProps) {
   // hooks
-  const { push } = useRouter();
-  const { data, error } = useSWR(`/posted/roompies?userId=${dbUser.id}`);
+  const { push } = useRouter()
+  const { data, error } = useSWR(`/posted/roompies?userId=${dbUser.id}`)
 
-  console.log(data, error);
+  console.log(data, error)
 
   function onCreateRoompies() {
     // check if the 'dbUser' is premium / postedRoompies less than 1, then can upload more than 1 post
     if (dbUser?.postedRoompies.length < 1 || dbUser?.premium) {
-      return push('/dashboard/roompies/create');
+      return push('/dashboard/roompies/create')
     } else {
       return toast.warning(
-        'Sorry, free dbUser can only create 1 roompies. Please, extend your subscription plan.',
-      );
+        'Sorry, free dbUser can only create 1 roompies. Please, extend your subscription plan.'
+      )
     }
   }
 
@@ -137,7 +132,7 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric',
-                          },
+                          }
                         )}
                   </h3>
                 )}
@@ -221,5 +216,5 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
         <NoListings color="pink" />
       </div>
     </div>
-  );
+  )
 }

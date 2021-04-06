@@ -1,15 +1,15 @@
-import { useState, MouseEvent, useContext } from 'react';
-import Select from 'react-select';
-import { toast } from 'react-toastify';
-import Rodal from 'rodal';
+import { useState, MouseEvent, useContext } from 'react'
+import Select from 'react-select'
+import { toast } from 'react-toastify'
+import Rodal from 'rodal'
 // files
-import UserContext from '../contexts/UserContext';
-import { db } from '../configs/firebaseConfig';
+import UserContext from '../contexts/UserContext'
+import { db } from '../configs/firebaseConfig'
 
 export interface MyModalProps {
-  isOpen: boolean;
-  closeModal: () => void;
-  roompyId: string;
+  isOpen: boolean
+  closeModal: () => void
+  roompyId: string
 }
 
 export default function MyModal({
@@ -18,7 +18,7 @@ export default function MyModal({
   roompyId,
 }: MyModalProps) {
   // state
-  const [reportMessage, setReportMessage] = useState<string>('');
+  const [reportMessage, setReportMessage] = useState<string>('')
   const [types] = useState([
     {
       value: 1,
@@ -40,18 +40,18 @@ export default function MyModal({
       value: 5,
       label: 'Contains offensive or inappropriate content',
     },
-  ]);
-  const [selectedTypes, setSelectedTypes] = useState(null); // object
+  ])
+  const [selectedTypes, setSelectedTypes] = useState(null) // object
 
   // UserContext
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)
 
   async function submitReport(e: MouseEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // check input
     if (!reportMessage || !selectedTypes.value) {
-      return toast.warning('Please fill in all the report field');
+      return toast.warning('Please fill in all the report field')
     }
 
     const report = {
@@ -59,16 +59,16 @@ export default function MyModal({
       for: roompyId,
       typeId: selectedTypes.value,
       desc: reportMessage,
-    };
+    }
 
     // store to firestore
-    await db.collection('reports').add(report);
+    await db.collection('reports').add(report)
 
     // after all done
-    closeModal();
+    closeModal()
     toast.success(
-      'Thanks for your report, we will review this roompies shortly',
-    );
+      'Thanks for your report, we will review this roompies shortly'
+    )
   }
 
   return (
@@ -121,5 +121,5 @@ export default function MyModal({
         </form>
       </section>
     </Rodal>
-  );
+  )
 }

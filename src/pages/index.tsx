@@ -1,11 +1,11 @@
 // import Head from 'next/head';
 // files
-import NavHome from '../components/home/NavHome';
-import FeatureHome from '../components/home/FeatureHome';
-import Steps from '../components/home/Steps';
-import Testimonials from '../components/home/Testimonials';
-import CTA from '../components/home/CTA';
-import Footer from '../components/Footer';
+import NavHome from '../components/home/NavHome'
+import FeatureHome from '../components/home/FeatureHome'
+import Steps from '../components/home/Steps'
+import Testimonials from '../components/home/Testimonials'
+import CTA from '../components/home/CTA'
+import Footer from '../components/Footer'
 
 export default function IndexPage() {
   return (
@@ -22,5 +22,5 @@ export default function IndexPage() {
 
       <Footer />
     </div>
-  );
+  )
 }

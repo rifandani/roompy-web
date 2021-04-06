@@ -1,29 +1,29 @@
-import { useState, Dispatch, SetStateAction, FormEvent } from 'react';
+import { useState, Dispatch, SetStateAction, FormEvent } from 'react'
 import {
   FaSortAmountUp,
   FaSortAmountDown,
   FaEllipsisV,
   FaPaperclip,
-} from 'react-icons/fa';
-import { IoSend } from 'react-icons/io5';
-import { toast } from 'react-toastify';
+} from 'react-icons/fa'
+import { IoSend } from 'react-icons/io5'
+import { toast } from 'react-toastify'
 // files
-import { InboxPageProps } from '../../pages/dashboard/inbox';
+import { InboxPageProps } from '../../pages/dashboard/inbox'
 
 const chat = {
   name: 'Masturah Adam',
   time: '2 days ago',
   message:
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tempus element',
-};
+}
 
 interface Props extends InboxPageProps {
-  setBusy: Dispatch<SetStateAction<boolean>>;
+  setBusy: Dispatch<SetStateAction<boolean>>
 }
 
 export default function InboxContent({ setBusy, dbUser }: Props) {
   // hooks
-  const [isAsc, setIsAsc] = useState<boolean>(false);
+  const [isAsc, setIsAsc] = useState<boolean>(false)
 
   return (
     <div className="flex-1 pb-20 mt-12 overflow-hidden bg-gray-100 md:mt-2 md:pb-0">
@@ -159,5 +159,5 @@ export default function InboxContent({ setBusy, dbUser }: Props) {
         </div>
       </main>
     </div>
-  );
+  )
 }

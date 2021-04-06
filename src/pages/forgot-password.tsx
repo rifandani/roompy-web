@@ -1,46 +1,46 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useState, MouseEvent, useContext } from 'react';
-import { toast } from 'react-toastify';
-import validator from 'validator';
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useState, MouseEvent, useContext } from 'react'
+import { toast } from 'react-toastify'
+import validator from 'validator'
 // files
-import UserContext from '../contexts/UserContext';
-import { auth } from '../configs/firebaseConfig';
+import UserContext from '../contexts/UserContext'
+import { auth } from '../configs/firebaseConfig'
 
 export default function ForgotPasswordPage() {
   // state
-  const [email, setEmail] = useState<string>('');
+  const [email, setEmail] = useState<string>('')
 
   // UserContext
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)
 
   // useRouter
-  const { push } = useRouter();
+  const { push } = useRouter()
 
   async function forgot(e: MouseEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // push back home already logged in user
     if (user) {
-      toast.warning('You are already logged in!');
-      return push('/');
+      toast.warning('You are already logged in!')
+      return push('/')
     }
 
     // validation
-    if (!email) return toast.warning('Please input the email field');
+    if (!email) return toast.warning('Please input the email field')
     if (!validator.isEmail(email))
-      return toast.warning('Please input a valid email');
+      return toast.warning('Please input a valid email')
 
     try {
-      await auth.sendPasswordResetEmail(email);
+      await auth.sendPasswordResetEmail(email)
 
-      toast.info('Check your email to reset your password');
-      return push('/login');
+      toast.info('Check your email to reset your password')
+      return push('/login')
     } catch (err) {
       // Handle Errors here.
-      toast.error(err.message);
+      toast.error(err.message)
 
-      return console.error(err);
+      return console.error(err)
     }
   }
 
@@ -121,5 +121,5 @@ export default function ForgotPasswordPage() {
         {/* <!-- END Form --> */}
       </div>
     </div>
-  );
+  )
 }

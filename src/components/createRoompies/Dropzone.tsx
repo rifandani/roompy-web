@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useEffect } from 'react'
+import { useDropzone } from 'react-dropzone'
 
 export default function Dropzone({
   images,
@@ -13,8 +13,8 @@ export default function Dropzone({
     onDrop: (acceptedImages: File[]) => {
       const filteredAcceptedImages = acceptedImages.filter(
         (image, i, images) =>
-          images.findIndex((blob) => blob.size === image.size) === i,
-      );
+          images.findIndex((blob) => blob.size === image.size) === i
+      )
 
       setImages(
         filteredAcceptedImages.map((image) =>
@@ -22,21 +22,21 @@ export default function Dropzone({
           // bisa jga pake spread operator
           Object.assign(image, {
             preview: URL.createObjectURL(image),
-          }),
-        ),
-      );
+          })
+        )
+      )
     },
-  });
+  })
 
   const removeImage = (size: any) => {
     // find the index of the item
     // remove the item from array
-    const validImageIndex = images.findIndex((e: any) => e.size === size);
-    images.splice(validImageIndex, 1);
+    const validImageIndex = images.findIndex((e: any) => e.size === size)
+    images.splice(validImageIndex, 1)
 
     // update images array
-    setImages([...images]);
-  };
+    setImages([...images])
+  }
 
   // image thumbnail component
   const thumbs = images.map((image: any) => (
@@ -49,15 +49,15 @@ export default function Dropzone({
         <img className="block w-auto h-full" src={image.preview} />
       </div>
     </div>
-  ));
+  ))
 
   useEffect(
     () => () => {
       // Make sure to revoke the data uris to avoid memory leaks
-      images.forEach((image: any) => URL.revokeObjectURL(image.preview));
+      images.forEach((image: any) => URL.revokeObjectURL(image.preview))
     },
-    [images],
-  );
+    [images]
+  )
 
   return (
     <section className="container px-3 py-2 mt-1 border border-purple-500 border-dashed rounded-md shadow-sm form-input">
@@ -79,5 +79,5 @@ export default function Dropzone({
       </div>
       <aside className="flex flex-wrap mt-4">{thumbs}</aside>
     </section>
-  );
+  )
 }

@@ -1,12 +1,12 @@
-import Link from 'next/link';
-import useSWR from 'swr';
+import Link from 'next/link'
+import useSWR from 'swr'
 // files
-import RoompyCard2 from '../roompies/RoompyCard2';
-import { MatchesPageProps } from '../../pages/dashboard/matches';
-import { Roompies } from '../../utils/interfaces';
+import RoompyCard2 from '../roompies/RoompyCard2'
+import { MatchesPageProps } from '../../pages/dashboard/matches'
+import { Roompies } from '../../utils/interfaces'
 
 export default function InboxContent({ userId }: MatchesPageProps) {
-  const { data, error } = useSWR(`/matches/roompies?userId=${userId}`);
+  const { data, error } = useSWR(`/matches/roompies?userId=${userId}`)
 
   return (
     <div className="flex-1 pb-20 mt-12 overflow-hidden bg-gray-100 md:mt-2 md:pb-0">
@@ -100,5 +100,5 @@ export default function InboxContent({ userId }: MatchesPageProps) {
         </div>
       </main>
     </div>
-  );
+  )
 }

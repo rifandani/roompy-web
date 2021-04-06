@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router'
 
 const pricings = [
   {
@@ -67,9 +67,13 @@ export default function Pricing() {
         </section>
 
         <section className="flex flex-wrap -mx-2 lg:w-4/5 sm:mx-auto sm:mb-2">
-          {pricings.map(pricing => (
+          {pricings.map((pricing) => (
             <div className="xl:w-1/3 md:w-1/2 w-full px-6 md:px-8 py-4 md:py-8">
-              <div className={`${pricing.recommended ? 'border-purple-500' : 'border-gray-300'} h-full p-6 rounded-lg border-2 flex flex-col relative overflow-hidden`}>
+              <div
+                className={`${
+                  pricing.recommended ? 'border-purple-500' : 'border-gray-300'
+                  } h-full p-6 rounded-lg border-2 flex flex-col relative overflow-hidden`}
+              >
                 {pricing.recommended && (
                   <span className="bg-purple-500 text-white px-3 py-1 tracking-widest text-xs absolute right-0 top-0 rounded-bl">
                     RECOMMENDED
@@ -81,25 +85,33 @@ export default function Pricing() {
                 </h2>
 
                 <h1 className="text-4xl text-gray-900 leading-none flex items-center pb-4 mb-4 border-b border-gray-200">
-                  <span>{new Intl.NumberFormat('id-ID', {
-                    style: 'currency',
-                    currency: 'IDR',
-                    maximumFractionDigits: 0
-                  }).format(pricing.price)}</span>
+                  <span>
+                    {new Intl.NumberFormat('id-ID', {
+                      style: 'currency',
+                      currency: 'IDR',
+                      maximumFractionDigits: 0,
+                    }).format(pricing.price)}
+                  </span>
 
-                  <span className="text-lg ml-2 font-normal text-gray-500">/bln</span>
+                  <span className="text-lg ml-2 font-normal text-gray-500">
+                    /bln
+                  </span>
                 </h1>
 
-                {pricing.features?.map(feature => (
-                  <p className="flex items-center text-gray-600 mb-2">
-                    <span className={`${pricing.recommended ? 'bg-purple-500' : 'bg-gray-500'} w-4 h-4 mr-2 inline-flex items-center justify-center text-white rounded-full flex-shrink-0`}>
+                {pricing.features?.map((feature, i) => (
+                  <p key={i} className="flex items-center text-gray-600 mb-2">
+                    <span
+                      className={`${
+                        pricing.recommended ? 'bg-purple-500' : 'bg-gray-500'
+                        } w-4 h-4 mr-2 inline-flex items-center justify-center text-white rounded-full flex-shrink-0`}
+                    >
                       <svg
                         fill="none"
                         stroke="currentColor"
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth="2.5"
-                        className='w-3 h-3'
+                        className="w-3 h-3"
                         viewBox="0 0 24 24"
                       >
                         <path d="M20 6L9 17l-5-5"></path>
@@ -116,7 +128,8 @@ export default function Pricing() {
 
                       return push('/login')
                     }}
-                    className="flex items-center mt-2 w-full rounded-md px-4 py-2 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent md:text-lg focus:outline-none hover:bg-purple-100 hover:text-purple-700">
+                    className="flex items-center mt-2 w-full rounded-md px-4 py-2 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent md:text-lg focus:outline-none hover:bg-purple-100 hover:text-purple-700"
+                  >
                     {pricing.recommended ? 'Subscribe' : 'Login'}
                     <svg
                       fill="none"
@@ -132,14 +145,12 @@ export default function Pricing() {
                   </button>
                 )}
 
-                <p className="text-xs text-gray-500 mt-3">
-                  {pricing.desc}
-                </p>
+                <p className="text-xs text-gray-500 mt-3">{pricing.desc}</p>
               </div>
             </div>
           ))}
         </section>
       </div>
     </article>
-  );
+  )
 }

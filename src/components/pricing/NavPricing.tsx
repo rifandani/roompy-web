@@ -1,30 +1,30 @@
-import Link from 'next/link';
-import { useContext, useState } from 'react';
-import { JackInTheBox } from 'react-awesome-reveal';
-import { toast } from 'react-toastify';
-import axios from 'axios';
+import Link from 'next/link'
+import { useContext, useState } from 'react'
+import { JackInTheBox } from 'react-awesome-reveal'
+import { toast } from 'react-toastify'
+import axios from 'axios'
 // files
-import UserContext from '../../contexts/UserContext';
-import { auth } from '../../configs/firebaseConfig';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
+import UserContext from '../../contexts/UserContext'
+import { auth } from '../../configs/firebaseConfig'
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
 
 const NavPricing = () => {
-  const [toggleMenu, setToggleMenu] = useState(false);
+  const [toggleMenu, setToggleMenu] = useState(false)
 
   // UserContext
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)
 
   async function logout() {
     try {
       // logout from firebase auth di client-side, biar UserContext/useAuth ke trigger
-      await auth.signOut();
+      await auth.signOut()
 
       // delete cookie from the server
-      await axios.get('/auth/logout');
+      await axios.get('/auth/logout')
 
-      toast.info('Logout success');
+      toast.info('Logout success')
     } catch (err) {
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
   }
 
@@ -112,12 +112,12 @@ const NavPricing = () => {
                     Logout
                   </span>
                 ) : (
-                    <Link href="/login">
-                      <a className="p-2 ml-6 font-medium text-purple-700 bg-purple-100 rounded-md hover:text-white hover:bg-purple-700">
-                        Login
+                  <Link href="/login">
+                    <a className="p-2 ml-6 font-medium text-purple-700 bg-purple-100 rounded-md hover:text-white hover:bg-purple-700">
+                      Login
                     </a>
-                    </Link>
-                  )}
+                  </Link>
+                )}
               </div>
             </nav>
           </section>
@@ -126,7 +126,7 @@ const NavPricing = () => {
           <section
             className={`top-0 inset-x-0 p-2 transform origin-top-right md:hidden ${
               toggleMenu ? 'absolute' : 'hidden'
-              }`}
+            }`}
           >
             <JackInTheBox duration={500}>
               <div className="rounded-lg shadow-md">
@@ -194,12 +194,12 @@ const NavPricing = () => {
                         Logout
                       </span>
                     ) : (
-                        <Link href="/login">
-                          <a className="block w-full px-5 py-3 font-medium text-center text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700">
-                            Login
+                      <Link href="/login">
+                        <a className="block w-full px-5 py-3 font-medium text-center text-purple-500 bg-gray-50 hover:bg-purple-100 hover:text-purple-700 focus:outline-none focus:bg-gray-100 focus:text-purple-700">
+                          Login
                         </a>
-                        </Link>
-                      )}
+                      </Link>
+                    )}
                   </div>
                 </div>
               </div>
@@ -243,7 +243,7 @@ const NavPricing = () => {
         />
       </article>
     </main>
-  );
-};
+  )
+}
 
-export default NavPricing;
+export default NavPricing

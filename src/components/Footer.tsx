@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { FaInstagram, FaFacebook } from 'react-icons/fa';
+import Link from 'next/link'
+import { FaInstagram, FaFacebook } from 'react-icons/fa'
 
 export default function Footer({ footer2 }: { footer2?: boolean }) {
   return (
@@ -139,5 +139,5 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
         </section>
       </div>
     </footer>
-  );
+  )
 }

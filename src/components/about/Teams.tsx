@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { FaLinkedin, FaInstagram } from 'react-icons/fa';
+import Link from 'next/link'
+import { FaLinkedin, FaInstagram } from 'react-icons/fa'
 
 export default function Teams() {
   return (
@@ -96,5 +96,5 @@ export default function Teams() {
         </div>
       </section>
     </>
-  );
+  )
 }

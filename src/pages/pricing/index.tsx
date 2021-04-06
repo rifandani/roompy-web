@@ -1,7 +1,7 @@
 // files
-import NavPricing from '../../components/pricing/NavPricing';
-import Pricing from '../../components/pricing/Pricing';
-import Footer from '../../components/Footer';
+import NavPricing from '../../components/pricing/NavPricing'
+import Pricing from '../../components/pricing/Pricing'
+import Footer from '../../components/Footer'
 
 export default function PricingPage() {
   return (
@@ -12,5 +12,5 @@ export default function PricingPage() {
 
       <Footer />
     </div>
-  );
+  )
 }

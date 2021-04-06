@@ -24,4 +24,4 @@ module.exports = {
     FIRE_MEASUREMENT_ID: 'G-VCE8864BGF',
     FIRE_DATABASE_URL: 'https://roompy-roompies-default-rtdb.firebaseio.com',
   },
-};
+}

@@ -1,13 +1,13 @@
-import { useState, FormEvent } from 'react';
-import { HiOutlineSearch } from 'react-icons/hi';
-import { IoFilter } from 'react-icons/io5';
+import { useState, FormEvent } from 'react'
+import { HiOutlineSearch } from 'react-icons/hi'
+import { IoFilter } from 'react-icons/io5'
 
 export default function RoomsFilters() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
 
   const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-  };
+    e.preventDefault()
+  }
 
   return (
     <div className="bg-gray-800 xl:w-72">
@@ -277,5 +277,5 @@ export default function RoomsFilters() {
         </div>
       </form>
     </div>
-  );
+  )
 }

@@ -1,80 +1,80 @@
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import { useState, FormEvent, MouseEvent } from 'react';
-import { FaCheck } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import validator from 'validator';
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { useState, FormEvent, MouseEvent } from 'react'
+import { FaCheck } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import validator from 'validator'
 // files
 import {
   auth,
   db,
   emailAuthProvider,
   nowMillis,
-} from '../../configs/firebaseConfig';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
-import { FireUser, User } from '../../utils/interfaces';
+} from '../../configs/firebaseConfig'
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import { FireUser, User } from '../../utils/interfaces'
 
 export default function AccountContent({
   dbUser,
   user,
 }: {
-  dbUser: User;
-  user: FireUser;
+  dbUser: User
+  user: FireUser
 }) {
-  console.log('last signin time => ', user.metadata.lastSignInTime);
+  console.log('last signin time => ', user.metadata.lastSignInTime)
 
   // hooks
-  const [busy, setBusy] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>('');
-  const [newEmail, setEmail] = useState<string>('');
-  const [currentEmail, setCurrentEmail] = useState<string>(user.email);
-  const [currentPassword, setCurrentPassword] = useState<string>('');
-  const [newPassword, setNewPassword] = useState<string>('');
-  const { push } = useRouter();
+  const [busy, setBusy] = useState<boolean>(false)
+  const [username, setUsername] = useState<string>('')
+  const [newEmail, setEmail] = useState<string>('')
+  const [currentEmail, setCurrentEmail] = useState<string>(user.email)
+  const [currentPassword, setCurrentPassword] = useState<string>('')
+  const [newPassword, setNewPassword] = useState<string>('')
+  const { push } = useRouter()
 
   async function onVerifyEmail() {
     if (user.emailVerified)
-      return toast.warning('Your email is already verified');
+      return toast.warning('Your email is already verified')
 
     try {
-      await user.sendEmailVerification();
-      toast.info('Please check your email to verify your account');
+      await user.sendEmailVerification()
+      toast.info('Please check your email to verify your account')
     } catch (err) {
-      toast.error(err.message);
-      return console.error(err);
+      toast.error(err.message)
+      return console.error(err)
     }
   }
 
   async function onUpdateProfile(e: FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // validation input
     if (!username || !newEmail || !newPassword) {
-      return toast.warning("Don't empty the input field");
+      return toast.warning("Don't empty the input field")
     } else if (!validator.isEmail(newEmail)) {
-      return toast.warning('Please input a valid email');
+      return toast.warning('Please input a valid email')
     } else if (!validator.isLength(username, { min: 3 })) {
-      return toast.warning('Please input min 3 chars for USERNAME');
+      return toast.warning('Please input min 3 chars for USERNAME')
     } else if (!validator.isLength(newPassword, { min: 6 })) {
-      return toast.warning('Please input min 6 chars for NEW PASSWORD');
+      return toast.warning('Please input min 6 chars for NEW PASSWORD')
     }
 
     try {
-      setBusy(true); // disable button
+      setBusy(true) // disable button
 
       // reauth and update profile items
-      await reauthenticate(currentPassword);
-      await updateProfileItems(username, newEmail, newPassword);
+      await reauthenticate(currentPassword)
+      await updateProfileItems(username, newEmail, newPassword)
 
       // sign in again to set userCredential to React Context
-      await auth.signInWithEmailAndPassword(newEmail, newPassword);
+      await auth.signInWithEmailAndPassword(newEmail, newPassword)
 
-      toast.success('Account Profile Updated');
-      return push('/dashboard');
+      toast.success('Account Profile Updated')
+      return push('/dashboard')
     } catch (err) {
-      setBusy(false);
-      console.error('Update profile items error', err);
-      return toast.error(err.message);
+      setBusy(false)
+      console.error('Update profile items error', err)
+      return toast.error(err.message)
     }
   }
 
@@ -82,91 +82,91 @@ export default function AccountContent({
     // get the user credentials
     const credential = emailAuthProvider.credential(
       currentEmail,
-      currentPassword,
-    );
+      currentPassword
+    )
 
     // check if user valid
     try {
-      await user.reauthenticateWithCredential(credential);
-      console.log('Reauthenticate success');
-      return true;
+      await user.reauthenticateWithCredential(credential)
+      console.log('Reauthenticate success')
+      return true
     } catch (err) {
-      setBusy(false);
-      console.error('Reauthenticate error', err);
-      toast.error(err.message);
-      return false;
+      setBusy(false)
+      console.error('Reauthenticate error', err)
+      toast.error(err.message)
+      return false
     }
   }
 
   async function updateProfileItems(
     username: string,
     newEmail: string,
-    newPassword: string,
+    newPassword: string
   ) {
     try {
       // update profile items in firebase.auth
       await user.updateProfile({
         displayName: username,
-      });
-      await user.updateEmail(newEmail);
-      await user.updatePassword(newPassword);
+      })
+      await user.updateEmail(newEmail)
+      await user.updatePassword(newPassword)
 
       // update profile items in users collection
       await db.collection('users').doc(user.uid).update({
         username,
         email: newEmail,
         updatedAt: nowMillis,
-      });
+      })
 
-      console.log('updateProfileItems success');
+      console.log('updateProfileItems success')
     } catch (err) {
-      setBusy(false);
-      console.error('Update profile items error', err);
-      return toast.error(err.message);
+      setBusy(false)
+      console.error('Update profile items error', err)
+      return toast.error(err.message)
     }
   }
 
   async function onDeleteAccount(e: MouseEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!currentPassword || !validator.isLength(currentPassword, { min: 6 })) {
       toast.warning(
-        'Please input your current valid password to reauthenticate',
-      );
-      return;
+        'Please input your current valid password to reauthenticate'
+      )
+      return
     }
 
     const userAgree = window.confirm(
-      'Are you sure you want to delete this account? \nThis action cannot be undone!',
-    );
-    if (!userAgree) return;
+      'Are you sure you want to delete this account? \nThis action cannot be undone!'
+    )
+    if (!userAgree) return
 
     try {
-      setBusy(true); // disable button
+      setBusy(true) // disable button
 
       // reauthenticate first
-      const isAuth = await reauthenticate(currentPassword);
+      const isAuth = await reauthenticate(currentPassword)
 
       if (isAuth) {
         // DELETE in users collection + postedRoompies
-        await axios.delete(`/users?id=${user.uid}`);
+        await axios.delete(`/users?id=${user.uid}`)
 
         // delete in auth & signOut the user (move this to client-side)
-        await user.delete();
+        await user.delete()
 
         // delete cookies in header
-        await axios.get('/auth/logout');
+        await axios.get('/auth/logout')
 
         // on SUCCESS
-        setBusy(false);
-        await push('/');
-        toast('Your account deleted successfully');
+        setBusy(false)
+        await push('/')
+        toast('Your account deleted successfully')
       }
     } catch (err) {
       // on ERROR => Axios Response error
-      setBusy(false); // enable button
+      setBusy(false) // enable button
 
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
   }
 
@@ -332,5 +332,5 @@ export default function AccountContent({
         </form>
       </div>
     </div>
-  );
+  )
 }

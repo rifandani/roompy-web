@@ -1,14 +1,14 @@
-import { FiPhoneCall, FiHome, FiMail } from 'react-icons/fi';
-import { toast } from 'react-toastify';
-import { useForm, ValidationError } from '@formspree/react';
+import { FiPhoneCall, FiHome, FiMail } from 'react-icons/fi'
+import { toast } from 'react-toastify'
+import { useForm, ValidationError } from '@formspree/react'
 // files
 
 export default function Contact() {
   // formspree
-  const [state, handleSubmit] = useForm('contact');
+  const [state, handleSubmit] = useForm('contact')
 
   if (state.succeeded) {
-    toast.success('Thank You. We will reply soon.');
+    toast.success('Thank You. We will reply soon.')
   }
 
   return (
@@ -121,5 +121,5 @@ export default function Contact() {
         </div>
       </div>
     </section>
-  );
+  )
 }

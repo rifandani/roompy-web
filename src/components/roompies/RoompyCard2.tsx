@@ -1,11 +1,11 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import React from 'react';
-import { FaMapMarkerAlt } from 'react-icons/fa';
-import { FcMoneyTransfer } from 'react-icons/fc';
-import { GiFemale, GiMale } from 'react-icons/gi';
+import Image from 'next/image'
+import Link from 'next/link'
+import React from 'react'
+import { FaMapMarkerAlt } from 'react-icons/fa'
+import { FcMoneyTransfer } from 'react-icons/fc'
+import { GiFemale, GiMale } from 'react-icons/gi'
 // files
-import { RoompyProps } from '../../utils/interfaces';
+import { RoompyProps } from '../../utils/interfaces'
 
 export default function RoompyCard2({ roompy }: RoompyProps) {
   return (
@@ -27,7 +27,7 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
             // premium user check bg-color
             className={`${
               false ? 'bg-yellow-50' : 'bg-white'
-              } px-4 py-4 rounded-lg shadow-lg`}
+            } px-4 py-4 rounded-lg shadow-lg`}
           >
             <div className="flex items-baseline">
               {/* badge */}
@@ -67,8 +67,8 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
               {roompy.gender === 'Pria' ? (
                 <GiMale className="mr-2 text-blue-500" />
               ) : (
-                  <GiFemale className="mr-2 text-pink-500" />
-                )}
+                <GiFemale className="mr-2 text-pink-500" />
+              )}
 
               <span className="text-gray-900">{roompy.age} thn</span>
               <span className="ml-2 italic text-purple-800">
@@ -82,11 +82,13 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
             <div className="flex items-center mt-1 text-sm">
               <FcMoneyTransfer className="mr-2" />
 
-              <span className="text-gray-900">{new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0,
-              }).format(roompy.budget)}</span>
+              <span className="text-gray-900">
+                {new Intl.NumberFormat('id-ID', {
+                  style: 'currency',
+                  currency: 'IDR',
+                  maximumFractionDigits: 0,
+                }).format(roompy.budget)}
+              </span>
               <span className="ml-1 text-gray-600">/bln</span>
             </div>
 
@@ -100,5 +102,5 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
         </section>
       </article>
     </Link>
-  );
+  )
 }

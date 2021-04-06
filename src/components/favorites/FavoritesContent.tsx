@@ -1,41 +1,41 @@
-import Link from 'next/link';
-import React, { Dispatch, SetStateAction } from 'react';
-import { FaWindowClose } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import useSWR, { mutate } from 'swr';
+import Link from 'next/link'
+import React, { Dispatch, SetStateAction } from 'react'
+import { FaWindowClose } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import useSWR, { mutate } from 'swr'
 // files
-import RoompyCard2 from '../roompies/RoompyCard2';
-import { FavoritesPageProps } from '../../pages/dashboard/favorites';
-import { Roompies } from '../../utils/interfaces';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
+import RoompyCard2 from '../roompies/RoompyCard2'
+import { FavoritesPageProps } from '../../pages/dashboard/favorites'
+import { Roompies } from '../../utils/interfaces'
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
 
 interface Props extends FavoritesPageProps {
-  setBusy: Dispatch<SetStateAction<boolean>>;
+  setBusy: Dispatch<SetStateAction<boolean>>
 }
 
 export default function InboxContent({ setBusy, userId }: Props) {
   // hooks
-  const { data, error } = useSWR(`/favorites/roompies?userId=${userId}`);
+  const { data, error } = useSWR(`/favorites/roompies?userId=${userId}`)
 
   const onDeleteFav = async (_userId: string, _roompyId: string) => {
     try {
-      setBusy(true);
+      setBusy(true)
 
       await axios.delete(
-        `/favorites/roompies?userId=${_userId}&roompyId=${_roompyId}`,
-      );
+        `/favorites/roompies?userId=${_userId}&roompyId=${_roompyId}`
+      )
 
       // on SUCCESS
-      mutate(`/favorites/roompies?userId=${userId}`); // re-fetch
-      toast.info('Delete successful');
-      setBusy(false);
+      mutate(`/favorites/roompies?userId=${userId}`) // re-fetch
+      toast.info('Delete successful')
+      setBusy(false)
     } catch (err) {
       // on ERROR
-      axiosErrorHandle(err);
-      setBusy(false);
+      axiosErrorHandle(err)
+      setBusy(false)
     }
-  };
+  }
 
   return (
     <div className="flex-1 pb-20 mt-12 overflow-hidden bg-gray-100 md:mt-2 md:pb-0">
@@ -133,5 +133,5 @@ export default function InboxContent({ setBusy, userId }: Props) {
         </div>
       </main>
     </div>
-  );
+  )
 }

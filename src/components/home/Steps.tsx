@@ -1,5 +1,5 @@
-import { FcImport, FcGlobe, FcCameraIdentification } from 'react-icons/fc';
-import { Zoom } from 'react-awesome-reveal';
+import { FcImport, FcGlobe, FcCameraIdentification } from 'react-icons/fc'
+import { Zoom } from 'react-awesome-reveal'
 
 export default function Steps() {
   return (
@@ -89,5 +89,5 @@ export default function Steps() {
         </Zoom>
       </main>
     </div>
-  );
+  )
 }

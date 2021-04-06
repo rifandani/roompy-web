@@ -5,7 +5,22 @@
     "dev": "rm -rf ./.next && next dev",
     "build": "next build",
     "start": "next start",
-    "build:export": "next build && next export"
+    "build:export": "next build && next export",
+    "lint": "eslint . --ext ts --ext tsx --ext js",
+    "type-check": "tsc --pretty --noEmit",
+    "format": "prettier --write ."
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run type-check"
+    }
+  },
+  "lint-staged": {
+    "*.@(ts|tsx)": [
+      "npm run lint",
+      "npm run format"
+    ]
   },
   "dependencies": {
     "@formspree/react": "^2.2.3",
@@ -64,6 +79,12 @@
     "@types/react-tooltip": "^4.2.4",
     "@types/validator": "^13.1.1",
     "@types/ws": "^7.4.0",
+    "@typescript-eslint/eslint-plugin": "^4.21.0",
+    "@typescript-eslint/parser": "^4.21.0",
+    "eslint": "^7.23.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-react": "^7.23.1",
+    "prettier": "^2.2.1",
     "typescript": "^4.1.2"
   },
   "license": "MIT"
