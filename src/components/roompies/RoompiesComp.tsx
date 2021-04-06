@@ -1,26 +1,25 @@
-import Link from 'next/link';
-import { useState } from 'react';
-import Select from 'react-select';
+import { useState } from 'react'
+import Select from 'react-select'
 // files
-import SiteHeader from '../SiteHeader';
-import RoompiesFilters from './RoompiesFilters';
-import RoompyCard2 from './RoompyCard2';
-import Pagination from '../Pagination';
-import { RoompiesProps } from '../../utils/interfaces';
+import SiteHeader from '../SiteHeader'
+import RoompiesFilters from './RoompiesFilters'
+import RoompyCard2 from './RoompyCard2'
+import Pagination from '../Pagination'
+import { RoompiesProps } from '../../utils/interfaces'
 
 const sorts = [
   { value: 'createdAt', label: 'Newest' },
   { value: 'age', label: 'Oldest' },
   { value: 'budget', label: 'Highest Budget' },
   { value: 'moveDate', label: 'Earliest Move Date' },
-];
+]
 
 export default function RoompiesComp({ roompies }: RoompiesProps) {
-  const [selectedSort, setSelectedSort] = useState(null); // object
-  const [currentPage, setCurrentPage] = useState<number>(0); // number => for pagination
-  const [limit] = useState<number>(12); // number => for pagination
+  const [selectedSort, setSelectedSort] = useState(null) // object
+  const [currentPage, setCurrentPage] = useState<number>(0) // number => for pagination
+  const [limit] = useState<number>(12) // number => for pagination
 
-  const offset = currentPage * limit;
+  const offset = currentPage * limit
 
   const currentRoompies = roompies
     .slice(offset, offset + limit)
@@ -31,11 +30,9 @@ export default function RoompiesComp({ roompies }: RoompiesProps) {
           i > 0 ? 'mt-10 sm:ml-4' : ''
         } sm:mt-0 sm:w-80 sm:flex-shrink-0`}
       >
-        <Link href={`/roompies/${roompy.id}`}>
-          <RoompyCard2 roompy={roompy} />
-        </Link>
+        <RoompyCard2 roompy={roompy} />
       </div>
-    ));
+    ))
 
   return (
     <div className="min-h-full antialiased xl:flex xl:flex-col xl:h-screen">
@@ -61,8 +58,8 @@ export default function RoompiesComp({ roompies }: RoompiesProps) {
               options={sorts}
               defaultValue={selectedSort}
               onChange={(sort) => {
-                setSelectedSort(sort);
-                roompies.sort((a, b) => b[sort.value] - a[sort.value]);
+                setSelectedSort(sort)
+                roompies.sort((a, b) => b[sort.value] - a[sort.value])
               }}
             />
           </section>
@@ -86,5 +83,5 @@ export default function RoompiesComp({ roompies }: RoompiesProps) {
         </main>
       </div>
     </div>
-  );
+  )
 }

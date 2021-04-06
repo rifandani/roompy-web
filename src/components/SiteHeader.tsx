@@ -1,40 +1,40 @@
-import { useState, useContext, MouseEvent } from 'react';
-import { IoMenu, IoClose } from 'react-icons/io5';
-import { HiOutlineSearch } from 'react-icons/hi';
-import { FaUserCircle } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import { useRouter } from 'next/router';
-import Image from 'next/image';
-import Link from 'next/link';
-import axios from 'axios';
+import { useState, useContext, MouseEvent } from 'react'
+import { IoMenu, IoClose } from 'react-icons/io5'
+import { HiOutlineSearch } from 'react-icons/hi'
+import { FaUserCircle } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
+import Image from 'next/image'
+import Link from 'next/link'
+import axios from 'axios'
 // files
-import { auth } from '../configs/firebaseConfig';
-import axiosErrorHandle from '../utils/axiosErrorHandle';
-import UserContext from '../contexts/UserContext';
+import { auth } from '../configs/firebaseConfig'
+import axiosErrorHandle from '../utils/axiosErrorHandle'
+import UserContext from '../contexts/UserContext'
 
 export default function SiteHeader() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [searchQue, setSearchQue] = useState<string>('');
-  const { user } = useContext(UserContext);
-  const { push } = useRouter();
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [searchQue, setSearchQue] = useState<string>('')
+  const { user } = useContext(UserContext)
+  const { push } = useRouter()
 
   const onLogout = async (e: MouseEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-      await push('/');
+      await push('/')
 
       // logout from firebase auth di client-side, biar UserContext/useAuth ke trigger
-      await auth.signOut();
+      await auth.signOut()
 
       // delete cookie from server
-      await axios.get('/auth/logout');
+      await axios.get('/auth/logout')
 
-      toast.info('Logout success');
+      toast.info('Logout success')
     } catch (err) {
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
-  };
+  }
 
   return (
     <header className="bg-gray-900 sm:flex sm:items-center sm:justify-between xl:bg-white xl:flex-shrink-0">
@@ -197,5 +197,5 @@ export default function SiteHeader() {
         </div>
       </nav>
     </header>
-  );
+  )
 }

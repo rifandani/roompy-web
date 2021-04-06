@@ -8,7 +8,7 @@ import UserContext from '../../contexts/UserContext'
 import { auth } from '../../configs/firebaseConfig'
 import axiosErrorHandle from '../../utils/axiosErrorHandle'
 
-const NavFAQ = () => {
+const NavPricing = () => {
   const [toggleMenu, setToggleMenu] = useState(false)
 
   // UserContext
@@ -209,26 +209,26 @@ const NavFAQ = () => {
           {/* hero header */}
           <section className="max-w-screen-xl px-4 pt-10 mx-auto mt-10 lg:h-full sm:mt-12 sm:px-6 md:mt-16 lg:mt-20 lg:px-8 xl:mt-28 lg:pt-20 xl:pt-16">
             <div className="sm:text-center lg:text-left">
-              <h2 className="text-4xl font-extrabold leading-10 tracking-tight text-gray-900 sm:text-5xl sm:leading-none md:text-6xl">
-                We learn about life through
+              <h2 className="mt-16 text-4xl font-extrabold leading-10 tracking-tight text-gray-900 sm:text-5xl sm:leading-none md:text-6xl">
+                Affordable
                 <br className="xl:hidden" />
-                <span className="text-purple-700"> Questions</span>
+                <span className="text-purple-700"> Pricing</span>
               </h2>
 
               <p className="mt-5 text-base italic text-gray-500 sm:text-lg md:text-xl sm:max-w-xl sm:mx-auto lg:mx-0">
-                Bertanya membuatmu menjadi lebih
-                <span className="text-purple-700"> bijak</span>
+                Pricing yang fleksibel menjangkau semua kebutuhan
+                <span className="text-purple-700"> anda</span>
               </p>
 
-              <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
+              {/* <div className="mt-10 sm:flex sm:justify-center lg:justify-start">
                 <div className="rounded-md shadow">
                   <Link href="/rooms/create">
                     <a className="flex items-center justify-center w-full px-8 py-3 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:py-4 md:text-lg md:px-10 focus:outline-none hover:bg-purple-100 hover:text-purple-700">
-                      Baca blog kami
+                      Read More
                     </a>
                   </Link>
                 </div>
-              </div>
+              </div> */}
             </div>
           </section>
         </div>
@@ -238,7 +238,7 @@ const NavFAQ = () => {
       <article className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
         <img
           className="hidden object-cover h-full lg:flex"
-          src="https://images.unsplash.com/photo-1484069560501-87d72b0c3669?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1950&q=80"
+          src="https://images.unsplash.com/photo-1579621970795-87facc2f976d?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
           alt="Question Marks Cover"
         />
       </article>
@@ -246,4 +246,4 @@ const NavFAQ = () => {
   )
 }
 
-export default NavFAQ
+export default NavPricing

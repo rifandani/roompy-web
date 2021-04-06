@@ -1,39 +1,39 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { toast } from 'react-toastify';
-import { AiFillSetting, AiFillHeart } from 'react-icons/ai';
-import { FaEnvelope, FaUserCircle, FaLink } from 'react-icons/fa';
-import { HiSearch, HiOutlineLogout } from 'react-icons/hi';
-import axios from 'axios';
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { toast } from 'react-toastify'
+import { AiFillSetting, AiFillHeart } from 'react-icons/ai'
+import { FaEnvelope, FaUserCircle, FaLink } from 'react-icons/fa'
+import { HiSearch, HiOutlineLogout } from 'react-icons/hi'
+import axios from 'axios'
 // files
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
-import { auth } from '../../configs/firebaseConfig';
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import { auth } from '../../configs/firebaseConfig'
 
 export default function DashboardLayout({
   children,
   ver2,
 }: {
-  children: any;
-  ver2?: boolean;
+  children: any
+  ver2?: boolean
 }) {
   // hooks
-  const [toggle, setToggle] = useState(false);
-  const { push, pathname } = useRouter();
+  const [toggle, setToggle] = useState(false)
+  const { push, pathname } = useRouter()
 
   async function logout() {
     try {
-      await push('/');
+      await push('/')
 
       // logout from firebase auth di client-side, biar UserContext/useAuth ke trigger
-      await auth.signOut();
+      await auth.signOut()
 
       // delete cookie from server
-      await axios.get('/auth/logout');
+      await axios.get('/auth/logout')
 
-      toast.info('Logout success');
+      toast.info('Logout success')
     } catch (err) {
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
   }
 
@@ -211,5 +211,5 @@ export default function DashboardLayout({
         {children}
       </div>
     </section>
-  );
+  )
 }

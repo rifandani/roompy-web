@@ -1,15 +1,15 @@
-import Link from 'next/link';
-import { FaMapMarkerAlt, FaCrown } from 'react-icons/fa';
-import { FcMoneyTransfer } from 'react-icons/fc';
-import { GiFemale, GiMale } from 'react-icons/gi';
+import Link from 'next/link'
+import { FaMapMarkerAlt, FaCrown } from 'react-icons/fa'
+import { FcMoneyTransfer } from 'react-icons/fc'
+import { GiFemale, GiMale } from 'react-icons/gi'
 // files
-import { Roompy } from '../utils/interfaces';
-import { nowMillis } from '../configs/firebaseConfig';
+import { Roompy } from '../../utils/interfaces'
+import { nowMillis } from '../../configs/firebaseConfig'
 
 export default function RoompyCard({ roompy }: { roompy: Roompy }) {
   // milliseconds
-  const oneWeek = 604800000;
-  const isMoreThanAWeek = nowMillis <= roompy.updatedAt + oneWeek;
+  const oneWeek = 604800000
+  const isMoreThanAWeek = nowMillis <= roompy.updatedAt + oneWeek
 
   return (
     <Link href={`/roompies/${roompy.id}`}>
@@ -85,5 +85,5 @@ export default function RoompyCard({ roompy }: { roompy: Roompy }) {
         </section>
       </article>
     </Link>
-  );
+  )
 }

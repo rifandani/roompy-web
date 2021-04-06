@@ -1,92 +1,92 @@
-import { useState, MouseEvent, useEffect, useContext } from 'react';
-import { Flip } from 'react-awesome-reveal';
-import Select from 'react-select';
-import { toast } from 'react-toastify';
+import { useState, MouseEvent, useEffect, useContext } from 'react'
+import { Flip } from 'react-awesome-reveal'
+import Select from 'react-select'
+import { toast } from 'react-toastify'
 // files
-import RoompyCard from '../RoompyCard';
-import { db } from '../../configs/firebaseConfig';
-import { Roompies } from '../../utils/interfaces';
-import UserContext from '../../contexts/UserContext';
-import subDistrictsJson2 from '../../utils/sub-districts2.json';
+import RoompyCard from './RoompyCard'
+import { db } from '../../configs/firebaseConfig'
+import { Roompies } from '../../utils/interfaces'
+import UserContext from '../../contexts/UserContext'
+import subDistrictsJson2 from '../../utils/sub-districts2.json'
 
 const types = [
   { value: 'Pria', label: 'Pria' },
   { value: 'Wanita', label: 'Wanita' },
-];
+]
 
 const sorts = [
   { value: 'createdAt', label: 'Newest' },
   { value: 'age', label: 'Oldest' },
   { value: 'budget', label: 'Highest Budget' },
   { value: 'moveDate', label: 'Earliest Move Date' },
-];
+]
 
 const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
   label: el,
   value: el,
-}));
+}))
 
 export default function Search() {
   // state
-  const [selectedTypes, setSelectedTypes] = useState(null); // object
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState(null); // object
-  const [selectedSort, setSelectedSort] = useState(null); // object
-  const [roompies2, setRoompies2] = useState<Roompies | []>([]); // array
-  const [limit, setLimit] = useState<number>(20); // number
+  const [selectedTypes, setSelectedTypes] = useState(null) // object
+  const [selectedSubDistricts, setSelectedSubDistricts] = useState(null) // object
+  const [selectedSort, setSelectedSort] = useState(null) // object
+  const [roompies2, setRoompies2] = useState<Roompies | []>([]) // array
+  const [limit, setLimit] = useState<number>(20) // number
 
   // UserContext
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)
 
   // useEffect
   useEffect(() => {
-    getRoompies();
-  }, []);
+    getRoompies()
+  }, [])
 
   async function getRoompies() {
     // get latest roompies
     const snap = await db
       .collection('roompies')
       .limit(user ? limit : 12)
-      .get();
+      .get()
 
     const roompiesFirestore = snap.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
-    }));
+    }))
 
-    setRoompies2(roompiesFirestore as Roompies);
+    setRoompies2(roompiesFirestore as Roompies)
   }
 
   async function search(e: MouseEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // kalau select input tidak dipilih
     if (!selectedTypes || !selectedSubDistricts)
-      return toast.warning('Choose the filter please');
+      return toast.warning('Choose the filter please')
 
     // get latest cities collection
     const snap = await db
       .collection('roompies')
       .where('gender', '==', selectedTypes.value)
       .where('locPref', 'array-contains', selectedSubDistricts.value)
-      .get();
+      .get()
 
     const roompiesFirestore = snap.docs.map((doc) => ({
       ...doc.data(),
       id: doc.id,
-    }));
+    }))
 
-    setRoompies2(roompiesFirestore as Roompies);
+    setRoompies2(roompiesFirestore as Roompies)
   }
 
   async function onLoadMore() {
     if (!user) {
-      return toast('Please login, to view more roompies');
+      return toast('Please login, to view more roompies')
     }
 
-    setLimit((prev) => prev * 2);
+    setLimit((prev) => prev * 2)
 
-    await getRoompies();
+    await getRoompies()
   }
 
   return (
@@ -149,12 +149,12 @@ export default function Search() {
                 options={sorts}
                 defaultValue={selectedSort}
                 onChange={(sort) => {
-                  setSelectedSort(sort);
+                  setSelectedSort(sort)
 
                   // sort descending prev Roompies
                   setRoompies2((prev) =>
-                    prev.sort((a, b) => b[sort.value] - a[sort.value]),
-                  );
+                    prev.sort((a, b) => b[sort.value] - a[sort.value])
+                  )
                 }}
               />
             </div>
@@ -190,5 +190,5 @@ export default function Search() {
         )}
       </div>
     </article>
-  );
+  )
 }

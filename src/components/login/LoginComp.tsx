@@ -1,55 +1,55 @@
-import Link from 'next/link';
-import { FormEvent, useState } from 'react';
-import validator from 'validator';
-import { toast } from 'react-toastify';
-import { useRouter } from 'next/router';
-import axios from 'axios';
+import Link from 'next/link'
+import { FormEvent, useState } from 'react'
+import validator from 'validator'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
+import axios from 'axios'
 // files
-import { auth } from '../../configs/firebaseConfig';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
+import { auth } from '../../configs/firebaseConfig'
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
 
 export default function LoginComp() {
   // hooks
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [busy, setBusy] = useState<boolean>(false);
-  const { push } = useRouter();
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [busy, setBusy] = useState<boolean>(false)
+  const { push } = useRouter()
 
   // custom functions
   async function login(e: FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // validation
     if (!email || !password) {
-      return toast.warning('Please input all required field');
+      return toast.warning('Please input all required field')
     } else if (!validator.isEmail(email)) {
-      return toast.warning('Please input a valid email');
+      return toast.warning('Please input a valid email')
     } else if (!validator.isLength(password, { min: 6 })) {
-      return toast.warning('Please input min 6 chars PASSWORD');
+      return toast.warning('Please input min 6 chars PASSWORD')
     }
 
     try {
-      setBusy(true); // disable login button
+      setBusy(true) // disable login button
 
       // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
-      const userCred = await auth.signInWithEmailAndPassword(email, password);
+      const userCred = await auth.signInWithEmailAndPassword(email, password)
 
       // POST req
       await axios.post('/auth/login', {
         id: userCred.user.uid,
-      });
+      })
 
       // on SUCCESS
-      await push('/dashboard');
-      return toast.success(`Welcome Back, ${userCred.user.displayName}`);
+      await push('/dashboard')
+      return toast.success(`Welcome Back, ${userCred.user.displayName}`)
     } catch (err) {
       // on ERROR => Axios Response error
-      setBusy(false); // enable login button
+      setBusy(false) // enable login button
 
       if (err.message) {
-        toast.error(err.message);
+        toast.error(err.message)
       } else {
-        axiosErrorHandle(err);
+        axiosErrorHandle(err)
       }
     }
   }
@@ -158,5 +158,5 @@ export default function LoginComp() {
         {/* <!-- END Form --> */}
       </div>
     </div>
-  );
+  )
 }

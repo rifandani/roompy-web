@@ -1,67 +1,64 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useState, FormEvent } from 'react';
-import { toast } from 'react-toastify';
-import validator from 'validator';
-import axios from 'axios';
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useState, FormEvent } from 'react'
+import { toast } from 'react-toastify'
+import validator from 'validator'
+import axios from 'axios'
 // files
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
-import { auth } from '../../configs/firebaseConfig';
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import { auth } from '../../configs/firebaseConfig'
 
 export default function RegisterComp() {
   // hooks
-  const [busy, setBusy] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [password2, setPassword2] = useState<string>('');
-  const { push } = useRouter();
+  const [busy, setBusy] = useState<boolean>(false)
+  const [username, setUsername] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [password2, setPassword2] = useState<string>('')
+  const { push } = useRouter()
 
   // custom functions
   async function register(e: FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // validation input
     if (!username || !email || !password || !password2) {
-      return toast.warning('Please input all field');
+      return toast.warning('Please input all field')
     } else if (password !== password2) {
-      return toast.warning('Please confirm the same password');
+      return toast.warning('Please confirm the same password')
     } else if (!validator.isEmail(email)) {
-      return toast.warning('Please input a valid email');
+      return toast.warning('Please input a valid email')
     } else if (
       !validator.isLength(username, { min: 3 }) ||
       !validator.isLength(password, { min: 6 })
     ) {
       return toast.warning(
-        'Please input min 3 chars USERNAME & 6 chars PASSWORD',
-      );
+        'Please input min 3 chars USERNAME & 6 chars PASSWORD'
+      )
     }
 
     try {
-      setBusy(true); // disable register button
+      setBusy(true) // disable register button
 
       // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
-      const newUser = await auth.createUserWithEmailAndPassword(
-        email,
-        password,
-      );
-      await newUser.user.updateProfile({ displayName: username }); // update user profile
+      const newUser = await auth.createUserWithEmailAndPassword(email, password)
+      await newUser.user.updateProfile({ displayName: username }) // update user profile
 
       // POST req
       await axios.post('/auth/register', {
         id: newUser.user.uid,
         username,
         email,
-      });
+      })
 
       // on SUCCESS
-      await push('/dashboard');
-      return toast.success(`Welcome, ${newUser.user.displayName}`);
+      await push('/dashboard')
+      return toast.success(`Welcome, ${newUser.user.displayName}`)
     } catch (err) {
       // on ERROR => Axios error response
-      setBusy(false);
+      setBusy(false)
 
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
   }
 
@@ -202,5 +199,5 @@ export default function RegisterComp() {
       </div>
       {/* <!-- END Create Account Section --> */}
     </div>
-  );
+  )
 }

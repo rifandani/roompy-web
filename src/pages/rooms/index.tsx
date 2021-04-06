@@ -1,11 +1,11 @@
-import { GetServerSideProps } from 'next';
-import { useState } from 'react';
-import Loader from 'react-loader-spinner';
+import { GetServerSideProps } from 'next'
+import { useState } from 'react'
+import Loader from 'react-loader-spinner'
 // files
-import Rooms from '../../components/rooms/Rooms';
+import Rooms from '../../components/rooms/Rooms'
 
 export default function RoomsPage() {
-  const [busy, setBusy] = useState<boolean>(false);
+  const [busy, setBusy] = useState<boolean>(false)
 
   if (busy) {
     return (
@@ -18,20 +18,20 @@ export default function RoomsPage() {
           timeout={3000} //3 secs
         />
       </div>
-    );
+    )
   }
 
   return (
     <>
       <Rooms />
     </>
-  );
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { sharedFacility, roomFacility } = ctx.query;
+  const { sharedFacility, roomFacility } = ctx.query
 
   return {
     props: {},
-  };
-};
+  }
+}

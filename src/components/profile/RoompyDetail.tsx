@@ -1,19 +1,18 @@
-import axios from 'axios';
-import { useRouter } from 'next/router';
-import { useState, useContext, MouseEvent } from 'react';
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { useState, useContext, MouseEvent } from 'react'
 import {
   FaCrown,
   FaRegCalendarAlt,
   FaFacebook,
   FaInstagram,
   FaTwitter,
-  FaLinkedin,
   FaWifi,
   FaShower,
   FaMapMarkerAlt,
   FaGenderless,
   FaHandPointLeft,
-} from 'react-icons/fa';
+} from 'react-icons/fa'
 import {
   GiAges,
   GiCigarette,
@@ -22,7 +21,7 @@ import {
   GiFemale,
   GiSandsOfTime,
   GiSittingDog,
-} from 'react-icons/gi';
+} from 'react-icons/gi'
 import {
   HiOutlineCurrencyDollar,
   HiExclamationCircle,
@@ -30,72 +29,72 @@ import {
   HiStar,
   HiCheck,
   HiOutlineHome,
-} from 'react-icons/hi';
-import { IoLogoWhatsapp } from 'react-icons/io';
-import { toast } from 'react-toastify';
+} from 'react-icons/hi'
+import { IoLogoWhatsapp } from 'react-icons/io'
+import { toast } from 'react-toastify'
 // files
-import UserContext from '../../contexts/UserContext';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
-import { Roompy } from '../../utils/interfaces';
-import MyModal from '../MyModal';
+import UserContext from '../../contexts/UserContext'
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import { Roompy } from '../../utils/interfaces'
+import MyModal from '../MyModal'
 
 export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
   // state
-  const [message, setMessage] = useState<string>('');
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isAlreadyFav, setIsAlreadyFav] = useState<boolean>(false);
+  const [message, setMessage] = useState<string>('')
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isAlreadyFav, setIsAlreadyFav] = useState<boolean>(false)
 
   // useRouter
-  const { back } = useRouter();
+  const { back } = useRouter()
 
   // UserContext
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)
 
   function closeModal() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   function openModal() {
     if (!user) {
-      return toast.warning('Please login to report roompies');
+      return toast.warning('Please login to report roompies')
     }
 
-    setIsOpen(true);
+    setIsOpen(true)
   }
 
   async function submitMessage(e: MouseEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
-    console.log(message);
+    console.log(message)
 
     // when all done
-    toast.success('Message delivered. Please wait for the reply.');
+    toast.success('Message delivered. Please wait for the reply.')
   }
 
   async function onAddToFavorite() {
     if (!user) {
-      return toast.warning('Please login first');
+      return toast.warning('Please login first')
     }
 
     try {
       const resp = await axios.post('/favorites/roompies', {
         userId: user.uid,
         roompyId: roompy.id,
-      });
+      })
 
       if (resp.status === 400) {
         // on ALREADY FAVORITED
-        toast.warning('This roompy is already favorited');
+        toast.warning('This roompy is already favorited')
       } else {
         // on SUCCESS
-        toast.success('Added to your favorites list');
+        toast.success('Added to your favorites list')
       }
 
-      setIsAlreadyFav(true);
+      setIsAlreadyFav(true)
     } catch (err) {
       // on ERROR
-      axiosErrorHandle(err);
-      toast.error(err.message);
+      axiosErrorHandle(err)
+      toast.error(err.message)
     }
   }
 
@@ -197,7 +196,12 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
 
                   <div className="flex flex-col items-center">
                     <p className="text-base font-semibold">
-                      Rp {roompy.budget} <small>/bln</small>
+                      {new Intl.NumberFormat('id-ID', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        maximumFractionDigits: 0,
+                      }).format(roompy.budget)}{' '}
+                      <small>/bln</small>
                     </p>
                     <p className="text-sm italic">Budget</p>
                   </div>
@@ -603,10 +607,6 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   onClick={() => {}}
                   className="text-blue-400 transition duration-500 transform cursor-pointer hover:scale-125"
                 />
-                <FaLinkedin
-                  onClick={() => {}}
-                  className="text-blue-500 transition duration-500 transform cursor-pointer hover:scale-125"
-                />
               </div>
             </div>
           </article>
@@ -658,5 +658,5 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         </aside>
       </div>
     </article>
-  );
+  )
 }

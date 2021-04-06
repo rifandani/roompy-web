@@ -1,13 +1,13 @@
-import { Dispatch, SetStateAction } from 'react';
-import ReactPaginate from 'react-paginate';
+import { Dispatch, SetStateAction } from 'react'
+import ReactPaginate from 'react-paginate'
 // files
-import { Roompies } from '../utils/interfaces';
+import { Roompies } from '../utils/interfaces'
 
 export interface PaginationProps {
-  roompies: Roompies;
-  currentPage: number;
-  setCurrentPage: Dispatch<SetStateAction<number>>;
-  limit: number;
+  roompies: Roompies
+  currentPage: number
+  setCurrentPage: Dispatch<SetStateAction<number>>
+  limit: number
 }
 
 export default function Pagination({
@@ -17,9 +17,9 @@ export default function Pagination({
   limit,
 }: PaginationProps) {
   const classNames =
-    'bg-white text-purple-500 hover:bg-purple-100 px-2 py-1 border cursor-pointer rounded-md appearance-none focus:outline-none focus:ring focus:border-purple-300 list-none';
+    'bg-white text-purple-500 hover:bg-purple-100 px-2 py-1 border cursor-pointer rounded-md appearance-none focus:outline-none focus:ring focus:border-purple-300 list-none'
 
-  const pageCount = Math.ceil(roompies.length / limit);
+  const pageCount = Math.ceil(roompies.length / limit)
 
   return (
     <div className="flex flex-col items-center my-10">
@@ -44,5 +44,5 @@ export default function Pagination({
         onPageChange={(e) => setCurrentPage(e.selected)}
       />
     </div>
-  );
+  )
 }

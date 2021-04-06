@@ -1,6 +1,6 @@
-import { HiLightBulb, HiLockClosed } from 'react-icons/hi';
-import { RiUserStarFill, RiMessengerFill } from 'react-icons/ri';
-import { Roll } from 'react-awesome-reveal';
+import { HiLightBulb, HiLockClosed } from 'react-icons/hi'
+import { RiUserStarFill, RiMessengerFill } from 'react-icons/ri'
+import { Roll } from 'react-awesome-reveal'
 
 export default function FeatureHome() {
   return (
@@ -106,5 +106,5 @@ export default function FeatureHome() {
         </article>
       </main>
     </div>
-  );
+  )
 }

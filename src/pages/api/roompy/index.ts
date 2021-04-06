@@ -1,56 +1,56 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import Cors from 'cors';
+import { NextApiRequest, NextApiResponse } from 'next'
+import Cors from 'cors'
 // Polyfills required for Firebase
-import XHR from 'xhr2';
-import WS from 'ws';
+import XHR from 'xhr2'
+import WS from 'ws'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware';
-import { nowMillis } from '../../../configs/firebaseConfig';
-import getRoompy from '../../../utils/getRoompy';
+import initMiddleware from '../../../middlewares/initMiddleware'
+import { nowMillis } from '../../../configs/firebaseConfig'
+import getRoompy from '../../../utils/getRoompy'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['PUT'],
-  }),
-);
+  })
+)
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res); // Run cors
+  await cors(req, res) // Run cors
 
   // polyfill
-  global.XMLHttpRequest = XHR;
-  (global.WebSocket as any) = WS;
+  global.XMLHttpRequest = XHR
+  ;(global.WebSocket as any) = WS
 
   // PUT req => /roompy?id=roompyId
   if (req.method === 'PUT') {
     try {
       // destructure req.body
-      const reqBody = req.body;
+      const reqBody = req.body
 
       // get roompy & roompyRef
-      const { roompy, roompyRef } = await getRoompy(req);
+      const { roompy, roompyRef } = await getRoompy(req)
 
       // update all previous roompy data
       await roompyRef.update({
         ...reqBody,
         photoURL: roompy.photoURL, // make sure photoURL does not updated
         updatedAt: nowMillis,
-      });
+      })
 
       // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Roompy updated successfully',
-      });
+      })
     } catch (err) {
       // PUT ERROR -----------------------------------------------------------------
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err });
+        .json({ error: true, name: err.name, message: err.message, err })
     }
   } else {
     // error => invalid req method
-    res.status(405).json({ error: true, message: 'Only support PUT req' });
+    res.status(405).json({ error: true, message: 'Only support PUT req' })
   }
-};
+}

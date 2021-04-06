@@ -1,43 +1,43 @@
-import Head from 'next/head';
-import type { AppProps /*, AppContext */ } from 'next/app';
-import Router from 'next/router';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import NProgress from 'nprogress';
-import 'nprogress/nprogress.css';
-import { FormspreeProvider } from '@formspree/react';
-import 'rodal/lib/rodal.css'; // react modal
-import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
-import 'react-phone-input-2/lib/style.css';
-import 'react-datepicker/dist/react-datepicker.css';
-import 'rc-slider/assets/index.css';
-import axios from 'axios';
-import { SWRConfig } from 'swr';
+import Head from 'next/head'
+import type { AppProps /*, AppContext */ } from 'next/app'
+import Router from 'next/router'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+import { FormspreeProvider } from '@formspree/react'
+import 'rodal/lib/rodal.css' // react modal
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
+import 'react-phone-input-2/lib/style.css'
+import 'react-datepicker/dist/react-datepicker.css'
+import 'rc-slider/assets/index.css'
+import axios from 'axios'
+import { SWRConfig } from 'swr'
 // files
-import '../styles/index.css';
-import useAuth from '../hooks/useAuth';
-import UserContext from '../contexts/UserContext';
+import '../styles/index.css'
+import useAuth from '../hooks/useAuth'
+import UserContext from '../contexts/UserContext'
 
 // axios BASE URL
 axios.defaults.baseURL =
   process.env.NODE_ENV === 'development'
     ? 'http://localhost:3000/api'
-    : 'https://roompy.vercel.app/api';
+    : 'https://roompy.vercel.app/api'
 
 // create a custom progress bar
-NProgress.configure({ showSpinner: false });
+NProgress.configure({ showSpinner: false })
 Router.events.on('routeChangeStart', () => {
-  NProgress.start();
-});
+  NProgress.start()
+})
 Router.events.on('routeChangeComplete', () => {
-  NProgress.done();
-});
+  NProgress.done()
+})
 Router.events.on('routeChangeError', () => {
-  NProgress.done();
-});
+  NProgress.done()
+})
 
 export default function MyApp({ Component, pageProps }: AppProps) {
-  const [user, setUser] = useAuth(); // user auth context
+  const [user, setUser] = useAuth() // user auth context
 
   return (
     <>
@@ -77,5 +77,5 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         </UserContext.Provider>
       </FormspreeProvider>
     </>
-  );
+  )
 }

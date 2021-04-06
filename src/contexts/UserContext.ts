@@ -1,7 +1,7 @@
-import { createContext } from 'react';
+import { createContext } from 'react'
 // files
-import { UserContextState } from '../utils/interfaces';
+import { UserContextState } from '../utils/interfaces'
 
-const UserContext = createContext<UserContextState>(null);
+const UserContext = createContext<UserContextState>(null)
 
-export default UserContext;
+export default UserContext

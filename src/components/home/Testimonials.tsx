@@ -1,6 +1,6 @@
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { Flip } from 'react-awesome-reveal';
-import { useState } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { Flip } from 'react-awesome-reveal'
+import { useState } from 'react'
 
 export default function Testimonials() {
   const [monials] = useState([
@@ -16,22 +16,22 @@ export default function Testimonials() {
       name: 'Jane Doe',
       date: '18 November 2020',
     },
-  ]);
-  const [index, setIndex] = useState(0);
+  ])
+  const [index, setIndex] = useState(0)
 
   function onLeft() {
     if (index === 0) {
-      setIndex(monials.length - 1);
+      setIndex(monials.length - 1)
     } else {
-      setIndex((prev) => prev - 1);
+      setIndex((prev) => prev - 1)
     }
   }
 
   function onRight() {
     if (index === monials.length - 1) {
-      setIndex(0);
+      setIndex(0)
     } else {
-      setIndex((prev) => prev + 1);
+      setIndex((prev) => prev + 1)
     }
   }
 
@@ -94,5 +94,5 @@ export default function Testimonials() {
         </article>
       </main>
     </div>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import { NextApiResponse } from 'next';
-import { sign } from 'jsonwebtoken';
-import cookie from 'cookie';
+import { NextApiResponse } from 'next'
+import { sign } from 'jsonwebtoken'
+import cookie from 'cookie'
 
 interface Payload {
   // subject (whom the token refers to)
-  sub: string;
+  sub: string
 }
 
 export default function setCookie(payload: Payload, res: NextApiResponse) {
@@ -15,7 +15,7 @@ export default function setCookie(payload: Payload, res: NextApiResponse) {
   // iat: Math.floor(Date.now() / 1000), // reserved word iat == issuedAt
   // };
 
-  const jwt = sign(payload, process.env.MY_SECRET_KEY, { expiresIn: '3h' });
+  const jwt = sign(payload, process.env.MY_SECRET_KEY, { expiresIn: '3h' })
 
   // set cookie to response header
   res.setHeader(
@@ -27,6 +27,6 @@ export default function setCookie(payload: Payload, res: NextApiResponse) {
       sameSite: 'strict',
       maxAge: 60 * 60 * 3, // 3 hour
       path: '/', // make it available everywhere, not only in /api
-    }),
-  );
+    })
+  )
 }

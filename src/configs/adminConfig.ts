@@ -1,4 +1,4 @@
-import admin, { ServiceAccount } from 'firebase-admin';
+import admin, { ServiceAccount } from 'firebase-admin'
 // import serviceAccount from './serviceAccount.json';
 
 // firebase -> project settings -> service accounts -> firebase admin SDK
@@ -10,6 +10,6 @@ import admin, { ServiceAccount } from 'firebase-admin';
 //   });
 // }
 
-export const adminDb = admin.firestore();
-export const adminAuth = admin.auth();
-export const adminStorage = admin.storage().bucket();
+export const adminDb = admin.firestore()
+export const adminAuth = admin.auth()
+export const adminStorage = admin.storage().bucket()

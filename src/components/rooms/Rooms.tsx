@@ -1,7 +1,7 @@
 // files
-import SiteHeader from '../SiteHeader';
-import SearchFilters from './RoomsFilters';
-import RoomCard from './RoomCard';
+import SiteHeader from '../SiteHeader'
+import SearchFilters from './RoomsFilters'
+import RoomCard from './RoomCard'
 
 const locations = [
   {
@@ -144,7 +144,7 @@ const locations = [
       },
     ],
   },
-];
+]
 
 export default function Rooms() {
   return (
@@ -185,5 +185,5 @@ export default function Rooms() {
         </main>
       </div>
     </div>
-  );
+  )
 }

@@ -1,97 +1,97 @@
-import { useRouter } from 'next/router';
-import { useState, FormEvent } from 'react';
-import { FaQuestionCircle } from 'react-icons/fa';
-import PhoneInput from 'react-phone-input-2';
-import id from 'react-phone-input-2/lang/id.json';
-import DatePicker from 'react-datepicker';
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
-import NumberFormat from 'react-number-format';
-import { Range, createSliderWithTooltip } from 'rc-slider';
-import Loader from 'react-loader-spinner';
-import validator from 'validator';
-import { toast } from 'react-toastify';
-import ReactTooltip from 'react-tooltip';
-import axios from 'axios';
+import { useRouter } from 'next/router'
+import { useState, FormEvent } from 'react'
+import { FaQuestionCircle } from 'react-icons/fa'
+import PhoneInput from 'react-phone-input-2'
+import id from 'react-phone-input-2/lang/id.json'
+import DatePicker from 'react-datepicker'
+import Select from 'react-select'
+import makeAnimated from 'react-select/animated'
+import NumberFormat from 'react-number-format'
+import { Range, createSliderWithTooltip } from 'rc-slider'
+import Loader from 'react-loader-spinner'
+import validator from 'validator'
+import { toast } from 'react-toastify'
+import ReactTooltip from 'react-tooltip'
+import axios from 'axios'
 // files
-import Dropzone from '../createRoompies/Dropzone';
-import subDistrictsJson2 from '../../utils/sub-districts2.json';
-import { EditRoompiesProps } from '../../pages/dashboard/roompies/edit/[id]';
-import axiosErrorHandle from '../../utils/axiosErrorHandle';
+import Dropzone from '../createRoompies/Dropzone'
+import subDistrictsJson2 from '../../utils/sub-districts2.json'
+import { EditRoompiesProps } from '../../pages/dashboard/roompies/edit/[id]'
+import axiosErrorHandle from '../../utils/axiosErrorHandle'
 
-const animatedComponents = makeAnimated(); // animation on react-select isMulti
+const animatedComponents = makeAnimated() // animation on react-select isMulti
 
 // filter sub-districts array so that it supports react-select
 const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
   label: el,
   value: el,
-}));
+}))
 
-const RangeWithTooltip = createSliderWithTooltip(Range); // rc-slider with tooltip
+const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
 
 export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
-  const { push } = useRouter();
-  const [busy, setBusy] = useState<boolean>(false);
+  const { push } = useRouter()
+  const [busy, setBusy] = useState<boolean>(false)
   // contact info
-  const [name, setName] = useState<string>(roompy.name || '');
-  const [phone, setPhone] = useState<string>(roompy.phoneNumber || ''); // '62822...'
+  const [name, setName] = useState<string>(roompy.name || '')
+  const [phone, setPhone] = useState<string>(roompy.phoneNumber || '') // '62822...'
   // descriptions
-  const [gender, setGender] = useState<string>(roompy.gender || 'Pria'); // Pria / Wanita
-  const [age, setAge] = useState<string>(roompy.age + '' || ''); // min 17
-  const [occupation, setOccupation] = useState<string>(roompy.occupation || '');
-  const [smoker, setSmoker] = useState<boolean>(roompy.smoker || false);
-  const [ownPet, setOwnPet] = useState<boolean>(roompy.ownPet || false);
+  const [gender, setGender] = useState<string>(roompy.gender || 'Pria') // Pria / Wanita
+  const [age, setAge] = useState<string>(roompy.age + '' || '') // min 17
+  const [occupation, setOccupation] = useState<string>(roompy.occupation || '')
+  const [smoker, setSmoker] = useState<boolean>(roompy.smoker || false)
+  const [ownPet, setOwnPet] = useState<boolean>(roompy.ownPet || false)
   // introduce yourself
-  const [budget, setBudget] = useState<string>(roompy.budget + '' || '');
+  const [budget, setBudget] = useState<string>(roompy.budget + '' || '')
   const [moveDate, setMoveDate] = useState<Date>(
-    new Date(roompy.moveDate) || new Date(),
-  ); // Date
+    new Date(roompy.moveDate) || new Date()
+  ) // Date
   const [stayLength, setStayLength] = useState<string>(
-    roompy.stayLength + '' || '',
-  );
-  const [desc, setDesc] = useState<string>(roompy.desc || '');
+    roompy.stayLength + '' || ''
+  )
+  const [desc, setDesc] = useState<string>(roompy.desc || '')
   // location preferences
   const [selectedSubDistricts, setSelectedSubDistricts] = useState([
     {
       label: 'July',
       value: 'July',
     },
-  ]); // array of object => karena isMulti
+  ]) // array of object => karena isMulti
   // home preferences
   const [roomType, setRoomType] = useState<string>(
-    roompy.homePref.room || 'Flex',
-  ); // Satu kamar / Satu rumah / Flex
+    roompy.homePref.room || 'Flex'
+  ) // Satu kamar / Satu rumah / Flex
   const [parking, setParking] = useState<string>(
-    roompy.homePref.parking || 'Flex',
-  ); // Required / Flex
-  const [wifi, setWifi] = useState<string>(roompy.homePref.wifi || 'Flex'); // Required / Flex
+    roompy.homePref.parking || 'Flex'
+  ) // Required / Flex
+  const [wifi, setWifi] = useState<string>(roompy.homePref.wifi || 'Flex') // Required / Flex
   const [bathroom, setBathroom] = useState<string>(
-    roompy.homePref.bathroom || 'Flex',
-  ); // Dalam / Flex
+    roompy.homePref.bathroom || 'Flex'
+  ) // Dalam / Flex
   // roompies preferences
   const [genderPref, setGenderPref] = useState<string>(
-    roompy.roompiesPref.gender || 'Flex',
-  ); // Pria / Wanita / Flex
+    roompy.roompiesPref.gender || 'Flex'
+  ) // Pria / Wanita / Flex
   const [smokerPref, setSmokerPref] = useState<string>(
-    roompy.roompiesPref.smoker || 'Okay',
-  ); // Okay / Not okay
+    roompy.roompiesPref.smoker || 'Okay'
+  ) // Okay / Not okay
   const [petPref, setPetPref] = useState<string>(
-    roompy.roompiesPref.pet || 'Okay',
-  ); // Okay / Not okay
-  const [agePref, setAgePref] = useState<number[]>([17, 70]); // [ageFrom, ageTo]
+    roompy.roompiesPref.pet || 'Okay'
+  ) // Okay / Not okay
+  const [agePref, setAgePref] = useState<number[]>([17, 70]) // [ageFrom, ageTo]
   // your photos
-  const [images, setImages] = useState<any>([]); // images FIRESTORAGE
+  const [images, setImages] = useState<any>([]) // images FIRESTORAGE
 
   async function onEditRoompies(e: FormEvent) {
-    e.preventDefault();
+    e.preventDefault()
 
     // validation
     if (!validator.isLength(phone, { min: 9, max: 16 })) {
-      return toast.warning('Please input a valid phone numbers');
+      return toast.warning('Please input a valid phone numbers')
     } else if (selectedSubDistricts.length < 1) {
-      return toast.warning('Please select minimal 1 location');
+      return toast.warning('Please select minimal 1 location')
     } else if (images.length < 1) {
-      return toast.warning('Please select minimal 1 photo');
+      return toast.warning('Please select minimal 1 photo')
     }
 
     // all required.
@@ -108,7 +108,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
       stayLength: ~~stayLength,
       desc,
       locPref: selectedSubDistricts.map(
-        (el: { label: string; value: string }) => el.value, // only return string
+        (el: { label: string; value: string }) => el.value // only return string
       ),
       homePref: {
         room: roomType,
@@ -124,68 +124,68 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
         pet: petPref,
       },
       postedBy: user.id, // userId disini
-    };
-    const photoURL = images[0]; // array of image object + preview: URL.createObjectURL(image)
-    delete photoURL.preview;
+    }
+    const photoURL = images[0] // array of image object + preview: URL.createObjectURL(image)
+    delete photoURL.preview
 
     try {
-      setBusy(true); // enable loading screen + disable button
+      setBusy(true) // enable loading screen + disable button
 
       // create x-www-form-urlencoded => enctype: application/x-www-form-urlencoded
       // const params = new URLSearchParams();
       // params.append('param1', 'value1');
 
       // create form-data => enctype: multipart/form-data
-      const formData = new FormData();
-      formData.append('photo', photoURL);
-      formData.append('roompy', JSON.stringify(state));
+      const formData = new FormData()
+      formData.append('photo', photoURL)
+      formData.append('roompy', JSON.stringify(state))
 
       // PUT Form Data
       const res = await axios.put(`/roompies?id=${roompy.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      });
+      })
 
       // console.log(photoURL);
       // console.log(state);
 
       // if PUT success
       if (res.status === 201) {
-        await push('/dashboard');
-        setBusy(false);
-        return toast.success('Roompies updated');
+        await push('/dashboard')
+        setBusy(false)
+        return toast.success('Roompies updated')
       }
     } catch (err) {
       // on ERROR => Axios Response error
-      setBusy(false); // enable login button
+      setBusy(false) // enable login button
 
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
   }
 
   async function onDeleteRoompies(e: FormEvent) {
-    e.preventDefault();
-    const userAgree = window.confirm('Are you sure you want to delete this?');
+    e.preventDefault()
+    const userAgree = window.confirm('Are you sure you want to delete this?')
 
-    if (!userAgree) return;
+    if (!userAgree) return
 
     try {
-      setBusy(true);
+      setBusy(true)
 
-      const res = await axios.delete(`/roompies?id=${roompy.id}`);
+      const res = await axios.delete(`/roompies?id=${roompy.id}`)
 
       // if DELETE success
       if (res.status === 200) {
-        await push('/dashboard');
-        setBusy(false);
-        return toast.success('Roompies deleted');
+        await push('/dashboard')
+        setBusy(false)
+        return toast.success('Roompies deleted')
       }
     } catch (err) {
       // on ERROR => Axios Response error
-      setBusy(false); // enable login button
+      setBusy(false) // enable login button
 
-      axiosErrorHandle(err);
+      axiosErrorHandle(err)
     }
   }
 
@@ -200,7 +200,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
           timeout={3000} //3 secs
         />
       </div>
-    );
+    )
   }
 
   return (
@@ -1008,5 +1008,5 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
         </div>
       </form>
     </article>
-  );
+  )
 }

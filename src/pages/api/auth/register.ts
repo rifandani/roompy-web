@@ -1,12 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import setCookie from '../../../utils/setCookie';
-import { db, nowMillis } from '../../../configs/firebaseConfig';
+import setCookie from '../../../utils/setCookie'
+import { db, nowMillis } from '../../../configs/firebaseConfig'
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     // destructure request body form
-    const { id, username, email } = req.body;
+    const { id, username, email } = req.body
 
     // TODO: clean/filter req.body
 
@@ -31,23 +31,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           token: '',
           updatedAt: nowMillis,
           username,
-        });
+        })
 
       // set JWT token to cookie in headers
-      setCookie({ sub: id }, res);
+      setCookie({ sub: id }, res)
 
       // register SUCCESS --------------------------
       res.status(201).json({
         error: false,
         message: 'User created successfully',
-      });
+      })
     } catch (err) {
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err }); // register ERROR
+        .json({ error: true, name: err.name, message: err.message, err }) // register ERROR
     }
   } else {
     // error => invalid req method
-    res.status(405).json({ error: true, message: 'Only support POST req' });
+    res.status(405).json({ error: true, message: 'Only support POST req' })
   }
-};
+}

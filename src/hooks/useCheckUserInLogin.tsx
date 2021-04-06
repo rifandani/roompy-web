@@ -1,16 +1,16 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react'
 // files
-import UserContext from '../contexts/UserContext';
+import UserContext from '../contexts/UserContext'
 
 function useCheckUserInLogin() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const { user } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { user } = useContext(UserContext)
 
   useEffect(() => {
-    setIsLoading(false);
-  }, [user]);
+    setIsLoading(false)
+  }, [user])
 
-  return [user, isLoading];
+  return [user, isLoading]
 }
 
-export default useCheckUserInLogin;
+export default useCheckUserInLogin
