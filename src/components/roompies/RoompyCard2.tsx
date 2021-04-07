@@ -87,6 +87,7 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
                   style: 'currency',
                   currency: 'IDR',
                   maximumFractionDigits: 0,
+                  minimumFractionDigits: 0,
                 }).format(roompy.budget)}
               </span>
               <span className="ml-1 text-gray-600">/bln</span>
