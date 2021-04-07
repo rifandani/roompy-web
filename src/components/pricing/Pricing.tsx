@@ -68,7 +68,7 @@ export default function Pricing() {
 
         <section className="flex flex-wrap -mx-2 lg:w-4/5 sm:mx-auto sm:mb-2">
           {pricings.map((pricing) => (
-            <div className="xl:w-1/3 md:w-1/2 w-full px-6 md:px-8 py-4 md:py-8">
+            <div key={pricing.id} className="xl:w-1/3 md:w-1/2 w-full px-6 md:px-8 py-4 md:py-8">
               <div
                 className={`${
                   pricing.recommended ? 'border-purple-500' : 'border-gray-300'
@@ -90,6 +90,7 @@ export default function Pricing() {
                       style: 'currency',
                       currency: 'IDR',
                       maximumFractionDigits: 0,
+                      minimumFractionDigits: 0,
                     }).format(pricing.price)}
                   </span>
 

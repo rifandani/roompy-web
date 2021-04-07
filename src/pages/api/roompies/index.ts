@@ -44,12 +44,14 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
       }))
 
       // GET roompies SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
       res.status(200).json(roompies)
     } else {
       // get roompy
       const { roompy } = await getRoompy(req)
 
       // GET roompy SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
       res.status(200).json(roompy)
     }
   } catch (err) {

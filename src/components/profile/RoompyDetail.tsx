@@ -117,7 +117,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         {/* back button */}
         <button
           onClick={() => back()}
-          className="absolute top-0 left-0 flex items-center px-3 py-1 mt-5 ml-5 transition duration-500 transform border border-red-500 rounded-md cursor-pointer hover:scale-110"
+          className="focus:outline-none focus:ring focus:ring-red-200 absolute top-0 left-0 flex items-center px-3 py-1 mt-5 ml-5 transition duration-500 transform border border-red-500 rounded-md cursor-pointer hover:scale-110"
         >
           <FaHandPointLeft className="text-lg text-red-500" />
 
@@ -127,7 +127,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         {/* add to favorite */}
         <button
           onClick={onAddToFavorite}
-          className="absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer hover:scale-110"
+          className="focus:outline-none focus:ring focus:ring-yellow-200 absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer hover:scale-110"
           disabled={isAlreadyFav}
         >
           <HiStar className="text-lg text-yellow-500" />
@@ -200,6 +200,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                         style: 'currency',
                         currency: 'IDR',
                         maximumFractionDigits: 0,
+                        minimumFractionDigits: 0,
                       }).format(roompy.budget)}{' '}
                       <small>/bln</small>
                     </p>

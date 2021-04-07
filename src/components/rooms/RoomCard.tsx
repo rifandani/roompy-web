@@ -35,6 +35,7 @@ export default function RoomCard({ prop, i }: { prop: any; i: number }) {
                 style: 'currency',
                 currency: 'IDR',
                 maximumFractionDigits: 0,
+                minimumFractionDigits: 0,
               }).format(prop.price)}
             </span>
             <span className="ml-1 text-sm text-gray-600">/wk</span>
