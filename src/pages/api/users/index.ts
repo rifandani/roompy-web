@@ -22,7 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   // polyfill
   global.XMLHttpRequest = XHR
-  (global.WebSocket as any) = WS
+    ; (global.WebSocket as any) = WS
 
   const usersRef = db.collection('users')
 
@@ -38,14 +38,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }))
 
         // GET roompies SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
+        // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
         res.status(200).json(users)
       } else {
         // get user
         const { user } = await getUser(req)
 
         // GET roompy SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
+        // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
         res.status(200).json(user)
       }
     } catch (err) {
