@@ -34,19 +34,19 @@ export default function RoompyCard({ roompy }: { roompy: Roompy }) {
               <span
                 className={`${
                   isMoreThanAWeek ? 'hidden' : 'absolute'
-                } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
+                  } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
               >
                 New
               </span>
             ) : (
-              <span
-                className={`${
-                  isMoreThanAWeek ? 'hidden' : 'absolute'
-                } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
-              >
-                Updated
-              </span>
-            )}
+                <span
+                  className={`${
+                    isMoreThanAWeek ? 'hidden' : 'absolute'
+                    } inline-flex items-center px-3 py-1 ml-4 -mb-3 text-xs font-medium leading-tight bg-pink-200 border rounded-full bottom-8 left-3`}
+                >
+                  Updated
+                </span>
+              )}
 
             <FaCrown className="absolute inline-flex items-center text-2xl text-yellow-200 bottom-10 right-12" />
             <span className="absolute inline-flex items-center px-3 py-1 mr-4 -mb-3 text-xs font-medium leading-tight bg-yellow-200 border rounded-full bottom-8 right-2">
@@ -65,8 +65,8 @@ export default function RoompyCard({ roompy }: { roompy: Roompy }) {
             {roompy.gender === 'Pria' ? (
               <GiMale className="mr-2 text-blue-500" />
             ) : (
-              <GiFemale className="mr-2 text-pink-500" />
-            )}
+                <GiFemale className="mr-2 text-pink-500" />
+              )}
             <span className="text-sm italic">{roompy.age} tahun</span>
           </div>
 
@@ -77,11 +77,11 @@ export default function RoompyCard({ roompy }: { roompy: Roompy }) {
           </div>
 
           {/* lokasi */}
-          <div className="flex w-full my-1">
+          {/* <div className="flex w-full my-1">
             <FaMapMarkerAlt className="mr-2 text-purple-500" />
 
             <span className="text-sm italic truncate">{roompy.locPref[0]}</span>
-          </div>
+          </div> */}
         </section>
       </article>
     </Link>

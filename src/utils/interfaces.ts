@@ -13,6 +13,11 @@ export interface HomePref {
   bathroom: string
 }
 
+export interface LocPref {
+  lat: number
+  lng: number
+}
+
 export interface RoompiesPref {
   gender: string
   ageFrom: number
@@ -30,7 +35,7 @@ export interface Roompy {
   gender: string
   homePref: HomePref
   smoker: boolean
-  locPref: string[]
+  locPref: LocPref[]
   moveDate: number
   name: string
   occupation: string

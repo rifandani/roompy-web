@@ -52,7 +52,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         ageTo: userPostedRoompies[0].roompiesPref.ageTo,
         pet: userPostedRoompies[0].roompiesPref.pet,
         smoker: userPostedRoompies[0].roompiesPref.smoker,
-        loc: userPostedRoompies[0].locPref,
+        // loc: userPostedRoompies[0].locPref,
       }
 
       // roompies except user postedRoompies
@@ -67,7 +67,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         const isGenderFlex = userPref.gender === 'Flex'
 
         const selected =
-          roompy.locPref.includes(userPref.loc[0]) &&
+          // roompy.locPref.includes(userPref.loc[0]) &&
           roompy.ownPet === isPetOkay &&
           roompy.smoker === isSmokerOkay &&
           (isGenderFlex ? true : roompy.gender === userPref.gender) &&
