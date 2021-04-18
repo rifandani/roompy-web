@@ -43,6 +43,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>Roompy | Cari teman sekamar atau serumah secara online</title>
+
         {/* meta */}
         <meta
           name="viewport"
@@ -57,8 +58,25 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
         <meta property="og:image" content="favicon.ico" />
         <meta name="twitter:image" content="favicon.ico" />
-        {/* link */}
+
+        {/* icon */}
         <link rel="icon" href="favicon.ico" />
+
+        {/* leaflet css */}
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossOrigin=""
+        />
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/react-leaflet-markercluster/dist/styles.min.css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css"
+        />
       </Head>
 
       {/* sets up a project context for all forms in the app, and associates your forms with the keys specified in your formspree.json config file */}

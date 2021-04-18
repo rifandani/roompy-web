@@ -27,7 +27,7 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
             // premium user check bg-color
             className={`${
               false ? 'bg-yellow-50' : 'bg-white'
-            } px-4 py-4 rounded-lg shadow-lg`}
+              } px-4 py-4 rounded-lg shadow-lg`}
           >
             <div className="flex items-baseline">
               {/* badge */}
@@ -67,8 +67,8 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
               {roompy.gender === 'Pria' ? (
                 <GiMale className="mr-2 text-blue-500" />
               ) : (
-                <GiFemale className="mr-2 text-pink-500" />
-              )}
+                  <GiFemale className="mr-2 text-pink-500" />
+                )}
 
               <span className="text-gray-900">{roompy.age} thn</span>
               <span className="ml-2 italic text-purple-800">
@@ -94,11 +94,11 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
             </div>
 
             {/* loc */}
-            <div className="flex items-center mt-1 text-sm">
+            {/* <div className="flex items-center mt-1 text-sm">
               <FaMapMarkerAlt className="mr-2 text-purple-500" />
 
               <span className="text-gray-600">{roompy.locPref[0]}</span>
-            </div>
+            </div> */}
           </div>
         </section>
       </article>

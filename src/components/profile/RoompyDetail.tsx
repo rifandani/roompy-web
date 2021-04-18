@@ -32,6 +32,7 @@ import {
 } from 'react-icons/hi'
 import { IoLogoWhatsapp } from 'react-icons/io'
 import { toast } from 'react-toastify'
+import dynamic from 'next/dynamic';
 // files
 import UserContext from '../../contexts/UserContext'
 import axiosErrorHandle from '../../utils/axiosErrorHandle'
@@ -98,6 +99,13 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
     }
   }
 
+  const MapWithNoSSR = dynamic(() => import('../leaflet/RoompyDetailLeaflet'), {
+    ssr: false,
+    //   loading: () => (
+    //     <div style={{ textAlign: 'center', paddingTop: 20 }}>Chargement…</div>
+    //   ),
+  });
+
   return (
     <article className="mx-auto bg-white max-w-7xl">
       {/* report modal */}
@@ -153,8 +161,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   {roompy.gender === 'Pria' ? (
                     <GiMale className="text-2xl text-blue-500" />
                   ) : (
-                    <GiFemale className="text-2xl text-pink-500" />
-                  )}
+                      <GiFemale className="text-2xl text-pink-500" />
+                    )}
 
                   <span className="ml-2 text-lg">{roompy.age} tahun</span>
                 </div>
@@ -261,8 +269,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   {roompy.smoker ? (
                     <p className="text-base">Smoker</p>
                   ) : (
-                    <p className="text-base">Non-smoker</p>
-                  )}
+                      <p className="text-base">Non-smoker</p>
+                    )}
                 </span>
 
                 {/* pets */}
@@ -272,8 +280,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   {roompy.ownPet ? (
                     <p className="text-base">Has pets</p>
                   ) : (
-                    <p className="text-base">No pets</p>
-                  )}
+                      <p className="text-base">No pets</p>
+                    )}
                 </span>
 
                 {/* children */}
@@ -455,17 +463,17 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                       </strong>
                     </p>
                   ) : (
-                    <p className="text-base">
-                      Jenis kelamin:{' '}
-                      <strong className="font-normal line-through">Pria</strong>{' '}
-                      <strong className="mx-2">/</strong>{' '}
-                      <strong className="font-normal line-through">
-                        Wanita
+                        <p className="text-base">
+                          Jenis kelamin:{' '}
+                          <strong className="font-normal line-through">Pria</strong>{' '}
+                          <strong className="mx-2">/</strong>{' '}
+                          <strong className="font-normal line-through">
+                            Wanita
                       </strong>
-                      <strong className="mx-2">/</strong>{' '}
-                      <strong>Flexible</strong>
-                    </p>
-                  )}
+                          <strong className="mx-2">/</strong>{' '}
+                          <strong>Flexible</strong>
+                        </p>
+                      )}
                 </span>
 
                 {/* age */}
@@ -546,20 +554,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 <p className="pb-4 text-xl font-bold">Location Preferences</p>
               </div>
 
-              <div className="flex flex-wrap items-center">
-                {roompy.locPref.map((loc, i, arr) => (
-                  <span
-                    key={i}
-                    className={`${
-                      arr.length - 1 === i ? '' : 'mr-2'
-                    } flex items-center px-2 py-1 mb-2 border border-green-500 rounded-md`}
-                  >
-                    <FaMapMarkerAlt className="mr-1 text-xl text-green-500" />
-
-                    <p className="text-base">{loc}</p>
-                  </span>
-                ))}
-              </div>
+              {/* @ts-ignore */}
+              <MapWithNoSSR locPref={roompy.locPref} />
             </div>
           </article>
 
@@ -588,24 +584,24 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                     </p>
                   </>
                 ) : (
-                  <p className="text-lg italic text-red-500">
-                    Please login to see {roompy.name}'s number
-                  </p>
-                )}
+                    <p className="text-lg italic text-red-500">
+                      Please login to see {roompy.name}'s number
+                    </p>
+                  )}
               </span>
 
               {/* verified social media */}
               <div className="flex items-center justify-center space-x-4 text-2xl md:justify-start">
                 <FaFacebook
-                  onClick={() => {}}
+                  onClick={() => { }}
                   className="text-blue-500 transition duration-500 transform cursor-pointer hover:scale-125"
                 />
                 <FaInstagram
-                  onClick={() => {}}
+                  onClick={() => { }}
                   className="text-red-500 transition duration-500 transform cursor-pointer hover:scale-125"
                 />
                 <FaTwitter
-                  onClick={() => {}}
+                  onClick={() => { }}
                   className="text-blue-400 transition duration-500 transform cursor-pointer hover:scale-125"
                 />
               </div>
