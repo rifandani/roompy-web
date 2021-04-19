@@ -1,23 +1,26 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef } from 'react'
 import {
   MapContainer,
   Marker,
   Popup,
   Tooltip,
   MapConsumer,
-  TileLayer
-} from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-markercluster"; // clustering marker
+  TileLayer,
+  LayersControl,
+  Circle,
+  LayerGroup,
+} from 'react-leaflet'
+import MarkerClusterGroup from 'react-leaflet-markercluster' // clustering marker
 // files
-import MyIcon from "./CustomIcon";
-import { LocPref } from "../../utils/interfaces";
+import MyIcon from './CustomIcon'
+import { LocPref } from '../../utils/interfaces'
 
 interface IRoompyDetailLeaflet {
   locPref: LocPref[]
 }
 
 const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
-  const LMap = useRef(); // Map ref
+  const LMap = useRef() // Map ref
 
   return (
     <MapContainer
@@ -25,7 +28,7 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
       style={{ minHeight: '50vh' }}
       center={[locPref[0].lat, locPref[0].lng]}
       zoom={7}
-      maxZoom={20}
+      maxZoom={30}
       scrollWheelZoom
     >
       <TileLayer
@@ -38,20 +41,35 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
         {(map) => {
           // masukin Leaflet Map instance ke ref
           // @ts-ignore
-          LMap.current = map;
+          LMap.current = map
 
-          console.log("Map Consumer");
-          return null;
+          console.log('Map Consumer')
+          return null
         }}
       </MapConsumer>
 
+      {/* layers control */}
+      <LayersControl position="bottomleft">
+        <LayersControl.Overlay name="Toggle Marker Radius">
+          <LayerGroup>
+            {locPref?.map((position, i) => (
+              <Circle
+                key={i}
+                center={[position.lat, position.lng]}
+                radius={1000}
+                pathOptions={{ color: 'purple' }}
+              />
+            ))}
+          </LayerGroup>
+        </LayersControl.Overlay>
+      </LayersControl>
+
       {/* marker cluster */}
-      {/* @ts-ignore */}
       <MarkerClusterGroup>
-        {locPref?.map((city, i: number) => (
+        {locPref?.map((position, i) => (
           <Marker
             key={i}
-            position={[Number(city.lat), Number(city.lng)]}
+            position={[Number(position.lat), Number(position.lng)]}
             icon={MyIcon}
           >
             {/* popup */}
@@ -65,9 +83,9 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
                   className="px-4 py-2 text-white bg-purple-500 rounded-md"
                   onClick={() => {
                     // @ts-ignore
-                    LMap.current.flyTo([city.lat, city.lng], 17, {
-                      duration: 7
-                    });
+                    LMap.current.flyTo([position.lat, position.lng], 17, {
+                      duration: 7,
+                    })
                   }}
                 >
                   Detailed Look
@@ -81,7 +99,7 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
         ))}
       </MarkerClusterGroup>
     </MapContainer>
-  );
-};
+  )
+}
 
-export default RoompyDetailLeaflet;
+export default RoompyDetailLeaflet
