@@ -184,7 +184,14 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
                       </h5>
 
                       <h3 className="text-2xl font-bold">
-                        {roompy.locPref[0]}
+                        {new Date(roompy.createdAt).toLocaleDateString(
+                          'en-GB',
+                          {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          }
+                        )}
                       </h3>
                     </div>
                   </div>

@@ -3,8 +3,6 @@ import { FaQuestionCircle } from 'react-icons/fa'
 import PhoneInput from 'react-phone-input-2'
 import id from 'react-phone-input-2/lang/id.json'
 import DatePicker from 'react-datepicker'
-import Select from 'react-select'
-import makeAnimated from 'react-select/animated'
 import NumberFormat from 'react-number-format'
 import { Range, createSliderWithTooltip } from 'rc-slider'
 import Loader from 'react-loader-spinner'
@@ -12,22 +10,22 @@ import validator from 'validator'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
 import axios from 'axios'
+import { useRouter } from 'next/router'
+import dynamic from 'next/dynamic'
+// import Select from 'react-select'
+// import makeAnimated from 'react-select/animated'
 // files
 import Dropzone from './Dropzone'
-import subDistrictsJson2 from '../../utils/sub-districts2.json'
-import { useRouter } from 'next/router'
 import { CreateRoompiesProps } from '../../pages/dashboard/roompies/create'
 import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import { LocPref } from '../../utils/interfaces'
 
-const animatedComponents = makeAnimated() // animation on react-select isMulti
-
-// filter sub-districts array so that it supports react-select
-const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
-  label: el,
-  value: el,
-}))
-
+// const animatedComponents = makeAnimated() // animation on react-select isMulti
 const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
+
+const MapWithNoSSR = dynamic(() => import('../leaflet/CreateRoompiesLeaflet'), {
+  ssr: false,
+})
 
 export default function CreateRoompies({ user }: CreateRoompiesProps) {
   const { push } = useRouter()
@@ -47,7 +45,7 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
   const [stayLength, setStayLength] = useState<string>('')
   const [desc, setDesc] = useState<string>('')
   // location preferences
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState([]) // array of object => karena isMulti
+  const [locPref, setLocPref] = useState<LocPref[]>([]) // array of LocPref object
   // home preferences
   const [roomType, setRoomType] = useState<string>('Flex') // Satu kamar / Satu rumah / Flex
   const [parking, setParking] = useState<string>('Flex') // Required / Flex
@@ -67,8 +65,6 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
     // validation
     if (!validator.isLength(phone, { min: 9, max: 16 })) {
       return toast.warning('Please input a valid phone numbers')
-    } else if (selectedSubDistricts.length < 1) {
-      return toast.warning('Please select minimal 1 location')
     } else if (~~budget < 1) {
       return toast.warning('Please input your budget')
     } else if (images.length < 1) {
@@ -88,9 +84,7 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
       moveDate: new Date(moveDate).getTime(), // milliseconds
       stayLength: ~~stayLength,
       desc,
-      locPref: selectedSubDistricts.map(
-        (el: { label: string; value: string }) => el.value // only return string
-      ),
+      locPref, // lat & lng dari leaflet map marker
       homePref: {
         room: roomType,
         parking,
@@ -106,15 +100,12 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
       },
       postedBy: user.id, // userId disini
     }
+
     const photoURL = images[0] // array of image object + preview: URL.createObjectURL(image)
     delete photoURL.preview
 
     try {
       setBusy(true) // enable loading screen + disable button
-
-      // create x-www-form-urlencoded => enctype: application/x-www-form-urlencoded
-      // const params = new URLSearchParams();
-      // params.append('param1', 'value1');
 
       // create form-data => enctype: multipart/form-data
       const formData = new FormData()
@@ -127,9 +118,6 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
           'Content-Type': 'multipart/form-data',
         },
       })
-
-      // console.log(photoURL);
-      // console.log(state);
 
       // if POST success
       if (res.status === 201) {
@@ -527,12 +515,15 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
 
             <ReactTooltip id="locPrefTip">
               <p className="text-white">
-                Rencana lokasi tempat tinggal anda nantinya. Bisa pilih lebih
-                dari 1.
+                Rencana lokasi tempat tinggal anda nantinya. Radius marker
+                sejauh 1 km. Bisa pilih maksimal 3 pilihan.
               </p>
             </ReactTooltip>
 
-            <Select
+            {/* leaflet map */}
+            <MapWithNoSSR locPref={locPref} setLocPref={setLocPref} />
+
+            {/* <Select
               className="w-full border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
               placeholder="List of sub-districts"
               name="locPref"
@@ -542,7 +533,7 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
               components={animatedComponents}
               options={subDistrictsOptions}
               onChange={setSelectedSubDistricts}
-            />
+            /> */}
           </section>
         </div>
 

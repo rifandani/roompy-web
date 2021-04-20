@@ -68,7 +68,7 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
 
   // polyfill
   global.XMLHttpRequest = XHR
-    ; (global.WebSocket as any) = WS
+  ;(global.WebSocket as any) = WS
 
   try {
     // @ts-ignore
@@ -84,13 +84,14 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     // save to firestore with empty photoURL & get the roompiesId first
     const postedRoompiesRef = await roompiesRef.add({
       ...state,
+      createdAt: nowMillis,
       photoURL: '',
     })
 
     // storageRef => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(
       `users/${userId}/roompies/${postedRoompiesRef.id}/${
-      file?.originalname ?? file?.name ?? file?.filename
+        file?.originalname ?? file?.name ?? file?.filename
       }`
     )
     await storageRef.put(file?.buffer ?? file) // save to storage => File / Blob
@@ -130,7 +131,7 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
 
   // polyfill
   global.XMLHttpRequest = XHR
-    ; (global.WebSocket as any) = WS
+  ;(global.WebSocket as any) = WS
 
   try {
     // @ts-ignore
@@ -159,7 +160,7 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
     // POST new photo to storage => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(
       `users/${userId}/roompies/${roompy.id}/${
-      file?.originalname ?? file?.name ?? file?.filename
+        file?.originalname ?? file?.name ?? file?.filename
       }`
     )
     await storageRef.put(file?.buffer ?? file) // save to storage => File / Blob
@@ -193,7 +194,7 @@ handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
 
   // polyfill
   global.XMLHttpRequest = XHR
-    ; (global.WebSocket as any) = WS
+  ;(global.WebSocket as any) = WS
 
   try {
     // get roompy
