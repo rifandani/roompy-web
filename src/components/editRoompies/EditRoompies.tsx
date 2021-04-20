@@ -4,8 +4,6 @@ import { FaQuestionCircle } from 'react-icons/fa'
 import PhoneInput from 'react-phone-input-2'
 import id from 'react-phone-input-2/lang/id.json'
 import DatePicker from 'react-datepicker'
-import Select from 'react-select'
-import makeAnimated from 'react-select/animated'
 import NumberFormat from 'react-number-format'
 import { Range, createSliderWithTooltip } from 'rc-slider'
 import Loader from 'react-loader-spinner'
@@ -13,21 +11,21 @@ import validator from 'validator'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
 import axios from 'axios'
+import dynamic from 'next/dynamic'
+// import Select from 'react-select'
+// import makeAnimated from 'react-select/animated'
 // files
 import Dropzone from '../createRoompies/Dropzone'
-import subDistrictsJson2 from '../../utils/sub-districts2.json'
 import { EditRoompiesProps } from '../../pages/dashboard/roompies/edit/[id]'
 import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import { LocPref } from '../../utils/interfaces'
 
-const animatedComponents = makeAnimated() // animation on react-select isMulti
-
-// filter sub-districts array so that it supports react-select
-const subDistrictsOptions = subDistrictsJson2.map((el: string) => ({
-  label: el,
-  value: el,
-}))
-
+// const animatedComponents = makeAnimated() // animation on react-select isMulti
 const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
+
+const MapWithNoSSR = dynamic(() => import('../leaflet/EditRoompiesLeaflet'), {
+  ssr: false,
+})
 
 export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
   const { push } = useRouter()
@@ -51,12 +49,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
   )
   const [desc, setDesc] = useState<string>(roompy.desc || '')
   // location preferences
-  const [selectedSubDistricts, setSelectedSubDistricts] = useState([
-    {
-      label: 'July',
-      value: 'July',
-    },
-  ]) // array of object => karena isMulti
+  const [locPref, setLocPref] = useState<LocPref[]>(roompy.locPref || []) // array of LocPref object
   // home preferences
   const [roomType, setRoomType] = useState<string>(
     roompy.homePref.room || 'Flex'
@@ -88,8 +81,8 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
     // validation
     if (!validator.isLength(phone, { min: 9, max: 16 })) {
       return toast.warning('Please input a valid phone numbers')
-    } else if (selectedSubDistricts.length < 1) {
-      return toast.warning('Please select minimal 1 location')
+    } else if (locPref.length < 1) {
+      return toast.warning('Please select minimal 1 location preferences')
     } else if (images.length < 1) {
       return toast.warning('Please select minimal 1 photo')
     }
@@ -107,9 +100,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
       moveDate: new Date(moveDate).getTime(), // milliseconds
       stayLength: ~~stayLength,
       desc,
-      locPref: selectedSubDistricts.map(
-        (el: { label: string; value: string }) => el.value // only return string
-      ),
+      locPref,
       homePref: {
         room: roomType,
         parking,
@@ -131,10 +122,6 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
     try {
       setBusy(true) // enable loading screen + disable button
 
-      // create x-www-form-urlencoded => enctype: application/x-www-form-urlencoded
-      // const params = new URLSearchParams();
-      // params.append('param1', 'value1');
-
       // create form-data => enctype: multipart/form-data
       const formData = new FormData()
       formData.append('photo', photoURL)
@@ -146,9 +133,6 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
           'Content-Type': 'multipart/form-data',
         },
       })
-
-      // console.log(photoURL);
-      // console.log(state);
 
       // if PUT success
       if (res.status === 201) {
@@ -166,7 +150,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
 
   async function onDeleteRoompies(e: FormEvent) {
     e.preventDefault()
-    const userAgree = window.confirm('Are you sure you want to delete this?')
+    const userAgree = window.confirm('Anda yakin ingin menghapus roompy ini?')
 
     if (!userAgree) return
 
@@ -179,7 +163,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
       if (res.status === 200) {
         await push('/dashboard')
         setBusy(false)
-        return toast.success('Roompies deleted')
+        return toast.success('Roompy deleted')
       }
     } catch (err) {
       // on ERROR => Axios Response error
@@ -571,12 +555,15 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
 
             <ReactTooltip id="locPrefTip">
               <p className="text-white">
-                Rencana lokasi tempat tinggal anda nantinya. Bisa pilih lebih
-                dari 1.
+                Rencana lokasi tempat tinggal anda nantinya. Radius marker
+                sejauh 1 km. Bisa pilih maksimal 3 pilihan.
               </p>
             </ReactTooltip>
 
-            <Select
+            {/* leaflet map */}
+            <MapWithNoSSR locPref={locPref} setLocPref={setLocPref} />
+
+            {/* <Select
               className="w-full border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
               placeholder="List of sub-districts"
               name="locPref"
@@ -586,7 +573,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
               components={animatedComponents}
               options={subDistrictsOptions}
               onChange={setSelectedSubDistricts}
-            />
+            /> */}
           </section>
         </div>
 

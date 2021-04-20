@@ -65,6 +65,8 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
     // validation
     if (!validator.isLength(phone, { min: 9, max: 16 })) {
       return toast.warning('Please input a valid phone numbers')
+    } else if (locPref.length < 1) {
+      return toast.warning('Please input your location preferences')
     } else if (~~budget < 1) {
       return toast.warning('Please input your budget')
     } else if (images.length < 1) {

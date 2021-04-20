@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 // import { FaMapMarkerAlt } from 'react-icons/fa'
@@ -13,12 +12,10 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
       <article className="transition duration-500 transform cursor-pointer hover:scale-105">
         {/* roompy image */}
         <section className="relative h-96 sm:h-60 pb-5/6">
-          <Image
+          <img
             className="absolute inset-0 object-cover w-full h-full mx-auto rounded-lg shadow-md"
-            src={roompy.photoURL || '/favicon.ico'}
+            src={roompy.photoURL || '/unknown-user.png'}
             alt={roompy.name}
-            layout="fill"
-            objectFit="cover"
           />
         </section>
 

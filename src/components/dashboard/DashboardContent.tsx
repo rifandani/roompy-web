@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 import { MdTimelapse } from 'react-icons/md'
 import { FaCrown, FaShoppingCart, FaUserPlus, FaDoorOpen } from 'react-icons/fa'
 import { toast } from 'react-toastify'
@@ -43,8 +42,6 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
   // hooks
   const { push } = useRouter()
   const { data, error } = useSWR(`/posted/roompies?userId=${dbUser.id}`)
-
-  console.log(data, error)
 
   function onCreateRoompies() {
     // check if the 'dbUser' is premium / postedRoompies less than 1, then can upload more than 1 post
@@ -169,12 +166,10 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
                   <div className="flex flex-row items-center">
                     <div className="flex-shrink pr-4">
                       <div className="">
-                        <Image
+                        <img
                           className="rounded-full"
-                          src={roompy.photoURL}
-                          width={60}
-                          height={60}
-                          quality={50}
+                          src={roompy.photoURL || '/unknown-user-circle.png'}
+                          alt={roompy.name}
                         />
                       </div>
                     </div>

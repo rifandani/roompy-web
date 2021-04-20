@@ -2,6 +2,7 @@ module.exports = {
   images: {
     domains: [
       'firebasestorage.googleapis.com',
+      'roompy-roompies.appspot.com',
       'images.unsplash.com',
       'placeimg.com',
     ],

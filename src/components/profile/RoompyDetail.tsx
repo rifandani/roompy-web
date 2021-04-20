@@ -32,7 +32,7 @@ import {
 } from 'react-icons/hi'
 import { IoLogoWhatsapp } from 'react-icons/io'
 import { toast } from 'react-toastify'
-import dynamic from 'next/dynamic';
+import dynamic from 'next/dynamic'
 // files
 import UserContext from '../../contexts/UserContext'
 import axiosErrorHandle from '../../utils/axiosErrorHandle'
@@ -104,7 +104,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
     //   loading: () => (
     //     <div style={{ textAlign: 'center', paddingTop: 20 }}>Chargement…</div>
     //   ),
-  });
+  })
 
   return (
     <article className="mx-auto bg-white max-w-7xl">
@@ -117,7 +117,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         <div className="flex items-center justify-center pt-10 pb-3">
           <img
             className="object-cover w-64 mt-8 rounded-md md:w-80 xl:w-96 md:mt-0"
-            src={roompy.photoURL}
+            src={roompy.photoURL || '/unknown-user.png'}
             alt={roompy.name}
           />
         </div>
@@ -125,7 +125,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         {/* back button */}
         <button
           onClick={() => back()}
-          className="focus:outline-none focus:ring focus:ring-red-200 absolute top-0 left-0 flex items-center px-3 py-1 mt-5 ml-5 transition duration-500 transform border border-red-500 rounded-md cursor-pointer hover:scale-110"
+          className="absolute top-0 left-0 flex items-center px-3 py-1 mt-5 ml-5 transition duration-500 transform border border-red-500 rounded-md cursor-pointer focus:outline-none focus:ring focus:ring-red-200 hover:scale-110"
         >
           <FaHandPointLeft className="text-lg text-red-500" />
 
@@ -135,7 +135,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
         {/* add to favorite */}
         <button
           onClick={onAddToFavorite}
-          className="focus:outline-none focus:ring focus:ring-yellow-200 absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer hover:scale-110"
+          className="absolute top-0 right-0 flex items-center px-3 py-1 mt-5 mr-5 transition duration-500 transform border border-yellow-500 rounded-md cursor-pointer focus:outline-none focus:ring focus:ring-yellow-200 hover:scale-110"
           disabled={isAlreadyFav}
         >
           <HiStar className="text-lg text-yellow-500" />
@@ -161,8 +161,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   {roompy.gender === 'Pria' ? (
                     <GiMale className="text-2xl text-blue-500" />
                   ) : (
-                      <GiFemale className="text-2xl text-pink-500" />
-                    )}
+                    <GiFemale className="text-2xl text-pink-500" />
+                  )}
 
                   <span className="ml-2 text-lg">{roompy.age} tahun</span>
                 </div>
@@ -269,8 +269,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   {roompy.smoker ? (
                     <p className="text-base">Smoker</p>
                   ) : (
-                      <p className="text-base">Non-smoker</p>
-                    )}
+                    <p className="text-base">Non-smoker</p>
+                  )}
                 </span>
 
                 {/* pets */}
@@ -280,8 +280,8 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   {roompy.ownPet ? (
                     <p className="text-base">Has pets</p>
                   ) : (
-                      <p className="text-base">No pets</p>
-                    )}
+                    <p className="text-base">No pets</p>
+                  )}
                 </span>
 
                 {/* children */}
@@ -463,17 +463,17 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                       </strong>
                     </p>
                   ) : (
-                        <p className="text-base">
-                          Jenis kelamin:{' '}
-                          <strong className="font-normal line-through">Pria</strong>{' '}
-                          <strong className="mx-2">/</strong>{' '}
-                          <strong className="font-normal line-through">
-                            Wanita
+                    <p className="text-base">
+                      Jenis kelamin:{' '}
+                      <strong className="font-normal line-through">Pria</strong>{' '}
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong className="font-normal line-through">
+                        Wanita
                       </strong>
-                          <strong className="mx-2">/</strong>{' '}
-                          <strong>Flexible</strong>
-                        </p>
-                      )}
+                      <strong className="mx-2">/</strong>{' '}
+                      <strong>Flexible</strong>
+                    </p>
+                  )}
                 </span>
 
                 {/* age */}
@@ -565,7 +565,7 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
             <div className="flex justify-center w-full pb-4 md:w-2/5 md:justify-start xl:w-1/5">
               <img
                 className="w-32 h-32 rounded-full shadow"
-                src={roompy.photoURL}
+                src={roompy.photoURL || '/unknown-user-circle.png'}
                 alt={roompy.name}
               />
             </div>
@@ -584,24 +584,24 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                     </p>
                   </>
                 ) : (
-                    <p className="text-lg italic text-red-500">
-                      Please login to see {roompy.name}'s number
-                    </p>
-                  )}
+                  <p className="text-lg italic text-red-500">
+                    Please login to see {roompy.name}'s number
+                  </p>
+                )}
               </span>
 
               {/* verified social media */}
               <div className="flex items-center justify-center space-x-4 text-2xl md:justify-start">
                 <FaFacebook
-                  onClick={() => { }}
+                  onClick={() => {}}
                   className="text-blue-500 transition duration-500 transform cursor-pointer hover:scale-125"
                 />
                 <FaInstagram
-                  onClick={() => { }}
+                  onClick={() => {}}
                   className="text-red-500 transition duration-500 transform cursor-pointer hover:scale-125"
                 />
                 <FaTwitter
-                  onClick={() => { }}
+                  onClick={() => {}}
                   className="text-blue-400 transition duration-500 transform cursor-pointer hover:scale-125"
                 />
               </div>
