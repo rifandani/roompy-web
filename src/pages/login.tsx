@@ -1,16 +1,16 @@
 import { GetServerSideProps } from 'next'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+// import { useRouter } from 'next/router'
+// import { useEffect } from 'react'
 // files
 import LoginComp from '../components/login/LoginComp'
 
 export default function LoginPage() {
-  const { prefetch } = useRouter()
+  // const { prefetch } = useRouter()
 
-  useEffect(() => {
-    // Prefetch the dashboard page for USER
-    prefetch('/dashboard')
-  }, [])
+  // useEffect(() => {
+  //   // Prefetch the dashboard page for USER
+  //   prefetch('/dashboard')
+  // }, [])
 
   return (
     <div className="">

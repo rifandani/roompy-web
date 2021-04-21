@@ -35,9 +35,12 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // run cors
 
   try {
+    // kalau gaada query berarti GET all roompies
     if (Object.keys(req.query).length === 0) {
       // get all roompies
       const roompiesSnap = await roompiesRef.get()
+
+      // tambahin attribute id di setiap object data roompy
       const roompies = roompiesSnap.docs.map((el) => ({
         ...el.data(),
         id: el.id,
@@ -72,7 +75,7 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     // @ts-ignore
-    const file = req.file
+    const file = req.file // hanya 1 file
     const state = JSON.parse(req.body.roompy)
     const userId = state.postedBy
 
@@ -135,7 +138,7 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     // @ts-ignore
-    const file = req.file
+    const file = req.file // hanya 1 file
     const state = JSON.parse(req.body.roompy)
     const userId = state.postedBy
 
