@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import validator from 'validator'
 // files
 import setCookie from '../../../utils/setCookie'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
@@ -8,7 +9,32 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // destructure request body form
     const { id, username, email } = req.body
 
-    // TODO: clean/filter req.body
+    // TODO: clean/filter/validate client req.body
+    if (!id || !username || !email) {
+      // kalau input kosong
+      return res.status(400).json({
+        error: true,
+        message: 'Please input all fields',
+      })
+    } else if (typeof id !== 'string') {
+      // kalau input id tidak berupa string
+      return res.status(400).json({
+        error: true,
+        message: 'Should be a valid string id from firebase uid',
+      })
+    } else if (!validator.isLength(username, { min: 3 })) {
+      // kalau input email tidak berupa valid email address
+      return res.status(400).json({
+        error: true,
+        message: 'Username should be minimal 3 characters',
+      })
+    } else if (!validator.isEmail(email)) {
+      // kalau input email tidak berupa valid email address
+      return res.status(400).json({
+        error: true,
+        message: 'Should be a valid email address',
+      })
+    }
 
     try {
       // save to firestore Users collection

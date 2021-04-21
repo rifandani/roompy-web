@@ -6,7 +6,7 @@ import initMiddleware from '../../../middlewares/initMiddleware'
 
 const cors = initMiddleware(
   Cors({
-    methods: ['PUT'],
+    methods: ['GET'],
   })
 )
 
@@ -34,7 +34,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // logout SUCCESS --------------------------
       res.status(200).json({ error: false, message: 'Logout success' })
     } catch (err) {
-      res.status(500).json({ error: true, err }) // logout ERROR
+      res
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message, err }) // logout ERROR
     }
   } else {
     // error => invalid req method

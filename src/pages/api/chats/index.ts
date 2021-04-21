@@ -1,8 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
-// Polyfills required for Firebase
-import XHR from 'xhr2'
-import WS from 'ws'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
 import { realDB, nowMillis } from '../../../configs/firebaseConfig'
@@ -17,10 +14,6 @@ const cors = initMiddleware(
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // run cors
-
-  // polyfill
-  global.XMLHttpRequest = XHR
-  ;(global.WebSocket as any) = WS
 
   const messagesRef = realDB.ref('messages_id')
   const chatsRef = realDB.ref('chats')
