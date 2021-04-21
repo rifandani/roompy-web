@@ -1,15 +1,25 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import validator from 'validator'
+import Cors from 'cors'
 // files
 import setCookie from '../../../utils/setCookie'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
+import initMiddleware from '../../../middlewares/initMiddleware'
+
+const cors = initMiddleware(
+  Cors({
+    methods: ['POST'],
+  })
+)
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await cors(req, res) // Run cors
+
   if (req.method === 'POST') {
     // destructure request body form
     const { id, username, email } = req.body
 
-    // TODO: clean/filter/validate client req.body
+    // clean/filter/validate client req.body
     if (!id || !username || !email) {
       // kalau input kosong
       return res.status(400).json({

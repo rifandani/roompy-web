@@ -1,6 +1,6 @@
 # Design Guidelines
 
-This document aims to specify and define the rules and patterns to follow when implementing and developing new features and components for DogeHouse.
+This document aims to specify and define the rules and patterns to follow when implementing and developing new features and components for Roompy.
 
 > This is a summary. For a more extensive version, components and UI Design, visit the publically available **[Figma file](https://www.figma.com/file/CS01VVLR7ArQl0afYFkNj3/Web-App?node-id=201%3A1979)**.
 
@@ -9,9 +9,9 @@ This document aims to specify and define the rules and patterns to follow when i
 - [Design Guidelines](#design-guidelines)
   - [Table of contents](#table-of-contents)
   - [Color scheme](#color-scheme)
-      - [Gray shades](#gray-shades)
+    - [Gray shades](#gray-shades)
   - [Typography](#typography)
-      - [Web Embed](#web-embed)
+    - [Web Embed](#web-embed)
   - [Spacing](#spacing)
   - [Doubts and questions](#doubts-and-questions)
 
@@ -20,7 +20,7 @@ This document aims to specify and define the rules and patterns to follow when i
 - **Accent**: `#FD4D4D`
 - **Pure White**: `#FFFFFF`
 
-#### Gray shades
+### Gray shades
 
 - **Gray 100**: `#DEE3EA`
 - **Gray 200**: `#B2BDCD`
@@ -41,7 +41,7 @@ We'll be using two of its styles:
 - Inter Bold (`700`)
 - Inter Medium (`500`)
 
-#### Web Embed
+### Web Embed
 
 HTML's `link` method
 
@@ -86,4 +86,4 @@ This is an approximation. On some circumstances other values will be used to ens
 
 ## Doubts and questions
 
-If you have any doubts or concerns when developing components or other UI elements, you can open an issue and tag @ajmnz or leave a message in `#design` or `#kofta` in [our Discord](https://discord.gg/82HzQCJCDg).
+If you have any doubts or concerns when developing components or other UI elements, you can open an issue and tag @rifandani or leave a message in [our Discord](https://discord.gg/NZYu9K7dJf).

@@ -1,7 +1,10 @@
 <a href="https://roompy.vercel.app">
   <p align="center">
-    <img height=100 src="https://raw.githubusercontent.com/benawad/dogehouse/staging/.redesign-assets/dogehouse_logo.svg"/>
+    <img height=100 src="https://i.ibb.co/Kwy7QNX/circle.png"/>
   </p>
+  <h1 style="color: #" align="center">
+    Roompy
+  </h1>
 </a>
 
 <p align="center">
@@ -9,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/wCbKBZF9cV">
+  <a href="https://discord.gg/NZYu9K7dJf">
     <img src="https://img.shields.io/discord/810571477316403233?style=for-the-badge" alt="discord - users online" />
   </a>
 
@@ -19,8 +22,6 @@
 </p>
 
 <h3 align="center">
-  <a href="https://github.com/benawad/dogehouse/blob/staging/CONTRIBUTING.md">Contribute</a>
-    <span> · </span>
   <a href="https://discord.gg/82HzQCJCDg">Community</a>
     <span> · </span>
   <a href="./docs/README.MD">Documentation</a>
@@ -51,15 +52,6 @@ The android app built with Android Studio.
 - Get it from.
 - If.
 - Currently.
-
-## Contributions
-
-Roompy Web is open to contributions, but I recommend creating an issue or replying in a comment to let me know what you are working on first that way we don't overwrite each other.
-Please read [CONTRIBUTING.md](https://github.com/benawad/dogehouse/blob/staging/CONTRIBUTING.md) for details on this project.
-
-## Code of Conduct
-
-Please read [CODE_OF_CONDUCT.md](https://github.com/benawad/dogehouse/blob/staging/CODE_OF_CONDUCT.md) for details on our code of conduct.
 
 ## Design Guidelines
 
