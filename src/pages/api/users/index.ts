@@ -22,13 +22,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   // polyfill
   global.XMLHttpRequest = XHR
-    ; (global.WebSocket as any) = WS
+  ;(global.WebSocket as any) = WS
 
   const usersRef = db.collection('users')
 
   // GET req => /users & /users?id=userId
   if (req.method === 'GET') {
     try {
+      // if there is no query === get ALL users
       if (Object.keys(req.query).length === 0) {
         // get all users
         const usersSnap = await usersRef.get()
@@ -86,8 +87,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // can not delete premium user
       if (user.premium) {
-        return res.status(200).json({
-          error: false,
+        return res.status(400).json({
+          error: true,
           message: 'You can not delete a premium user',
           user,
         })

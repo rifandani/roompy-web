@@ -24,6 +24,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // get user from firestore
       const userSnap = await db.collection('users').doc(userId).get()
 
+      // append id to user object
       const dbUser = {
         ...userSnap.data(),
         id: userSnap.id,
@@ -45,7 +46,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json({ dbUser, favRoompies })
+      res.status(200).json({ user: dbUser, favRoompies })
     } catch (err) {
       // GET ERROR -----------------------------------------------------------------
       res
@@ -77,6 +78,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
       }
 
+      // if roompyId belum ada di list
       await userRef.update({
         favorites: {
           roompies: [...prevFavRoompies, roompyId],
@@ -84,7 +86,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
 
       // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json({
+      res.status(201).json({
         error: false,
         message: 'Success adding to the favorites list',
       })

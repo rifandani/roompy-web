@@ -4,9 +4,9 @@ import Cors from 'cors'
 import XHR from 'xhr2'
 import WS from 'ws'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import { nowMillis } from '../../../configs/firebaseConfig'
-import getRoompy from '../../../utils/getRoompy'
+import initMiddleware from '../../../../middlewares/initMiddleware'
+import { nowMillis } from '../../../../configs/firebaseConfig'
+import getRoompy from '../../../../utils/getRoompy'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -22,6 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   global.XMLHttpRequest = XHR
   ;(global.WebSocket as any) = WS
 
+  // update ONLY roompy data (photoURL not included)
   // PUT req => /roompy?id=roompyId
   if (req.method === 'PUT') {
     try {

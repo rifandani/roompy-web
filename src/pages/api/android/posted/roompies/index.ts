@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
-import initMiddleware from '../../../../middlewares/initMiddleware'
-import { db } from '../../../../configs/firebaseConfig'
-import { Roompies } from '../../../../utils/interfaces'
-import { getAsString } from '../../../../utils/getAsString'
+import initMiddleware from '../../../../../middlewares/initMiddleware'
+import { db } from '../../../../../configs/firebaseConfig'
+import { Roompies } from '../../../../../utils/interfaces'
+import { getAsString } from '../../../../../utils/getAsString'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -29,7 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         id: el.id,
       }))
 
-      // userPostedRoompies
+      // filter all roompies array to get the roompy object that match with userId from query
       const userPostedRoompies = (roompies as Roompies).filter(
         (el) => el.postedBy === userId
       )
@@ -45,7 +45,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
       }
 
-      // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // GET SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
         postedRoompies: userPostedRoompies,

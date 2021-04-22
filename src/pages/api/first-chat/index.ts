@@ -3,12 +3,11 @@ import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
-import { getAsString } from '../../../utils/getAsString'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
-    methods: ['POST',],
+    methods: ['POST'],
   })
 )
 
@@ -17,13 +16,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
   const usersRef = db.collection('users')
 
-  // POST req => 
+  // POST req => /api/first-chat
   if (req.method === 'POST') {
     try {
-      const {
-        senderId,
-        receiverId,
-      } = req.body
+      const { senderId, receiverId } = req.body
 
       // get senderRef & previousMessagesTo data
       const senderRef = usersRef.doc(senderId) // sender reference
@@ -31,10 +27,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const previousMessagesTo = senderDataSnapshot.get('messagesTo') // array
       // update sender messagesTo document
       await senderRef.update({
-        messagesTo: [
-          ...previousMessagesTo,
-          senderId + '-' + receiverId
-        ],
+        messagesTo: [...previousMessagesTo, senderId + '-' + receiverId],
         updatedAt: nowMillis,
       })
 
@@ -44,15 +37,17 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const previousMessagesFrom = receiverDataSnapshot.get('messagesFrom') // array
       // update receiver messagesFrom document
       await receiverRef.update({
-        messagesFrom: [
-          ...previousMessagesFrom,
-          senderId + '-' + receiverId
-        ],
+        messagesFrom: [...previousMessagesFrom, senderId + '-' + receiverId],
         updatedAt: nowMillis,
       })
 
       // POST chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json({ error: false, message: 'Users messagesFrom & messagesTo updated' })
+      res
+        .status(200)
+        .json({
+          error: false,
+          message: 'Users messagesFrom & messagesTo updated',
+        })
     } catch (err) {
       // POST ERROR -----------------------------------------------------------------
       res
@@ -61,8 +56,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else {
     // error => invalid req method
-    res
-      .status(405)
-      .json({ error: true, message: 'Only support POST req' })
+    res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }

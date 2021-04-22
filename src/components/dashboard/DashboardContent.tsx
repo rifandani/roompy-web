@@ -34,10 +34,6 @@ function NoListings({ color }: { color: string }) {
   )
 }
 
-// interface Props extends DashboardProps {
-//   postedRoompies: Roompies | [];
-// }
-
 export default function DashboardContent({ dbUser }: DashboardProps) {
   // hooks
   const { push } = useRouter()
@@ -167,7 +163,7 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
                     <div className="flex-shrink pr-4">
                       <div className="">
                         <img
-                          className="rounded-full"
+                          className="rounded-full w-14 h-14"
                           src={roompy.photoURL || '/unknown-user-circle.png'}
                           alt={roompy.name}
                         />

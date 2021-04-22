@@ -3,13 +3,12 @@ import Cors from 'cors'
 // Polyfills required for Firebase
 import XHR from 'xhr2'
 import WS from 'ws'
-// import formidable from 'formidable';
 import nc from 'next-connect'
 import multer from 'multer'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import { nowMillis, storage } from '../../../configs/firebaseConfig'
-import getRoompy from '../../../utils/getRoompy'
+import initMiddleware from '../../../../middlewares/initMiddleware'
+import { nowMillis, storage } from '../../../../configs/firebaseConfig'
+import getRoompy from '../../../../utils/getRoompy'
 
 // handle files upload middleware
 const upload = multer()
@@ -29,6 +28,7 @@ export const config = {
   },
 }
 
+// ONLY update or add new photo for roompy (not other roompy data)
 // PUT req => /upload?id=roompyId
 handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
@@ -67,7 +67,7 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
     const url = await storageRef.getDownloadURL() // get fileUrl from uploaded file
 
     if (url) {
-      // update all previous roompy data
+      // update ONLY photoURL and updatedAt from previous roompy data
       await roompyRef.update({
         photoURL: url,
         updatedAt: nowMillis,
@@ -76,7 +76,7 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
       // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
-        message: 'Roompy updated successfully',
+        message: 'Photo updated successfully',
       })
     }
   } catch (err) {

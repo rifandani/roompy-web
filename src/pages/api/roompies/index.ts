@@ -3,7 +3,6 @@ import Cors from 'cors'
 // Polyfills required for Firebase
 import XHR from 'xhr2'
 import WS from 'ws'
-// import formidable from 'formidable';
 import nc from 'next-connect'
 import multer from 'multer'
 // files

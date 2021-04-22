@@ -24,6 +24,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookie = ctx.req.headers?.cookie
   const authCookie = cookie?.replace('auth=', '') // get only the cookie
 
+  console.log('cookie', cookie)
+  console.log('auth cookie', authCookie)
+
   // kalau auth cookie sudah ada
   if (authCookie) {
     return {

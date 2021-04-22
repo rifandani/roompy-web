@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import * as turf from '@turf/turf'
 // files
 import initMiddleware from '../../../../middlewares/initMiddleware'
 import { db } from '../../../../configs/firebaseConfig'
@@ -24,12 +25,13 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // get all roompies
       const roompiesSnap = await db.collection('roompies').get()
 
+      // append id to all roompy object
       const roompies = roompiesSnap.docs.map((el) => ({
         ...el.data(),
         id: el.id,
       }))
 
-      // userPostedRoompies
+      // filter all roompies so that it only select roompy from query userId
       const userPostedRoompies = (roompies as Roompies).filter(
         (el) => el.postedBy === userId
       )
@@ -40,20 +42,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(200).json({
           error: false,
           matchRoompies: [],
-          havePostedRoompies: false,
           message: 'There is no posted roompies in this user document',
         })
       }
 
       // current user roompiesPreferences
-      const userPref = {
-        gender: userPostedRoompies[0].roompiesPref.gender,
-        ageFrom: userPostedRoompies[0].roompiesPref.ageFrom,
-        ageTo: userPostedRoompies[0].roompiesPref.ageTo,
-        pet: userPostedRoompies[0].roompiesPref.pet,
-        smoker: userPostedRoompies[0].roompiesPref.smoker,
-        // loc: userPostedRoompies[0].locPref,
-      }
+      // panjang array minimal 1, maksimal 3
+      const userLocPref = userPostedRoompies[0].locPref.map(
+        (el) => turf.point([el.lng, el.lat]) // Note order: longitude, latitude.
+      )
 
       // roompies except user postedRoompies
       const roompiesExcept = (roompies as Roompies).filter(
@@ -61,27 +58,29 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       )
 
       // filter all roompies based on userPref
-      const matchRoompies = (roompiesExcept as Roompies).filter((roompy) => {
-        const isPetOkay = userPref.pet === 'Okay'
-        const isSmokerOkay = userPref.smoker === 'Okay'
-        const isGenderFlex = userPref.gender === 'Flex'
+      let matchRoompies = []
+      roompiesExcept.forEach((roompy) => {
+        const roompyLocPref = roompy.locPref.map(
+          (el) => turf.point([el.lng, el.lat]) // Note order: longitude, latitude.
+        )
 
-        const selected =
-          // roompy.locPref.includes(userPref.loc[0]) &&
-          roompy.ownPet === isPetOkay &&
-          roompy.smoker === isSmokerOkay &&
-          (isGenderFlex ? true : roompy.gender === userPref.gender) &&
-          roompy.age >= userPref.ageFrom &&
-          roompy.age <= userPref.ageTo
+        userLocPref.forEach((userLoc) => {
+          roompyLocPref.forEach((roompyLoc) => {
+            const distance = turf.distance(userLoc, roompyLoc) // in km
+            console.log(distance)
 
-        return selected
+            if (distance <= 1) {
+              matchRoompies.push(roompy)
+            }
+          })
+        })
       })
 
       // GET SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
+        userLocPref: userPostedRoompies[0].locPref,
         matchRoompies,
-        havePostedRoompies: true,
       })
     } catch (err) {
       // GET ERROR -----------------------------------------------------------------
