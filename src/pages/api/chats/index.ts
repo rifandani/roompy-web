@@ -2,46 +2,67 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { realDB, nowMillis } from '../../../configs/firebaseConfig'
-import { getAsString } from '../../../utils/getAsString'
+import { realDB, nowMillis, db } from '../../../configs/firebaseConfig'
+import getUser from '../../../utils/getUser'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
-    methods: ['GET', 'POST', 'DELETE'],
+    methods: ['GET', 'POST'],
   })
 )
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // run cors
 
-  const messagesRef = realDB.ref('messages_id')
   const chatsRef = realDB.ref('chats')
 
-  // GET req => /chats & /chats?userId=userId
+  // GET req => /chats?id=userId
   if (req.method === 'GET') {
     try {
-      if (Object.keys(req.query).length === 0) {
-        // get chats
-        const messages = await chatsRef.get()
-        const messagesOnce = await chatsRef.once('value')
+      // get user
+      const { user } = await getUser(req)
 
-        const exportVal = messagesOnce.exportVal()
-        const val = messagesOnce.val()
-        const keys = messagesOnce.key // 'messages_id'
-        const numChild = messagesOnce.numChildren() // 2
+      // variables
+      let promises = []
+      const userMessagesFromLength = user.messagesFrom.length
+      const userMessagesToLength = user.messagesTo.length
 
-        // GET chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.status(200).json({ messages, exportVal, val, keys, numChild })
-      } else {
-        const userId = getAsString(req.query.userId)
-
-        // get chats by userId
-        const chats = await chatsRef.child(userId).get()
-
-        // GET chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.status(200).json({ chats })
+      // get user messagesFrom (inbox) and push it to Promises array
+      if (userMessagesFromLength > 0) {
+        user.messagesFrom.forEach(async (chatId) => {
+          promises.push(chatsRef.child(chatId).get())
+        })
       }
+
+      // get user messagesTo (outbox) and push it to Promises array
+      if (userMessagesToLength > 0) {
+        user.messagesTo.forEach(async (chatId) => {
+          promises.push(chatsRef.child(chatId).get())
+        })
+      }
+
+      // kalau Promises array empty
+      if (promises.length === 0) {
+        return res.status(200).json({
+          error: false,
+          messages: [],
+          message: 'No messages found',
+        })
+      }
+
+      // settle all Promises array
+      const promiseValues = await Promise.all(promises)
+
+      // convert toJSON to a serializable data
+      const messages = promiseValues.map((val) => val.toJSON())
+      console.log(messages)
+
+      // GET chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.status(200).json({
+        messages,
+        error: false,
+      })
     } catch (err) {
       // GET ERROR -----------------------------------------------------------------
       res
@@ -51,59 +72,38 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // POST req => /chats
   } else if (req.method === 'POST') {
     try {
-      const {
-        senderUserId,
-        senderRoompyId,
-        receiverUserId,
-        receiverRoompyId,
-        text,
-      } = req.body // destructure body
+      const { senderUserId, text, chatId } = req.body // destructure body
 
-      // pertimbangkan apakah pake receiverUserId atau receiverRoompyId. Begitu juga dengan senderUserId atau senderRoompyId
-      const senderRef = chatsRef.child(senderUserId) // ref ke pengirim
-      const senderChats = await senderRef.get()
-      const numChild = senderChats.numChildren() // number
+      // chat ref
+      const chatRef = chatsRef.child(chatId) // ref ke chatId
 
       // TODO: kalo FREE user max. 3 chats
 
-      const receiverRef = senderRef.child(receiverUserId) // ref ke receiver, child dari senderRef
-      const roompySenderRef = receiverRef.child('senderRoompy') // ref ke senderRoompy, child dari receiverRef
-      const roompyReceiverRef = receiverRef.child('receiverRoompy') // ref ke receiverRoompy, child dari receiverRef
-      const pesanRef = receiverRef.child('messages') // ref ke messages, child dari receiverRef
+      // update updatedAt, lastMessage
+      await chatRef.update({
+        updatedAt: nowMillis,
+        lastMessage: text,
+      })
 
-      roompySenderRef.set({ id: senderRoompyId })
-      roompyReceiverRef.set({ id: receiverRoompyId })
-      const thenableRef = pesanRef.push({
+      // push text ke message list
+      await chatRef.child('message').push({
         text,
-        createdAt: nowMillis,
+        senderUserId,
+        time: nowMillis,
       })
 
       // POST chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json({ error: false, message: 'Message sent' })
+      res.status(201).json({ error: false, message: 'Message sent' })
     } catch (err) {
       // POST ERROR -----------------------------------------------------------------
       res
         .status(500)
         .json({ error: true, name: err.name, message: err.message, err })
     }
-    // DELETE req =>
-  } else if (req.method === 'DELETE') {
-    try {
-      // DELETE chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json({
-        error: false,
-        message: 'User deleted successfully',
-      })
-    } catch (err) {
-      // DELETE chats ERROR -----------------------------------------------------------------
-      res
-        .status(501)
-        .json({ error: true, name: err.name, message: err.message, err })
-    }
   } else {
     // error => invalid req method
     res
       .status(405)
-      .json({ error: true, message: 'Only support GET, POST and DELETE req' })
+      .json({ error: true, message: 'Only support GET and POST req' })
   }
 }

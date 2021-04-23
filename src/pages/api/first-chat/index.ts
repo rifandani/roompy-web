@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { db, nowMillis } from '../../../configs/firebaseConfig'
+import { db, nowMillis, realDB } from '../../../configs/firebaseConfig'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -19,35 +19,52 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   // POST req => /api/first-chat
   if (req.method === 'POST') {
     try {
-      const { senderId, receiverId } = req.body
+      const {
+        senderUserId,
+        senderRoompyId,
+        receiverUserId,
+        receiverRoompyId,
+      } = req.body
+
+      // chatId
+      const chatId = senderRoompyId + '-' + receiverRoompyId
 
       // get senderRef & previousMessagesTo data
-      const senderRef = usersRef.doc(senderId) // sender reference
-      const senderDataSnapshot = await senderRef.get() // sender data object
+      const senderRef = usersRef.doc(senderUserId) // sender reference
+      const senderDataSnapshot = await senderRef.get() // sender user object
       const previousMessagesTo = senderDataSnapshot.get('messagesTo') // array
       // update sender messagesTo document
       await senderRef.update({
-        messagesTo: [...previousMessagesTo, senderId + '-' + receiverId],
+        messagesTo: [...previousMessagesTo, chatId],
         updatedAt: nowMillis,
       })
 
       // get receiverRef & previousMessagesFrom data
-      const receiverRef = usersRef.doc(receiverId) // receiver reference
-      const receiverDataSnapshot = await receiverRef.get() // receiver data object
+      const receiverRef = usersRef.doc(receiverUserId) // receiver reference
+      const receiverDataSnapshot = await receiverRef.get() // receiver user object
       const previousMessagesFrom = receiverDataSnapshot.get('messagesFrom') // array
       // update receiver messagesFrom document
       await receiverRef.update({
-        messagesFrom: [...previousMessagesFrom, senderId + '-' + receiverId],
+        messagesFrom: [...previousMessagesFrom, chatId],
+        updatedAt: nowMillis,
+      })
+
+      // chat ref
+      const chatsRef = realDB.ref('chats')
+      const chatRef = chatsRef.child(chatId) // ref ke chatId
+
+      // set initial data without lastMessage, message
+      await chatRef.set({
+        chatId,
         updatedAt: nowMillis,
       })
 
       // POST chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res
-        .status(200)
-        .json({
-          error: false,
-          message: 'Users messagesFrom & messagesTo updated',
-        })
+      res.status(201).json({
+        chatId,
+        error: false,
+        message: 'Sender messagesTo updated & receiver messagesFrom updated',
+      })
     } catch (err) {
       // POST ERROR -----------------------------------------------------------------
       res
