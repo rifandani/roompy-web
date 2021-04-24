@@ -56,7 +56,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // convert toJSON to a serializable data
       const messages = promiseValues.map((val) => val.toJSON())
-      console.log(messages)
 
       // GET chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({

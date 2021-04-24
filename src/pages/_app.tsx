@@ -17,6 +17,7 @@ import { SWRConfig } from 'swr'
 import '../styles/index.css'
 import useAuth from '../hooks/useAuth'
 import UserContext from '../contexts/UserContext'
+import { init } from '../utils/sentry'
 
 // axios BASE URL
 axios.defaults.baseURL =
@@ -36,7 +37,15 @@ Router.events.on('routeChangeError', () => {
   NProgress.done()
 })
 
-export default function MyApp({ Component, pageProps }: AppProps) {
+// err untuk Sentry di _error.tsx
+interface MyAppProps extends AppProps {
+  err: Error
+}
+
+// init sentry
+init()
+
+export default function MyApp({ Component, pageProps, err }: MyAppProps) {
   const [user, setUser] = useAuth() // user auth context
 
   return (
@@ -89,7 +98,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
               fetcher: (url: string) => axios.get(url).then((res) => res.data),
             }}
           >
-            <Component {...pageProps} />
+            {/* tambahan props err dari _error.tsx (sentry) */}
+            <Component {...pageProps} err={err} />
             <ToastContainer />
           </SWRConfig>
         </UserContext.Provider>

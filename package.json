@@ -24,8 +24,13 @@
   },
   "dependencies": {
     "@formspree/react": "^2.2.3",
+    "@sentry/browser": "^6.3.1",
+    "@sentry/integrations": "^6.3.1",
+    "@sentry/node": "^6.3.1",
+    "@sentry/webpack-plugin": "^1.15.1",
     "@turf/turf": "^6.3.0",
     "autoprefixer": "^10.2.5",
+    "await-to-js": "^3.0.0",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cookie": "^0.4.1",
