@@ -2,10 +2,10 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { realDB, nowMillis, db } from '../../../configs/firebaseConfig'
+import { realDB, nowMillis } from '../../../configs/firebaseConfig'
 import getUser from '../../../utils/getUser'
+import captureException from '../../../utils/sentry/captureException'
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['GET', 'POST'],
@@ -57,16 +57,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // convert toJSON to a serializable data
       const messages = promiseValues.map((val) => val.toJSON())
 
-      // GET chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         messages,
         error: false,
       })
     } catch (err) {
-      // GET ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // GET server error => Internal Server Error -----------------------------------------------------------------
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .json({ error: true, name: err.name, message: err.message })
     }
     // POST req => /chats
   } else if (req.method === 'POST') {
@@ -91,16 +94,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         time: nowMillis,
       })
 
-      // POST chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({ error: false, message: 'Message sent' })
     } catch (err) {
-      // POST ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // POST server error => Internal Server Error -----------------------------------------------------------------
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed -----------------------------------------------------------------
     res
       .status(405)
       .json({ error: true, message: 'Only support GET and POST req' })

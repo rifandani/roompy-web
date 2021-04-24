@@ -7,6 +7,7 @@ import WS from 'ws'
 import initMiddleware from '../../../../middlewares/initMiddleware'
 import { nowMillis } from '../../../../configs/firebaseConfig'
 import getRoompy from '../../../../utils/getRoompy'
+import captureException from '../../../../utils/sentry/captureException'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -39,19 +40,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         updatedAt: nowMillis,
       })
 
-      // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // PUT success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Roompy updated successfully',
       })
     } catch (err) {
-      // PUT ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // PUT server error => Internal Server Error -----------------------------------------------------------------
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed
     res.status(405).json({ error: true, message: 'Only support PUT req' })
   }
 }

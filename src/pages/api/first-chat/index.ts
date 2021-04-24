@@ -3,8 +3,8 @@ import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
 import { db, nowMillis, realDB } from '../../../configs/firebaseConfig'
+import captureException from '../../../utils/sentry/captureException'
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['POST'],
@@ -29,21 +29,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // chatId
       const chatId = senderRoompyId + '-' + receiverRoompyId
 
-      // get senderRef & previousMessagesTo data
+      // get senderRef object data
       const senderRef = usersRef.doc(senderUserId) // sender reference
-      const senderDataSnapshot = await senderRef.get() // sender user object
-      const previousMessagesTo = senderDataSnapshot.get('messagesTo') // array
+      const senderDataSnapshot = await senderRef.get()
+
       // update sender messagesTo document
+      const previousMessagesTo = senderDataSnapshot.get('messagesTo') // array
       await senderRef.update({
         messagesTo: [...previousMessagesTo, chatId],
         updatedAt: nowMillis,
       })
 
-      // get receiverRef & previousMessagesFrom data
+      // get receiverRef object data
       const receiverRef = usersRef.doc(receiverUserId) // receiver reference
-      const receiverDataSnapshot = await receiverRef.get() // receiver user object
-      const previousMessagesFrom = receiverDataSnapshot.get('messagesFrom') // array
+      const receiverDataSnapshot = await receiverRef.get()
+
       // update receiver messagesFrom document
+      const previousMessagesFrom = receiverDataSnapshot.get('messagesFrom') // array
       await receiverRef.update({
         messagesFrom: [...previousMessagesFrom, chatId],
         updatedAt: nowMillis,
@@ -59,20 +61,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         updatedAt: nowMillis,
       })
 
-      // POST chats SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         chatId,
         error: false,
         message: 'Sender messagesTo updated & receiver messagesFrom updated',
       })
     } catch (err) {
-      // POST ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // POST server error => Internal Server Error -----------------------------------------------------------------
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed -----------------------------------------------------------------
     res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }

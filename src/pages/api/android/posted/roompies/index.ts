@@ -5,8 +5,8 @@ import initMiddleware from '../../../../../middlewares/initMiddleware'
 import { db } from '../../../../../configs/firebaseConfig'
 import { Roompies } from '../../../../../utils/interfaces'
 import { getAsString } from '../../../../../utils/getAsString'
+import captureException from '../../../../../utils/sentry/captureException'
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: 'GET',
@@ -34,31 +34,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         (el) => el.postedBy === userId
       )
 
-      // kalau belum ada postedRoompies
-      if (userPostedRoompies.length === 0) {
-        // GET SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        return res.status(200).json({
-          error: false,
-          postedRoompies: [],
-          havePostedRoompies: false,
-          message: 'There is no posted roompies in this user document',
-        })
-      }
-
-      // GET SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // GET success => OK +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
         postedRoompies: userPostedRoompies,
-        havePostedRoompies: true,
+        havePostedRoompies: userPostedRoompies.length > 0 ? true : false,
       })
     } catch (err) {
-      // GET ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // GET server error => Internal Server Error -----------------------------------------------------------------
       res
-        .status(501)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed
     res.status(405).json({ error: true, message: 'Only support GET req' })
   }
 }

@@ -3,7 +3,7 @@ import Cors from 'cors'
 import * as Sentry from '@sentry/node'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { init } from '../../../utils/sentry'
+import init from '../../../utils/sentry/init'
 
 const cors = initMiddleware(
   Cors({
@@ -33,14 +33,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // https://vercel.com/docs/platform/limits#streaming-responses
       await Sentry.flush(2000)
 
+      // server error => Internal Server Error
       res.status(500).json({
         error: true,
         name: err.name,
         message: err.message,
-      }) // register ERROR
+      })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed
     res.status(405).json({ error: true, message: 'Only support GET req' })
   }
 }

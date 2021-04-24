@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node'
 import { RewriteFrames } from '@sentry/integrations'
 
-export const init = () => {
+const init = () => {
   if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
     const integrations = []
 
@@ -34,3 +34,5 @@ export const init = () => {
     })
   }
 }
+
+export default init

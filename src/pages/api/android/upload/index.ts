@@ -9,6 +9,7 @@ import multer from 'multer'
 import initMiddleware from '../../../../middlewares/initMiddleware'
 import { nowMillis, storage } from '../../../../configs/firebaseConfig'
 import getRoompy from '../../../../utils/getRoompy'
+import captureException from '../../../../utils/sentry/captureException'
 
 // handle files upload middleware
 const upload = multer()
@@ -37,13 +38,13 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
   global.XMLHttpRequest = XHR
   ;(global.WebSocket as any) = WS
 
+  // @ts-ignore
+  const file = req.file
+
+  // console.log('file => ', file);
+  // res.status(201).json({ file, body: req.body });
+
   try {
-    // @ts-ignore
-    const file = req.file
-
-    // console.log('file => ', file);
-    // res.status(201).json({ file, body: req.body });
-
     // get roompy & roompyRef
     const { roompy, roompyRef } = await getRoompy(req)
 
@@ -73,17 +74,18 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
         updatedAt: nowMillis,
       })
 
-      // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // PUT success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Photo updated successfully',
       })
     }
   } catch (err) {
-    // PUT ERROR -----------------------------------------------------------------
-    res
-      .status(500)
-      .json({ error: true, name: err.name, message: err.message, err })
+    // capture exception sentry
+    await captureException(err)
+
+    // PUT server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({ error: true, name: err.name, message: err.message })
   }
 })
 

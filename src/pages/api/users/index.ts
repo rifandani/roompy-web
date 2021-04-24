@@ -9,6 +9,7 @@ import initMiddleware from '../../../middlewares/initMiddleware'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
 import getUser from '../../../utils/getUser'
 import { getAsString } from '../../../utils/getAsString'
+import captureException from '../../../utils/sentry/captureException'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -38,22 +39,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           id: el.id,
         }))
 
-        // GET roompies SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
         res.status(200).json(users)
       } else {
         // get user
         const { user } = await getUser(req)
 
-        // GET roompy SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
+        // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(200).json(user)
       }
     } catch (err) {
-      // GET ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // GET server error => Internal Server Error -----------------------------------------------------------------
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .json({ error: true, name: err.name, message: err.message })
     }
     // PUT req => /users?id=userId
   } else if (req.method === 'PUT') {
@@ -70,15 +73,18 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         updatedAt: nowMillis,
       })
 
-      // PUT roompy SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // PUT success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res
-        .status(200)
+        .status(201)
         .json({ error: false, message: 'User updated successfully' })
     } catch (err) {
-      // PUT ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // PUT server error => Internal Server Error -----------------------------------------------------------------
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .json({ error: true, name: err.name, message: err.message })
     }
     // DELETE req => /users?id=userId
   } else if (req.method === 'DELETE') {
@@ -87,6 +93,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // can not delete premium user
       if (user.premium) {
+        // DELETE client error => Bad Request -----------------------------------------------------------------
         return res.status(400).json({
           error: true,
           message: 'You can not delete a premium user',
@@ -121,19 +128,22 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // delete in users collection
       await userRef.delete()
 
-      // DELETE SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // DELETE success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
         message: 'User deleted successfully',
       })
     } catch (err) {
+      // capture exception sentry
+      await captureException(err)
+
       // DELETE ERROR -----------------------------------------------------------------
       res
-        .status(501)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed
     res
       .status(405)
       .json({ error: true, message: 'Only support GET, PUT and DELETE req' })

@@ -5,6 +5,7 @@ import initMiddleware from '../../../../middlewares/initMiddleware'
 import { db, nowMillis } from '../../../../configs/firebaseConfig'
 import { User } from '../../../../utils/interfaces'
 import { getAsString } from '../../../../utils/getAsString'
+import captureException from '../../../../utils/sentry/captureException'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -45,13 +46,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       }
 
-      // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json({ user: dbUser, favRoompies })
+      // GET success => OK +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.status(200).json({ error: false, user: dbUser, favRoompies })
     } catch (err) {
-      // GET ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // GET server error => Internal Server Error -----------------------------------------------------------------
       res
-        .status(501)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message })
     }
     // POST req => /favorites/roompies
   } else if (req.method === 'POST') {
@@ -72,6 +76,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // kalau roompyId sudah ada di list
       if (isAlreadyExists) {
+        // POST client error => Bad Request -----------------------------------------------------------------
         return res.status(400).json({
           error: true,
           message: `${roompyId} is already exists in the favorites list`,
@@ -85,16 +90,19 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       })
 
-      // POST SUCCESS +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // POST success => Created +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Success adding to the favorites list',
       })
     } catch (err) {
-      // POST ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // POST server error => Internal Server Error -----------------------------------------------------------------
       res
-        .status(501)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message })
     }
     // DELETE req => /favorites/roompies?userId=userId&roompyId=roompyId
   } else if (req.method === 'DELETE') {
@@ -117,35 +125,38 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         (favId) => favId !== roompyId
       )
 
-      // kalau favRoompies ada isinya
-      if (favRoompies.length > 0) {
-        await userRef.update({
-          favorites: {
-            roompies: filteredFavRoompies,
-          },
-          updatedAt: nowMillis,
-        })
-
-        // DELETE SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.status(200).json({
-          error: false,
-          message: 'Favorited roompies deleted successfully',
-        })
-      } else {
-        // kalau favRoompies tidak ada isinya
+      // kalau favRoompies tidak ada isinya
+      if (favRoompies.length === 0) {
+        // DELETE client error => Bad Request -----------------------------------------------------------------
         res.status(400).json({
           error: true,
           message: 'Favorited roompies is already empty, please check again!',
         })
       }
+
+      await userRef.update({
+        favorites: {
+          roompies: filteredFavRoompies,
+        },
+        updatedAt: nowMillis,
+      })
+
+      // DELETE success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.status(200).json({
+        error: false,
+        message: 'Favorited roompies deleted successfully',
+      })
     } catch (err) {
-      // DELETE ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // DELETE server error => Internal Server Error -----------------------------------------------------------------
       res
-        .status(501)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed
     res
       .status(405)
       .json({ error: true, message: 'Only support GET, POST and DELETE req' })

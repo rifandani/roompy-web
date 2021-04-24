@@ -42,7 +42,7 @@ interface MyAppProps extends AppProps {
   err: Error
 }
 
-// init sentry
+// init sentry untuk client
 init()
 
 export default function MyApp({ Component, pageProps, err }: MyAppProps) {

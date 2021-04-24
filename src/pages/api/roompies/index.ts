@@ -9,12 +9,12 @@ import multer from 'multer'
 import initMiddleware from '../../../middlewares/initMiddleware'
 import { db, nowMillis, storage } from '../../../configs/firebaseConfig'
 import getRoompy from '../../../utils/getRoompy'
+import captureException from '../../../utils/sentry/captureException'
 
 const upload = multer() // will ONLY support form-data
 const handler = nc()
 handler.use(upload.single('photo'))
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -45,22 +45,22 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
         id: el.id,
       }))
 
-      // GET roompies SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
       res.status(200).json(roompies)
     } else {
       // get roompy
       const { roompy } = await getRoompy(req)
 
-      // GET roompy SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
+      // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json(roompy)
     }
   } catch (err) {
-    // GET ERROR -----------------------------------------------------------------
-    res
-      .status(500)
-      .json({ error: true, name: err.name, message: err.message, err })
+    // capture exception sentry
+    await captureException(err)
+
+    // GET server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({ error: true, name: err.name, message: err.message })
   }
 })
 
@@ -72,17 +72,19 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
   global.XMLHttpRequest = XHR
   ;(global.WebSocket as any) = WS
 
+  // @ts-ignore
+  const file = req.file // hanya 1 file
+  const state = JSON.parse(req.body.roompy)
+  const userId = state.postedBy
+
+  // console.log('file => ', file);
+  // console.log('JSON.parse req.body.roompy => ', state);
+  // console.log('string req.body.userId => ', userId);
+  // res.status(201).json({ file, body: req.body });
+
+  // TODO: validate client request body
+
   try {
-    // @ts-ignore
-    const file = req.file // hanya 1 file
-    const state = JSON.parse(req.body.roompy)
-    const userId = state.postedBy
-
-    // console.log('file => ', file);
-    // console.log('JSON.parse req.body.roompy => ', state);
-    // console.log('string req.body.userId => ', userId);
-    // res.status(201).json({ file, body: req.body });
-
     // save to firestore with empty photoURL & get the roompiesId first
     const postedRoompiesRef = await roompiesRef.add({
       ...state,
@@ -113,17 +115,21 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
         postedRoompies: [...prevPostedRoompies, postedRoompiesRef.id],
       })
 
-      // POST SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Roompy created successfully',
+        roompyId: postedRoompiesRef.id,
       })
     }
   } catch (err) {
-    // POST ERROR -----------------------------------------------------------------
+    // capture exception sentry
+    await captureException(err)
+
+    // POST server error => Internal Server Error -----------------------------------------------------------------
     return res
       .status(500)
-      .json({ error: true, name: err.name, message: err.message, err })
+      .json({ error: true, name: err.name, message: err.message })
   }
 })
 
@@ -135,17 +141,19 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
   global.XMLHttpRequest = XHR
   ;(global.WebSocket as any) = WS
 
+  // @ts-ignore
+  const file = req.file // hanya 1 file
+  const state = JSON.parse(req.body.roompy)
+  const userId = state.postedBy
+
+  // console.log('file => ', file);
+  // console.log('JSON.parse req.body.roompy => ', state);
+  // console.log('string req.body.userId => ', userId);
+  // res.status(201).json({ file, body: req.body });
+
+  // TODO: validate client request body
+
   try {
-    // @ts-ignore
-    const file = req.file // hanya 1 file
-    const state = JSON.parse(req.body.roompy)
-    const userId = state.postedBy
-
-    // console.log('file => ', file);
-    // console.log('JSON.parse req.body.roompy => ', state);
-    // console.log('string req.body.userId => ', userId);
-    // res.status(201).json({ file, body: req.body });
-
     // get roompy & roompyRef
     const { roompy, roompyRef } = await getRoompy(req)
 
@@ -176,17 +184,19 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
         updatedAt: nowMillis,
       })
 
-      // PUT SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // PUT success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Roompy updated successfully',
+        roompyId: roompyRef.id,
       })
     }
   } catch (err) {
-    // PUT ERROR -----------------------------------------------------------------
-    res
-      .status(500)
-      .json({ error: true, name: err.name, message: err.message, err })
+    // capture exception sentry
+    await captureException(err)
+
+    // PUT server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({ error: true, name: err.name, message: err.message })
   }
 })
 
@@ -225,16 +235,17 @@ handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
       postedRoompies: filteredPostedRoompies,
     })
 
-    // DELETE SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    // DELETE success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json({
       error: false,
       message: 'Roompy deleted successfully',
     })
   } catch (err) {
-    // DELETE ERROR -----------------------------------------------------------------
-    res
-      .status(501)
-      .json({ error: true, name: err.name, message: err.message, err })
+    // capture exception sentry
+    await captureException(err)
+
+    // DELETE server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({ error: true, name: err.name, message: err.message })
   }
 })
 

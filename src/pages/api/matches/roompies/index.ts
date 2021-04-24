@@ -6,6 +6,7 @@ import initMiddleware from '../../../../middlewares/initMiddleware'
 import { db } from '../../../../configs/firebaseConfig'
 import { Roompies } from '../../../../utils/interfaces'
 import { getAsString } from '../../../../utils/getAsString'
+import captureException from '../../../../utils/sentry/captureException'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -38,7 +39,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // kalau belum ada postedRoompies
       if (userPostedRoompies.length === 0) {
-        // GET SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         return res.status(200).json({
           error: false,
           matchRoompies: [],
@@ -76,20 +77,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
       })
 
-      // GET SUCCESS ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
+        matchRoompies,
         error: false,
         userLocPref: userPostedRoompies[0].locPref,
-        matchRoompies,
       })
     } catch (err) {
-      // GET ERROR -----------------------------------------------------------------
+      // capture exception sentry
+      await captureException(err)
+
+      // GET server error => Internal Server Error -----------------------------------------------------------------
       res
-        .status(501)
-        .json({ error: true, name: err.name, message: err.message, err })
+        .status(500)
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed
     res.status(405).json({ error: true, message: 'Only support GET req' })
   }
 }

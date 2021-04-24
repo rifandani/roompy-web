@@ -5,6 +5,7 @@ import Cors from 'cors'
 import setCookie from '../../../utils/setCookie'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
 import initMiddleware from '../../../middlewares/initMiddleware'
+import captureException from '../../../utils/sentry/captureException'
 
 const cors = initMiddleware(
   Cors({
@@ -21,25 +22,25 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     // clean/filter/validate client req.body
     if (!id || !username || !email) {
-      // kalau input kosong
+      // client error => Bad Request ----------------------------------------------------------------
       return res.status(400).json({
         error: true,
         message: 'Please input all fields',
       })
     } else if (typeof id !== 'string') {
-      // kalau input id tidak berupa string
+      // client error => Bad Request ----------------------------------------------------------------
       return res.status(400).json({
         error: true,
         message: 'Should be a valid string id from firebase uid',
       })
     } else if (!validator.isLength(username, { min: 3 })) {
-      // kalau input email tidak berupa valid email address
+      // client error => Bad Request ----------------------------------------------------------------
       return res.status(400).json({
         error: true,
         message: 'Username should be minimal 3 characters',
       })
     } else if (!validator.isEmail(email)) {
-      // kalau input email tidak berupa valid email address
+      // client error => Bad Request ----------------------------------------------------------------
       return res.status(400).json({
         error: true,
         message: 'Should be a valid email address',
@@ -72,18 +73,21 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // set JWT token to cookie in headers
       setCookie({ sub: id }, res)
 
-      // register SUCCESS --------------------------
+      // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
-        message: 'User created successfully',
+        message: 'Register success',
       })
     } catch (err) {
+      // capture exception sentry
+      await captureException(err)
+
       res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err }) // register ERROR
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
+    // client error => Method Not Allowed -----------------------------------------------------------------
     res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }

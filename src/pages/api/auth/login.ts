@@ -3,6 +3,7 @@ import Cors from 'cors'
 // files
 import setCookie from '../../../utils/setCookie'
 import initMiddleware from '../../../middlewares/initMiddleware'
+import captureException from '../../../utils/sentry/captureException'
 
 const cors = initMiddleware(
   Cors({
@@ -17,15 +18,15 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
     // destructure request body form
     const { id } = req.body
 
-    // clean/filter/validate client req.body
+    // validate client req.body
     if (!id) {
-      // kalau input kosong
+      // GET client error => Bad Request -----------------------------------------------------------------
       return res.status(400).json({
         error: true,
         message: 'Please input all fields',
       })
     } else if (typeof id !== 'string') {
-      // kalau input id tidak berupa string
+      // GET client error => Bad Request -----------------------------------------------------------------
       return res.status(400).json({
         error: true,
         message: 'Should be a valid string id from firebase uid',
@@ -36,17 +37,19 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
       // set JWT token to cookie in headers
       setCookie({ sub: id }, res)
 
-      // login SUCCESS --------------------------
-      return res.status(200).json({ error: false, message: 'Login success.' })
+      // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.status(200).json({ error: false, message: 'Login success.' })
     } catch (err) {
-      return res
+      // capture exception sentry
+      await captureException(err)
+
+      // POST server error => Internal Server Error -----------------------------------------------------------------
+      res
         .status(500)
-        .json({ error: true, name: err.name, message: err.message, err }) // login ERROR
+        .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // error => invalid req method
-    return res
-      .status(405)
-      .json({ error: true, message: 'Only support POST req' })
+    // client error => Method Not Allowed
+    res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }
