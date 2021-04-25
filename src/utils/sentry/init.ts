@@ -27,7 +27,7 @@ const init = () => {
     }
 
     Sentry.init({
-      enabled: process.env.NODE_ENV === 'development', // sentry jalan hanya di prod
+      enabled: process.env.NODE_ENV === 'production', // sentry jalan hanya di prod
       integrations,
       dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
       release: process.env.NEXT_PUBLIC_COMMIT_SHA,
