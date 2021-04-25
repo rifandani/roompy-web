@@ -1,5 +1,9 @@
 # Changelog
 
+## 24 April 2021
+
+- Integrasi Sentry ke dalam project
+
 ## 21 April 2021
 
 - Membuat Backend API Documentation dengan [Postman](https://documenter.getpostman.com/view/10894618/TzJvcbk3)

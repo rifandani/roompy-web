@@ -17,7 +17,7 @@ import { SWRConfig } from 'swr'
 import '../styles/index.css'
 import useAuth from '../hooks/useAuth'
 import UserContext from '../contexts/UserContext'
-import { init } from '../utils/sentry'
+import init from '../utils/sentry/init'
 
 // axios BASE URL
 axios.defaults.baseURL =

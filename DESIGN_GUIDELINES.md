@@ -2,7 +2,7 @@
 
 This document aims to specify and define the rules and patterns to follow when implementing and developing new features and components for Roompy.
 
-> This is a summary. For a more extensive version, components and UI Design, visit the publically available **[Figma file](https://www.figma.com/file/CS01VVLR7ArQl0afYFkNj3/Web-App?node-id=201%3A1979)**.
+> This is a summary. For a more extensive version, components and UI Design, visit the publically available **[Figma file](https://www.figma.com/)**.
 
 ## Table of contents
 
@@ -69,7 +69,7 @@ font-weight: 500;
 font-weight: 700;
 ```
 
-![DogeHouse typography](https://i.imgur.com/A1pz7UD.png)
+![Roompy typography](https://i.imgur.com/A1pz7UD.png)
 Tag | Font Size | Line Height | Weight
 --- | --------- | ----------- | ------
 **H1** | 56px | 90 | 700
@@ -82,7 +82,7 @@ Tag | Font Size | Line Height | Weight
 ## Spacing
 
 This is an approximation. On some circumstances other values will be used to ensure readability, consistency and visual balance, so make sure to also check the UI Design and the spacing used there.
-![DogeHouse spacing](https://i.imgur.com/gRIJAXA.png)
+![Roompy spacing](https://i.imgur.com/gRIJAXA.png)
 
 ## Doubts and questions
 
