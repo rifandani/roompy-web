@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import axios from 'axios'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { adminMessaging } from '../../../configs/firebaseAdmin'
 
 const cors = initMiddleware(
   Cors({
@@ -32,31 +32,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // POST req => /testing/fcm
   } else if (req.method === 'POST') {
     try {
-      const { token, notification, data, webpush, android } = req.body // destructure body
+      const { to, notification, data, key } = req.body // destructure body
 
-      if (webpush) {
-        // Send a message to the web
-        const messageIdWeb = await adminMessaging.send({
-          token,
-          notification,
-          data,
-          webpush,
-        })
+      const axiosRes = await axios.post(
+        'https://fcm.googleapis.com/fcm/send',
+        req.body,
+        {
+          headers: {
+            Authorization: 'key=' + key,
+          },
+        }
+      )
 
-        // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        return res.status(201).json({ error: false, messageId: messageIdWeb })
+      if (axiosRes.status !== 200) {
+        // POST fail => error ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        res
+          .status(400)
+          .json({ error: true, message: 'Error', requestBody: req.body })
       }
 
-      // Send a message to android device
-      const messageIdAndroid = await adminMessaging.send({
-        token,
-        notification,
-        data,
-        android,
-      })
-
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      return res.status(201).json({ error: false, messageId: messageIdAndroid })
+      res.status(201).json({ error: false, data: axiosRes?.data })
     } catch (err) {
       // POST server error => Internal Server Error -----------------------------------------------------------------
       res

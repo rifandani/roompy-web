@@ -1,5 +1,4 @@
 // this all available in client-side
-
 import app from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/auth'
@@ -26,7 +25,62 @@ export const db = app.firestore()
 export const auth = app.auth()
 export const storage = app.storage()
 export const realDB = app.database()
-// export const fcm = app.messaging()
 export const serverTimestamp = app.firestore.FieldValue.serverTimestamp()
 export const nowMillis = app.firestore.Timestamp.now().toMillis()
 export const emailAuthProvider = app.auth.EmailAuthProvider
+
+/*
+ *
+ *  implement firebase messaging
+ *
+ */
+import 'firebase/messaging'
+import localforage from 'localforage'
+
+export const initFCM = async () => {
+  try {
+    // get fcmToken from localforage
+    const fcmToken = await localforage.getItem<string>('fcmToken')
+
+    // kalau fcmToken sudah ada di localforage
+    if (fcmToken !== null) return false
+
+    // inisiasi fcm
+    const messaging = app.messaging()
+
+    // request notifikasi permission
+    const permission = await Notification.requestPermission()
+    console.log('permission', permission.valueOf())
+
+    // get token from fcm
+    const token = await messaging.getToken()
+    console.log('token', token)
+
+    // set fcmToken to localforage
+    const forageResult = await localforage.setItem('fcmToken', token)
+    console.log('forageResult', forageResult)
+
+    // messaging.onMessage((payload) => {
+    //   console.log('messaging.onMessage => ', payload)
+    // })
+
+    // messaging.onBackgroundMessage((payload) => {
+    //   console.log(
+    //     '[firebase-messaging-sw.js] Received background message ',
+    //     payload
+    //   )
+
+    //   // Customize notification here
+    //   const notificationTitle = 'Background Message Title'
+    //   const notificationOptions = {
+    //     body: 'Background Message body.',
+    //     icon: '/rifandani.png',
+    //   }
+
+    //   // @ts-ignore
+    //   self.registration.showNotification(notificationTitle, notificationOptions)
+    // })
+  } catch (error) {
+    console.error(error)
+  }
+}

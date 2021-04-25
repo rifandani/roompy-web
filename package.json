@@ -1,6 +1,7 @@
 {
-  "name": "with-tailwindcss",
+  "name": "roompy-web",
   "version": "1.0.0",
+  "license": "MIT",
   "scripts": {
     "dev": "rm -rf ./.next && next dev",
     "build": "next build",
@@ -36,11 +37,13 @@
     "cookie": "^0.4.1",
     "cors": "^2.8.5",
     "firebase": "^8.4.1",
+    "firebase-admin": "^9.6.0",
     "formidable": "^1.2.2",
     "jsonwebtoken": "^8.5.1",
     "leaflet": "^1.7.1",
     "leaflet-geosearch": "^3.3.1",
     "leaflet.markercluster": "^1.5.0",
+    "localforage": "^1.9.0",
     "multer": "^1.4.2",
     "next": "^10.1.3",
     "next-connect": "^0.10.1",
@@ -99,6 +102,5 @@
     "eslint-plugin-react": "^7.23.2",
     "prettier": "^2.2.1",
     "typescript": "^4.2.4"
-  },
-  "license": "MIT"
+  }
 }
