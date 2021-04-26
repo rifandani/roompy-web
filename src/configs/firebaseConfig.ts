@@ -25,8 +25,9 @@ export const db = app.firestore()
 export const auth = app.auth()
 export const storage = app.storage()
 export const realDB = app.database()
-export const serverTimestamp = app.firestore.FieldValue.serverTimestamp()
-export const nowMillis = app.firestore.Timestamp.now().toMillis()
+export const serverTimestamp = app.firestore.FieldValue.serverTimestamp() // hanya untuk firestore field value ketika di set() atau update()
+export const nowMillis = app.firestore.Timestamp.now().toMillis() // isEqual(Date.now())
+export const databaseTime = app.database.ServerValue.TIMESTAMP // hanya untuk di realtime database field value
 export const emailAuthProvider = app.auth.EmailAuthProvider
 
 /*

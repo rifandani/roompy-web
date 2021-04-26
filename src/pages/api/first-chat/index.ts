@@ -2,7 +2,12 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { db, nowMillis, realDB } from '../../../configs/firebaseConfig'
+import {
+  databaseTime,
+  db,
+  nowMillis,
+  realDB,
+} from '../../../configs/firebaseConfig'
 import captureException from '../../../utils/sentry/captureException'
 
 const cors = initMiddleware(
@@ -58,7 +63,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // set initial data without lastMessage, message
       await chatRef.set({
         chatId,
-        updatedAt: nowMillis,
+        updatedAt: databaseTime,
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

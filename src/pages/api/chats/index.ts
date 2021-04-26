@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { realDB, nowMillis } from '../../../configs/firebaseConfig'
+import { realDB, databaseTime } from '../../../configs/firebaseConfig'
 import getUser from '../../../utils/getUser'
 import captureException from '../../../utils/sentry/captureException'
 
@@ -83,7 +83,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // update updatedAt, lastMessage
       await chatRef.update({
-        updatedAt: nowMillis,
+        updatedAt: databaseTime,
         lastMessage: text,
       })
 
@@ -91,7 +91,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       await chatRef.child('message').push({
         text,
         senderUserId,
-        time: nowMillis,
+        time: databaseTime,
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
