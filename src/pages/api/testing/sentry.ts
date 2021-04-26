@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       // untuk di client, juga sama tanpa adanya init(), captureException, flush
       // return error object dengan message
-      throw new Error('Error API /auth/testSentry')
+      throw new Error('Error API /testing/sentry')
     } catch (err) {
       Sentry.captureException(err, {
         user: {

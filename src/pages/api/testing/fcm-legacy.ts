@@ -13,13 +13,18 @@ const cors = initMiddleware(
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
 
-  // GET req => /testing/fcm
+  // GET req => /testing/fcm-legacy
   if (req.method === 'GET') {
     try {
+      const res2 = await axios.get(process.env.SERVICE_ACCOUNT_LINK!)
+
+      const serviceAccount = res2?.data
+
       // GET success => OK +++++++++++++++++++++++++++++++
-      res.status(500).json({
+      res.status(200).json({
         error: false,
         message: 'Success',
+        data: serviceAccount,
       })
     } catch (err) {
       // server error => Internal Server Error ---------------------------------------
@@ -29,10 +34,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         message: err.message,
       })
     }
-    // POST req => /testing/fcm
+    // POST req => /testing/fcm-legacy
   } else if (req.method === 'POST') {
     try {
-      const { to, notification, data, key } = req.body // destructure body
+      const { key } = req.body // destructure body
 
       const axiosRes = await axios.post(
         'https://fcm.googleapis.com/fcm/send',
