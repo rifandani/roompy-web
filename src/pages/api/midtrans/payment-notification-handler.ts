@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 import * as Sentry from '@sentry/node'
-import axios from 'axios'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
@@ -34,7 +33,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const orderId: string = notifResponse?.order_id
       const transactionStatus: string = notifResponse?.transaction_status
       const fraudStatus: string = notifResponse?.fraud_status
-      const grossAmount: string = notifResponse?.gross_amount
+      // const grossAmount: string = notifResponse?.gross_amount
 
       // log to serverless functions
       const logMessage = `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
@@ -57,7 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           })
 
           // DENY transaction because it is ambiguous
-          await snapClient.transaction.deny(orderId)
+          // await snapClient.transaction.deny(orderId)
 
           // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           res.status(201).json({
@@ -135,11 +134,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
 
         // Refund Transaction with Direct Refund
-        await snapClient.transaction.refundDirect(orderId, {
-          refund_key: `refund-${orderId}`, // merchant refund ID
-          amount: grossAmount,
-          reason: 'I dont know why is this refunded',
-        })
+        // await snapClient.transaction.refundDirect(orderId, {
+        //   refund_key: `refund-${orderId}`, // merchant refund ID
+        //   amount: grossAmount,
+        //   reason: 'I dont know why is this refunded',
+        // })
 
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(201).json({
@@ -155,7 +154,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
 
         // Approve Transaction
-        await snapClient.transaction.approve(orderId)
+        // await snapClient.transaction.approve(orderId)
 
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(201).json({
