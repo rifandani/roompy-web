@@ -20,7 +20,7 @@ init()
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
 
-  // POST /api/midtrans/token-request
+  // POST /api/midtrans/payment-notification-handler
   if (req.method === 'POST') {
     try {
       const notificationJson = req.body // POST notification dari midtrans webhook
@@ -34,11 +34,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const orderId: string = notifResponse?.order_id
       const transactionStatus: string = notifResponse?.transaction_status
       const fraudStatus: string = notifResponse?.fraud_status
-      const statusMessage: string = notifResponse?.status_message
+      const grossAmount: string = notifResponse?.gross_amount
 
-      console.log(
-        `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
-      )
+      // log to serverless functions
+      const logMessage = `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+      console.log(logMessage)
 
       const orderRef = db.collection('orders').doc(orderId) // get order with id === order_id
       const userId = orderId.split('-')[1]
@@ -50,37 +50,27 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           // Transaction is flagged as potential fraud, but cannot be determined precisely.
           // You can accept or deny via Dashboard, or via Approve or Deny API.
 
-          // DENY the transaction because it is ambiguous
-          const denyResponse = await axios.post(
-            `https://api.sandbox.midtrans.com/v2/${orderId}/deny`
-          )
+          // update the order document
+          await orderRef.update({
+            transaction_status: 'challenge',
+            updated_at: nowMillis,
+          })
 
-          if (denyResponse.data?.status_code === '200') {
-            // update the order document
-            await orderRef.update({
-              transaction_status: 'challenge_deny',
-              updated_at: nowMillis,
-            })
+          // DENY transaction because it is ambiguous
+          await snapClient.transaction.deny(orderId)
 
-            // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            res.status(201).json({
-              data: {
-                orderId,
-                transactionStatus,
-                fraudStatus,
-                statusMessage,
-              },
-              error: false,
-              message: 'Transaction challenge denied',
-            })
-            return
-          }
+          // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          res.status(201).json({
+            error: false,
+            message: 'Transaction challenge denied',
+          })
+          return
         } else if (fraudStatus == 'accept') {
           // Transaction is safe to proceed. It is not considered as a fraud.
 
           // update the order document
           await orderRef.update({
-            transaction_status: 'accept',
+            transaction_status: 'success',
             updated_at: nowMillis,
           })
 
@@ -92,12 +82,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           res.status(201).json({
-            data: {
-              orderId,
-              transactionStatus,
-              fraudStatus,
-              statusMessage,
-            },
             error: false,
             message: 'Transaction accepted',
           })
@@ -108,7 +92,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         // update the order document
         await orderRef.update({
-          transaction_status: 'settlement',
+          transaction_status: 'success',
           updated_at: nowMillis,
         })
 
@@ -120,41 +104,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(201).json({
-          data: {
-            orderId,
-            transactionStatus,
-            fraudStatus,
-            statusMessage,
-          },
           error: false,
           message: 'Transaction settled',
         })
         return
-      } else if (transactionStatus == 'deny') {
-        // Transaction is considered as fraud. It is rejected by Midtrans
-        // You can ignore 'deny', because most of the time it allows payment retries and later can become success
-
-        // update the order document
-        await orderRef.update({
-          transaction_status: 'deny',
-          updated_at: nowMillis,
-        })
-
-        // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.status(201).json({
-          data: {
-            orderId,
-            transactionStatus,
-            fraudStatus,
-            statusMessage,
-          },
-          error: false,
-          message: 'Transaction denied',
-        })
-        return
       } else if (
         transactionStatus == 'cancel' ||
-        transactionStatus == 'expire'
+        transactionStatus == 'expire' ||
+        transactionStatus == 'deny'
       ) {
         // update the order document
         await orderRef.update({
@@ -164,46 +121,54 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(201).json({
-          data: {
-            orderId,
-            transactionStatus,
-            fraudStatus,
-            statusMessage,
-          },
           error: false,
           message: 'Transaction canceled / expired',
         })
         return
       } else if (transactionStatus == 'refund') {
+        // This API only supports credit_card === bni, mandiri, cimb
+
         // update the order document
         await orderRef.update({
           transaction_status: 'refund',
           updated_at: nowMillis,
         })
 
+        // Refund Transaction with Direct Refund
+        await snapClient.transaction.refundDirect(orderId, {
+          refund_key: `refund-${orderId}`, // merchant refund ID
+          amount: grossAmount,
+          reason: 'I dont know why is this refunded',
+        })
+
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(201).json({
-          data: {
-            orderId,
-            transactionStatus,
-            fraudStatus,
-            statusMessage,
-          },
           error: false,
           message: 'Transaction refunded',
         })
         return
+      } else if (transactionStatus === 'pending') {
+        // update the order document
+        await orderRef.update({
+          transaction_status: 'pending',
+          updated_at: nowMillis,
+        })
+
+        // Approve Transaction
+        await snapClient.transaction.approve(orderId)
+
+        // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        res.status(201).json({
+          error: false,
+          message: 'Transaction pending / waiting payment',
+        })
+        return
       }
 
-      res.status(201).json({
-        data: {
-          orderId,
-          transactionStatus,
-          fraudStatus,
-          statusMessage,
-        },
+      // else
+      res.status(200).json({
+        message: logMessage,
         error: false,
-        message: 'Transaction pending / waiting payment',
       })
     } catch (err) {
       Sentry.captureException(err, {

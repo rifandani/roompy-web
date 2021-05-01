@@ -19,7 +19,7 @@ init()
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
 
-  // GET /api/midtrans/transaction-status?orderId=orderId
+  // GET /api/midtrans/transaction/status?orderId=orderId
   if (req.method === 'GET') {
     try {
       const orderId = getAsString(req.query.orderId)

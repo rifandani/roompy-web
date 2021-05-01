@@ -19,7 +19,7 @@ init()
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
 
-  // POST /api/midtrans/transactions
+  // POST /api/midtrans/transaction
   if (req.method === 'POST') {
     try {
       const { user_id, customer_details } = req.body // destructure body
@@ -56,7 +56,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         item_details: data.item_details,
         created_at: nowMillis,
         updated_at: nowMillis,
-        transaction_status: 'pending', // see https://docs.midtrans.com/en/after-payment/get-status?id=transaction-status
+        transaction_status: 'token_created', // see https://docs.midtrans.com/en/after-payment/get-status?id=transaction-status
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
