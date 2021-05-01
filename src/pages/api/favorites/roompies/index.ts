@@ -77,10 +77,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // kalau roompyId sudah ada di list
       if (isAlreadyExists) {
         // POST client error => Bad Request -----------------------------------------------------------------
-        return res.status(400).json({
+        res.status(400).json({
           error: true,
           message: `${roompyId} is already exists in the favorites list`,
         })
+        return
       }
 
       // if roompyId belum ada di list

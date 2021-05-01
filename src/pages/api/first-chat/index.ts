@@ -3,10 +3,10 @@ import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
 import {
-  databaseTime,
   db,
-  nowMillis,
   realDB,
+  nowMillis,
+  databaseTimestamp,
 } from '../../../configs/firebaseConfig'
 import captureException from '../../../utils/sentry/captureException'
 
@@ -63,7 +63,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // set initial data without lastMessage, message
       await chatRef.set({
         chatId,
-        updatedAt: databaseTime,
+        updatedAt: databaseTimestamp,
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

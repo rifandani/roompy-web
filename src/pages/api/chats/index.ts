@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
-import { realDB, databaseTime } from '../../../configs/firebaseConfig'
+import { realDB, databaseTimestamp } from '../../../configs/firebaseConfig'
 import getUser from '../../../utils/getUser'
 import captureException from '../../../utils/sentry/captureException'
 
@@ -44,11 +44,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // kalau Promises array empty
       if (promises.length === 0) {
-        return res.status(200).json({
+        res.status(200).json({
           error: false,
           messages: [],
           message: 'No messages found',
         })
+        return
       }
 
       // settle all Promises array
@@ -83,7 +84,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       // update updatedAt, lastMessage
       await chatRef.update({
-        updatedAt: databaseTime,
+        updatedAt: databaseTimestamp,
         lastMessage: text,
       })
 
@@ -91,7 +92,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       await chatRef.child('message').push({
         text,
         senderUserId,
-        time: databaseTime,
+        time: databaseTimestamp,
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -30,7 +30,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     })
   }
 
-  // GET req => /testing/fcm
+  // GET req => /fcm
   if (req.method === 'GET') {
     try {
       // GET success => OK +++++++++++++++++++++++++++++++
@@ -47,7 +47,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         message: err.message,
       })
     }
-    // POST req => /testing/fcm
+    // POST req => /fcm
   } else if (req.method === 'POST') {
     try {
       const { token, notification, data, webpush, android } = req.body // destructure body
@@ -62,7 +62,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         })
 
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        return res.status(201).json({ error: false, messageId: messageIdWeb })
+        res.status(201).json({ error: false, messageId: messageIdWeb })
+        return
       }
 
       // Send a message to android device
@@ -74,7 +75,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      return res.status(201).json({ error: false, messageId: messageIdAndroid })
+      res.status(201).json({ error: false, messageId: messageIdAndroid })
     } catch (err) {
       // POST server error => Internal Server Error -----------------------------------------------------------------
       res

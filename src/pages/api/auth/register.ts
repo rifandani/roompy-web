@@ -23,28 +23,32 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     // clean/filter/validate client req.body
     if (!id || !username || !email) {
       // client error => Bad Request ----------------------------------------------------------------
-      return res.status(400).json({
+      res.status(400).json({
         error: true,
         message: 'Please input all fields',
       })
+      return
     } else if (typeof id !== 'string') {
       // client error => Bad Request ----------------------------------------------------------------
-      return res.status(400).json({
+      res.status(400).json({
         error: true,
         message: 'Should be a valid string id from firebase uid',
       })
+      return
     } else if (!validator.isLength(username, { min: 3 })) {
       // client error => Bad Request ----------------------------------------------------------------
-      return res.status(400).json({
+      res.status(400).json({
         error: true,
         message: 'Username should be minimal 3 characters',
       })
+      return
     } else if (!validator.isEmail(email)) {
       // client error => Bad Request ----------------------------------------------------------------
-      return res.status(400).json({
+      res.status(400).json({
         error: true,
         message: 'Should be a valid email address',
       })
+      return
     }
 
     try {

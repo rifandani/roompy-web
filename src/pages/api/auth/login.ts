@@ -21,16 +21,18 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
     // validate client req.body
     if (!id) {
       // GET client error => Bad Request -----------------------------------------------------------------
-      return res.status(400).json({
+      res.status(400).json({
         error: true,
         message: 'Please input all fields',
       })
+      return
     } else if (typeof id !== 'string') {
       // GET client error => Bad Request -----------------------------------------------------------------
-      return res.status(400).json({
+      res.status(400).json({
         error: true,
         message: 'Should be a valid string id from firebase uid',
       })
+      return
     }
 
     try {

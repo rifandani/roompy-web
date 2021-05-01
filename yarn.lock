@@ -4777,7 +4777,7 @@ lodash@^4.17.11, lodash@^4.17.13:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
 
-lodash@^4.17.15, lodash@^4.17.21:
+lodash@^4.17.15, lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -4849,6 +4849,14 @@ micromatch@^4.0.2:
   dependencies:
     braces "^3.0.1"
     picomatch "^2.0.5"
+
+midtrans-client@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/midtrans-client/-/midtrans-client-1.2.3.tgz#cd97f40749479890f72861ffc5115569c686be63"
+  integrity sha512-TcVY0ErXr/vmcTIIqrYpVrm3gNMSPZOhpjIBWWC5ShSKzBX/HvxA6pUa+uqeHm2Kuw7GeO4Os7giWv7q+w3AFg==
+  dependencies:
+    axios "^0.21.1"
+    lodash "^4.17.20"
 
 miller-rabin@^4.0.0:
   version "4.0.1"

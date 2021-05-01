@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next'
 import { verify } from 'jsonwebtoken'
+import { parse } from 'cookie'
 // files
 import DashboardLayout from '../../components/dashboard/DashboardLayout'
 import DashboardContent from '../../components/dashboard/DashboardContent'
@@ -22,8 +23,8 @@ export default function DashboardPage({ dbUser }: DashboardProps) {
 
 // You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookie = ctx.req.headers?.cookie
-  const authCookie = cookie?.replace('auth=', '') // get only the cookie
+  const cookies = parse(ctx.req.headers?.cookie ?? '')
+  const authCookie = cookies.auth
 
   // kalau auth cookie kosong
   if (!authCookie) {

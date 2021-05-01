@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 // files
-import initMiddleware from '../../../../../middlewares/initMiddleware'
-import { db } from '../../../../../configs/firebaseConfig'
-import { Roompies } from '../../../../../utils/interfaces'
-import { getAsString } from '../../../../../utils/getAsString'
-import captureException from '../../../../../utils/sentry/captureException'
+import initMiddleware from '../../../../middlewares/initMiddleware'
+import { db } from '../../../../configs/firebaseConfig'
+import { Roompies } from '../../../../utils/interfaces'
+import { getAsString } from '../../../../utils/getAsString'
+import captureException from '../../../../utils/sentry/captureException'
 
 const cors = initMiddleware(
   Cors({

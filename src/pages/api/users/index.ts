@@ -94,11 +94,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // can not delete premium user
       if (user.premium) {
         // DELETE client error => Bad Request -----------------------------------------------------------------
-        return res.status(400).json({
+        res.status(400).json({
           error: true,
           message: 'You can not delete a premium user',
           user,
         })
+        return
       }
 
       // delete all posted ROOMPIES + ROOMS
@@ -110,7 +111,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           const resp = await axios.delete(`/roompies?id=${roompyId}`)
 
           if (resp.status !== 200) {
-            return res.status(500).json(resp)
+            res.status(500).json(resp)
+            return
           }
         }
       }

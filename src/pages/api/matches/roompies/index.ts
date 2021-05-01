@@ -40,11 +40,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // kalau belum ada postedRoompies
       if (userPostedRoompies.length === 0) {
         // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        return res.status(200).json({
+        res.status(200).json({
           error: false,
           matchRoompies: [],
           message: 'There is no posted roompies in this user document',
         })
+        return
       }
 
       // current user roompiesPreferences
