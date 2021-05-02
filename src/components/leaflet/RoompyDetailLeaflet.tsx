@@ -26,7 +26,7 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
     <MapContainer
       className="w-full rounded-md"
       style={{ minHeight: '50vh' }}
-      center={[locPref[0].lat, locPref[0].lng]}
+      center={[locPref[0]?.lat, locPref[0]?.lng]}
       zoom={7}
       maxZoom={30}
       scrollWheelZoom

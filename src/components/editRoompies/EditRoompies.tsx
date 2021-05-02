@@ -41,9 +41,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
   const [ownPet, setOwnPet] = useState<boolean>(roompy.ownPet || false)
   // introduce yourself
   const [budget, setBudget] = useState<string>(roompy.budget + '' || '')
-  const [moveDate, setMoveDate] = useState<Date>(
-    new Date(roompy.moveDate) || new Date()
-  ) // Date
+  const [moveDate, setMoveDate] = useState<Date>(new Date(roompy.moveDate)) // Date
   const [stayLength, setStayLength] = useState<string>(
     roompy.stayLength + '' || ''
   )
@@ -980,7 +978,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
             type="submit"
             disabled={busy}
           >
-            {busy ? 'Loading' : 'Update'}
+            Update
           </button>
         </div>
 
@@ -990,7 +988,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
             disabled={busy}
             onClick={(e) => onDeleteRoompies(e)}
           >
-            {busy ? 'Loading' : 'Delete this roompy'}
+            Delete roompy
           </button>
         </div>
       </form>

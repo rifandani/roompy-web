@@ -55,8 +55,8 @@ export default function useGetPostedRoompies(userContext: FireUser) {
         const roompySnap = await roompyRef.get()
 
         roompyData.push({
-          ...roompySnap.data(),
-          id: roompySnap.id,
+          ...roompySnap?.data(),
+          id: roompySnap?.id,
         })
 
         setUserPostedRoompies(roompyData)
@@ -69,11 +69,11 @@ export default function useGetPostedRoompies(userContext: FireUser) {
           const roompySnap = await roompyRef.get()
 
           roompyData.push({
-            ...roompySnap.data(),
-            id: roompySnap.id,
+            ...roompySnap?.data(),
+            id: roompySnap?.id,
           })
 
-          if (roompySnap && i === postedRoompiesLength - 1) {
+          if (i === postedRoompiesLength - 1) {
             setUserPostedRoompies(roompyData)
             // setIsLoading(false)
           }

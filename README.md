@@ -32,18 +32,15 @@
 
 ---
 
-## Tech Stack 📃
+## Services Used 📃
 
-|                        Libraries                        |        Description        |
-| :-----------------------------------------------------: | :-----------------------: |
-|            [react.js](https://reactjs.org/)             |     Frontend library      |
-|             [next.js](https://nextjs.org/)              |      React framework      |
-|            [leaflet](https://leafletjs.com/)            |      Javascript map       |
-|     [react-leaflet](https://react-leaflet.js.org/)      | React leaflet integration |
-| [firebase](https://github.com/firebase/firebase-js-sdk) |         Firebase          |
-|         [tailwindcss](https://tailwindcss.com/)         |   CSS utility framework   |
-|         [axios](https://github.com/axios/axios)         |        HTTP client        |
-|              [sentry](https://sentry.com/)              |  Error logging/tracking   |
+|                        Libraries                         |        Description         |
+| :------------------------------------------------------: | :------------------------: |
+|              [next.js](https://nextjs.com/)              |    Best React Framework    |
+| [firebase](https://github.com/firebase/firebase-js-sdk/) |    All-In-One Solution     |
+|              [sentry](https://sentry.com/)               |   Error logging/tracking   |
+|            [formspree](https://formspree.io/)            |       Forms Solution       |
+|            [midtrans](https://midtrans.com/)             | Indonesian Payment Gateway |
 
 ## Branches 🔱
 

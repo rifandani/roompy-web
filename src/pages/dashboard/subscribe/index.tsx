@@ -2,21 +2,19 @@ import { GetServerSideProps } from 'next'
 import { verify } from 'jsonwebtoken'
 import { parse } from 'cookie'
 // files
-import DashboardLayout from '../../components/dashboard/DashboardLayout'
-import DashboardContent from '../../components/dashboard/DashboardContent'
-import { User } from '../../utils/interfaces'
-import getUserFromDecodedToken from '../../utils/getUserFromDecodedToken'
-import validatePremiumUser from '../../utils/validatePremiumUser'
-import unpremiumUser from '../../utils/unpremiumUser'
+import DashboardLayout from '../../../components/dashboard/DashboardLayout'
+import SubscribeComp from '../../../components/subscribe/SubscribeComp'
+import { User } from '../../../utils/interfaces'
+import getUserFromDecodedToken from '../../../utils/getUserFromDecodedToken'
 
-export interface DashboardProps {
+export interface ISubscribePageProps {
   dbUser: User
 }
 
-export default function DashboardPage({ dbUser }: DashboardProps) {
+export default function SubscribePage({ dbUser }: ISubscribePageProps) {
   return (
-    <DashboardLayout>
-      <DashboardContent dbUser={dbUser} />
+    <DashboardLayout ver2>
+      <SubscribeComp dbUser={dbUser} />
     </DashboardLayout>
   )
 }
@@ -42,20 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const decoded = verify(authCookie!, process.env.MY_SECRET_KEY)
 
     // get user from firestore
-    const { user, userRef } = await getUserFromDecodedToken(
-      decoded as { sub: string }
-    )
-
-    // premium user validation only happen in user dashboard
-    // validate is the user premiumUntil is still valid
-    if (user?.premium) {
-      const isValid = validatePremiumUser(user)
-
-      // if premiumUntil is no longer valid
-      if (!isValid) {
-        await unpremiumUser(userRef)
-      }
-    }
+    const { user } = await getUserFromDecodedToken(decoded as { sub: string })
 
     return {
       props: {

@@ -9,7 +9,6 @@ import {
   FaTwitter,
   FaWifi,
   FaShower,
-  FaMapMarkerAlt,
   FaGenderless,
   FaHandPointLeft,
 } from 'react-icons/fa'

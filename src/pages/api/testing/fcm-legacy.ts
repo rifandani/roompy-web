@@ -49,7 +49,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
       )
 
-      if (axiosRes.status !== 200) {
+      if (axiosRes?.status !== 200) {
         // POST fail => error ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res
           .status(400)

@@ -103,6 +103,7 @@ export type PhotoURLs = PhotoURL[]
 
 // firebase type
 export type DocRef = firebase.firestore.DocumentReference
+export type DocDataRef = firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
 export type Timestamp = firebase.firestore.Timestamp
 export type FireUser = firebase.User
 export type UserCredential = firebase.UserInfo

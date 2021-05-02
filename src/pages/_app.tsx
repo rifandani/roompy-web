@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import type { AppProps /*, AppContext */ } from 'next/app'
 import Router from 'next/router'
-import { ToastContainer } from 'react-toastify'
+import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
@@ -96,6 +96,7 @@ export default function MyApp({ Component, pageProps, err }: MyAppProps) {
             value={{
               // refreshInterval: 3000, // automatic re-fetching data in API every 3s
               fetcher: (url: string) => axios.get(url).then((res) => res.data),
+              onError: (err) => toast.error(err.message),
             }}
           >
             {/* tambahan props err dari _error.tsx (sentry) */}

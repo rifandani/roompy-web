@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction, FormEvent } from 'react'
+import { useState, Dispatch, SetStateAction } from 'react'
 import {
   FaSortAmountUp,
   FaSortAmountDown,
@@ -17,11 +17,11 @@ const chat = {
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tempus element',
 }
 
-interface Props extends InboxPageProps {
+interface IInboxProps extends InboxPageProps {
   setBusy: Dispatch<SetStateAction<boolean>>
 }
 
-export default function InboxContent({ setBusy, dbUser }: Props) {
+export default function InboxContent({ setBusy, dbUser }: IInboxProps) {
   // hooks
   const [isAsc, setIsAsc] = useState<boolean>(false)
 

@@ -43,8 +43,8 @@ export default function FAQ() {
 
         <section className="flex flex-wrap -mx-2 lg:w-4/5 sm:mx-auto sm:mb-2">
           {faqs.map((faq) => (
-            <div className="w-full px-4 py-2 lg:w-1/2">
-              <details key={faq.id} className="mb-4 bg-gray-100">
+            <div key={faq.id} className="w-full px-4 py-2 lg:w-1/2">
+              <details className="mb-4 bg-gray-100">
                 <summary className="px-4 py-2 font-semibold bg-gray-300 rounded-md cursor-pointer focus:ring-2 focus:outline-none focus:ring-purple-300">
                   {faq.q}
                 </summary>
