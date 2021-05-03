@@ -22,27 +22,28 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   // POST /api/midtrans/transaction
   if (req.method === 'POST') {
     try {
-      const { user_id, customer_details } = req.body // destructure body
+      const { user_id, customer_details, item_details } = req.body // destructure body
+
+      // calculate total gross amount
+      const grossAmount = item_details.reduce(
+        (acc: number, item: any) => item.quantity * item.price + acc,
+        0
+      )
 
       const ordersRef = await db.collection('orders').get() // get orders collection size for order_id
 
       const data = {
+        user_id,
         customer_details,
+        item_details,
         transaction_details: {
           order_id: `${ordersRef.size + 1}-${user_id}-${nowMillis}`,
-          gross_amount: 100000, // total harga
+          gross_amount: grossAmount, // total harga
         },
         credit_card: {
           secure: true,
+          save_card: true,
         },
-        item_details: [
-          {
-            id: 'premium-account',
-            price: 100000, // harga satuan
-            quantity: 1, // jumlah
-            name: 'Premium Account',
-          },
-        ],
       }
 
       // create transaction

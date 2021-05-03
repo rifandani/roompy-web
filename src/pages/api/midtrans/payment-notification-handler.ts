@@ -33,7 +33,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const orderId: string = notifResponse?.order_id
       const transactionStatus: string = notifResponse?.transaction_status
       const fraudStatus: string = notifResponse?.fraud_status
-      // const grossAmount: string = notifResponse?.gross_amount
+
+      const grossAmount: number = parseInt(notifResponse?.gross_amount)
+      const QUANTITY = grossAmount / 20000
+      const ONE_MONTH_IN_MILLISECONDS = 2592000000
+      const TOTAL_MONTHS_IN_MILLISECONDS = QUANTITY * ONE_MONTH_IN_MILLISECONDS
 
       // log to serverless functions
       const logMessage = `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
@@ -56,7 +60,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           })
 
           // DENY transaction because it is ambiguous
-          // await snapClient.transaction.deny(orderId)
+          await snapClient.transaction.deny(orderId)
 
           // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
           res.status(201).json({
@@ -75,8 +79,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
           // update the user document
           await userRef.update({
+            updatedAt: nowMillis,
+            premiumUntil: nowMillis + TOTAL_MONTHS_IN_MILLISECONDS,
             premium: true,
-            premiumUntil: nowMillis + 2592000000, // + 30 hari
           })
 
           // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -97,8 +102,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
         // update the user document
         await userRef.update({
+          updatedAt: nowMillis,
+          premiumUntil: nowMillis + TOTAL_MONTHS_IN_MILLISECONDS,
           premium: true,
-          premiumUntil: nowMillis + 2592000000, // + 30 hari
         })
 
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -121,7 +127,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(201).json({
           error: false,
-          message: 'Transaction canceled / expired',
+          message: 'Transaction canceled / expired / denied',
         })
         return
       } else if (transactionStatus == 'refund') {
@@ -152,9 +158,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
           transaction_status: 'pending',
           updated_at: nowMillis,
         })
-
-        // Approve Transaction
-        // await snapClient.transaction.approve(orderId)
 
         // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(201).json({

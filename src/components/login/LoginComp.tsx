@@ -91,7 +91,7 @@ export default function LoginComp() {
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-8">
-          <form autoComplete="on" onSubmit={(e) => login(e)}>
+          <form autoComplete="on" onSubmit={login}>
             <label className="block text-sm text-gray-700" htmlFor="email">
               Email
               <input
