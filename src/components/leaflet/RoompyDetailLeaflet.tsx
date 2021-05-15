@@ -26,7 +26,7 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
     <MapContainer
       className="w-full rounded-md"
       style={{ minHeight: '50vh' }}
-      center={[locPref[0]?.lat, locPref[0]?.lng]}
+      center={[locPref[0].lat, locPref[0].lng]}
       zoom={7}
       maxZoom={30}
       scrollWheelZoom
@@ -52,7 +52,7 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
       <LayersControl position="bottomleft">
         <LayersControl.Overlay name="Toggle Marker Radius">
           <LayerGroup>
-            {locPref?.map((position, i) => (
+            {locPref.map((position, i) => (
               <Circle
                 key={i}
                 center={[position.lat, position.lng]}
@@ -66,7 +66,7 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
 
       {/* marker cluster */}
       <MarkerClusterGroup>
-        {locPref?.map((position, i) => (
+        {locPref.map((position, i) => (
           <Marker
             key={i}
             position={[Number(position.lat), Number(position.lng)]}

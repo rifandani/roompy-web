@@ -9,7 +9,7 @@
 </a>
 
 <p align="center">
-  <strong style="font-style: italic;">Free platform to connect and find your roommates.</strong>
+  <strong style="font-style: italic;">Free platform to connect and find your roommates</strong>
 </p>
 
 <p align="center">
@@ -32,19 +32,21 @@
 
 ---
 
-## Services Used 📃
+[![DeepScan grade](https://deepscan.io/api/teams/13942/projects/17010/branches/374253/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=13942&pid=17010&bid=374253)
 
-|                        Libraries                         |        Description         |
-| :------------------------------------------------------: | :------------------------: |
-|              [next.js](https://nextjs.com/)              |    Best React Framework    |
-| [firebase](https://github.com/firebase/firebase-js-sdk/) |    All-In-One Solution     |
-|              [sentry](https://sentry.com/)               |   Error logging/tracking   |
-|            [formspree](https://formspree.io/)            |       Forms Solution       |
-|            [midtrans](https://midtrans.com/)             | Indonesian Payment Gateway |
+## Services 📃
+
+|                         Service                          |      Description       |
+| :------------------------------------------------------: | :--------------------: |
+|              [vercel](https://vercel.com/)               |    Next.js hosting     |
+| [firebase](https://github.com/firebase/firebase-js-sdk/) |  All-In-One Solution   |
+|              [sentry](https://sentry.com/)               | Error logging/tracking |
+|            [formspree](https://formspree.io/)            |     Forms Solution     |
+|            [midtrans](https://midtrans.com/)             |    Payment Gateway     |
 
 ## Branches 🔱
 
-- [staging](https://github.com/rifandani/roompy-web/tree/staging) -> PR branch ini untuk kontribusi (coming soon)
+- [dev](https://github.com/rifandani/roompy-web/tree/dev) -> PR branch ini untuk kontribusi **(coming soon)**
 - [master](https://github.com/rifandani/roompy-web) -> Jangan disentuh, branch ini untuk production
 
 ## Change Log 📜
@@ -61,7 +63,7 @@ Silahkan baca [CONTRIBUTING.md](https://github.com/rifandani/roompy-web/blob/mas
 
 ## Design Guidelines 🎨
 
-Roompy web membutuhkan UI/UX designer dan React developer untuk merancang bagaimana design guidelines yang cocok untuk aplikasi ini dan diharapkan dapat memperbaiki tampilan UI yang saat ini masih sangat kurang. Hal ini karena saya pribadi tidak familiar dengan bagaimana trend UI/UX zaman now.
+Roompy web membutuhkan UI/UX designer dan React developer untuk merancang bagaimana design guidelines yang cocok untuk aplikasi ini dan diharapkan dapat memperbaiki tampilan UI yang saat ini masih sangat kurang. Hal ini dikarenakan saya pribadi tidak familiar dengan bagaimana trend UI/UX zaman now.
 
 Silahkan baca [DESIGN_GUIDELINES.md](https://github.com/rifandani/roompy-web/blob/master/DESIGN_GUIDELINES.md) untuk mengetahui lebih detailnya.
 
