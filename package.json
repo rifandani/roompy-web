@@ -9,7 +9,10 @@
     "build:export": "next build && next export",
     "lint": "eslint . --ext ts --ext tsx --ext js",
     "type-check": "tsc --pretty --noEmit",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "cy:open": "cypress open",
+    "cy:run": "cypress run",
+    "cy:run-record": "cypress run --record"
   },
   "husky": {
     "hooks": {
@@ -96,6 +99,7 @@
     "@types/ws": "^7.4.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
+    "cypress": "^7.3.0",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
     "eslint-plugin-react": "^7.23.2",
