@@ -1,7 +1,24 @@
 {
   "name": "roompy-web",
-  "version": "1.0.0",
+  "version": "0.1.1",
+  "description": "A free platform to connect and find roommates",
+  "author": "Tri Rizeki Rifandani",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rifandani/roompy-web.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rifandani/roompy-web/issues"
+  },
+  "homepage": "https://github.com/rifandani/roompy-web#readme",
+  "keywords": [
+    "open-source",
+    "nextjs",
+    "firebase",
+    "cypress",
+    "typescript"
+  ],
   "scripts": {
     "dev": "rm -rf ./.next && next dev",
     "build": "next build",
@@ -10,8 +27,9 @@
     "lint": "eslint . --ext ts --ext tsx --ext js",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write .",
-    "cy:open": "cypress open",
-    "cy:run": "cypress run",
+    "cy:install": "cypress install",
+    "cy:open": "cypress open --browser chrome",
+    "cy:run": "cypress run --headless --browser chrome",
     "cy:run-record": "cypress run --record"
   },
   "husky": {
@@ -34,7 +52,6 @@
     "@sentry/webpack-plugin": "^1.15.1",
     "@turf/turf": "^6.3.0",
     "autoprefixer": "^10.2.5",
-    "await-to-js": "^3.0.0",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "cookie": "^0.4.1",

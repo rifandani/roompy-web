@@ -18,13 +18,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // GET /api/qrcode
   if (req.method === 'GET') {
     try {
-      const url = await QRCode.toDataURL('https://roompy.vercel.app')
+      // generate QRcode
+      const url = 'https://roompy.vercel.app'
+      const qrcodeUrl = await QRCode.toDataURL(url)
 
       // GET success => OK +++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
-        message: 'QRcode for roompy home URL',
-        url,
+        message: `QRcode for URL: ${url}`,
+        url: qrcodeUrl,
       })
     } catch (err) {
       // server error => Internal Server Error ---------------------------------------
@@ -44,6 +46,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // POST success => Created +++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
+        message: `QRcode for URL: ${url}`,
         url: qrcodeUrl,
       })
     } catch (err) {
