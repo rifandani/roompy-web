@@ -2,6 +2,7 @@ import { GetServerSideProps } from 'next'
 import { useContext } from 'react'
 import { verify } from 'jsonwebtoken'
 import Loader from 'react-loader-spinner'
+import { parse } from 'cookie'
 // files
 import DashboardLayout from '../../../components/dashboard/DashboardLayout'
 import AccountContent from '../../../components/account/AccountContent'
@@ -40,8 +41,8 @@ export default function AccountPage({ dbUser }: AccountPageProps) {
 
 // You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookie = ctx.req.headers?.cookie
-  const authCookie = cookie?.replace('auth=', '') // get only the cookie
+  const cookies = parse(ctx.req.headers?.cookie ?? '')
+  const authCookie = cookies.auth // get only the cookie
 
   // kalau auth cookie kosong
   if (!authCookie) {

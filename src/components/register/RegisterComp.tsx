@@ -1,64 +1,51 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState, FormEvent } from 'react'
 import { toast } from 'react-toastify'
-import validator from 'validator'
 import axios from 'axios'
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
 import { auth } from '../../configs/firebaseConfig'
+import { registerSchema, TRegisterSchema } from '../../utils/yup/schema'
 
 export default function RegisterComp() {
+  const initialValues: TRegisterSchema = {
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    termsConditions: false,
+  }
+
   // hooks
-  const [busy, setBusy] = useState<boolean>(false)
-  const [username, setUsername] = useState<string>('')
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [password2, setPassword2] = useState<string>('')
   const { push } = useRouter()
 
-  // custom functions
-  async function register(e: FormEvent) {
-    e.preventDefault()
-
-    // validation input
-    if (!username || !email || !password || !password2) {
-      return toast.warning('Please input all field')
-    } else if (password !== password2) {
-      return toast.warning('Please confirm the same password')
-    } else if (!validator.isEmail(email)) {
-      return toast.warning('Please input a valid email')
-    } else if (
-      !validator.isLength(username, { min: 3 }) ||
-      !validator.isLength(password, { min: 6 })
-    ) {
-      return toast.warning(
-        'Please input min 3 chars USERNAME & 6 chars PASSWORD'
-      )
-    }
-
+  async function onRegister(
+    values: TRegisterSchema,
+    actions: FormikHelpers<TRegisterSchema>
+  ) {
     try {
-      setBusy(true) // disable register button
-
       // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
-      const newUser = await auth.createUserWithEmailAndPassword(email, password)
-      await newUser.user.updateProfile({ displayName: username }) // update user profile
+      const newUser = await auth.createUserWithEmailAndPassword(
+        values.email,
+        values.password
+      )
+      await newUser.user.updateProfile({ displayName: values.username }) // update user profile displayName
 
       // POST req
       await axios.post('/auth/register', {
         id: newUser.user.uid,
-        username,
-        email,
+        username: values.username,
+        email: values.email,
       })
 
       // on SUCCESS
       await push('/dashboard')
-      return toast.success(`Welcome, ${newUser.user.displayName}`)
+      toast.success(`Welcome, ${newUser.user.displayName}`)
+      actions.setSubmitting(false) // finish formik cycle
     } catch (err) {
-      // on ERROR => Axios error response
-      setBusy(false)
-
-      axiosErrorHandle(err)
+      toast.error(err.message)
+      console.error('onRegister error => ', err)
+      actions.setSubmitting(false) // finish formik cycle
     }
   }
 
@@ -99,92 +86,123 @@ export default function RegisterComp() {
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-10">
-          <form autoComplete="on" onSubmit={(e) => register(e)}>
-            <label className="block text-sm text-gray-700" htmlFor="username">
-              Username
-              <input
-                className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="Elon Musk"
-                name="username"
-                id="username"
-                autoComplete="username"
-                autoFocus
-                required
-                minLength={3}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </label>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={registerSchema}
+            onSubmit={onRegister}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <label
+                  className="block text-sm text-gray-700"
+                  htmlFor="username"
+                >
+                  Username
+                  <Field
+                    className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+                    name="username"
+                    type="text"
+                    placeholder="Elon Musk"
+                    autoFocus
+                  />
+                  <ErrorMessage
+                    className="error-message"
+                    name="username"
+                    component="span"
+                  />
+                </label>
 
-            <label className="block mt-4 text-sm text-gray-700" htmlFor="email">
-              Email
-              <input
-                className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="elonmusk@gmail.com"
-                type="email"
-                name="email"
-                id="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </label>
+                <label
+                  className="block mt-4 text-sm text-gray-700"
+                  htmlFor="email"
+                >
+                  Email
+                  <Field
+                    className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+                    placeholder="elonmusk@gmail.com"
+                    type="email"
+                    name="email"
+                  />
+                  <ErrorMessage
+                    className="error-message"
+                    name="email"
+                    component="span"
+                  />
+                </label>
 
-            <label
-              className="block mt-4 text-sm text-gray-700"
-              htmlFor="new-password"
-            >
-              Password
-              <input
-                className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="******"
-                type="password"
-                name="new-password"
-                id="new-password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </label>
+                <label
+                  className="block mt-4 text-sm text-gray-700"
+                  htmlFor="password"
+                >
+                  Password
+                  <Field
+                    className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+                    name="password"
+                    type="password"
+                    placeholder="******"
+                  />
+                  <ErrorMessage
+                    className="error-message"
+                    name="password"
+                    component="span"
+                  />
+                </label>
 
-            <label
-              className="block mt-4 text-sm text-gray-700"
-              htmlFor="confirm-password"
-            >
-              Confirm Password
-              <input
-                className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="******"
-                type="password"
-                name="confirm-password"
-                id="confirm-password"
-                required
-                minLength={6}
-                value={password2}
-                onChange={(e) => setPassword2(e.target.value)}
-              />
-            </label>
+                <label
+                  className="block mt-4 text-sm text-gray-700"
+                  htmlFor="confirmPassword"
+                >
+                  Confirm Password
+                  <Field
+                    className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="******"
+                  />
+                  <ErrorMessage
+                    className="error-message"
+                    name="confirmPassword"
+                    component="span"
+                  />
+                </label>
 
-            {/* <label className="block mt-4">
-              <input type="checkbox" className="mr-1 leading-none" />
-              <span className="text-sm text-gray-700">
-                I accept terms &amp; conditions
-              </span>
-            </label> */}
+                <label className="block mt-4" htmlFor="termsConditions">
+                  <Field
+                    className="mr-3 leading-none text-purple-700 bg-gray-500 rounded-md form-checkbox focus:bg-purple-700"
+                    name="termsConditions"
+                    type="checkbox"
+                  />
 
-            <div className="mt-6">
-              <button
-                className={`${
-                  busy ? 'opacity-50' : 'opacity-100'
-                } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
-                type="submit"
-                disabled={busy}
-              >
-                {busy ? 'Loading' : 'Register'}
-              </button>
-            </div>
-          </form>
+                  <span className="text-sm text-gray-700">
+                    I accept{' '}
+                    <Link href="/terms">
+                      <a className="italic hover:text-purple-700 hover:underline">
+                        terms &amp; conditions
+                      </a>
+                    </Link>
+                  </span>
+
+                  <ErrorMessage
+                    className="error-message"
+                    name="termsConditions"
+                    component="span"
+                  />
+                </label>
+
+                <div className="mt-6">
+                  <button
+                    className={`${
+                      isSubmitting ? 'opacity-50' : 'opacity-100'
+                    } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Loading' : 'Register'}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
 
           {/* login page */}
           <div className="mt-6 text-sm text-center">

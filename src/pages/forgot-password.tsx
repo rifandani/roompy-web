@@ -1,46 +1,38 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState, MouseEvent, useContext } from 'react'
+import { GetServerSideProps } from 'next'
+import { parse } from 'cookie'
 import { toast } from 'react-toastify'
-import validator from 'validator'
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
-import UserContext from '../contexts/UserContext'
 import { auth } from '../configs/firebaseConfig'
+import {
+  TForgotPasswordSchema,
+  forgotPasswordSchema,
+} from '../utils/yup/schema'
 
 export default function ForgotPasswordPage() {
-  // state
-  const [email, setEmail] = useState<string>('')
+  const { push } = useRouter() // useRouter
 
-  // UserContext
-  const { user } = useContext(UserContext)
+  const initialValues: TForgotPasswordSchema = {
+    email: '',
+  }
 
-  // useRouter
-  const { push } = useRouter()
-
-  async function forgot(e: MouseEvent) {
-    e.preventDefault()
-
-    // push back home already logged in user
-    if (user) {
-      toast.warning('You are already logged in!')
-      return push('/')
-    }
-
-    // validation
-    if (!email) return toast.warning('Please input the email field')
-    if (!validator.isEmail(email))
-      return toast.warning('Please input a valid email')
-
+  async function onResetPassword(
+    values: TForgotPasswordSchema,
+    actions: FormikHelpers<TForgotPasswordSchema>
+  ) {
     try {
-      await auth.sendPasswordResetEmail(email)
+      await auth.sendPasswordResetEmail(values.email) // send passwrod reset to email
 
       toast.info('Check your email to reset your password')
+      actions.setSubmitting(false) // finish formik cycle
+
       return push('/login')
     } catch (err) {
-      // Handle Errors here.
       toast.error(err.message)
-
-      return console.error(err)
+      console.error('onResetPassword error => ', err)
+      actions.setSubmitting(false) // finish formik cycle
     }
   }
 
@@ -74,40 +66,49 @@ export default function ForgotPasswordPage() {
           </Link>
 
           <p className="mt-2 text-sm italic text-gray-500">
-            {user
-              ? 'You are already logged in'
-              : 'Jangan khawatir, kami akan membantu anda!'}
+            Jangan khawatir, kami akan membantu anda!
           </p>
         </div>
         {/* <!-- END Logo --> */}
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-8">
-          <form autoComplete="on">
-            <label className="block text-sm text-gray-700" htmlFor="email">
-              Email
-              <input
-                className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="elonmusk@email.com"
-                type="email"
-                name="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={user && Boolean(user)}
-              />
-            </label>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={forgotPasswordSchema}
+            onSubmit={onResetPassword}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <label className="block text-sm text-gray-700" htmlFor="email">
+                  Email
+                  <Field
+                    className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+                    placeholder="elonmusk@email.com"
+                    type="email"
+                    name="email"
+                  />
+                  <ErrorMessage
+                    className="text-sm italic text-red-700"
+                    name="email"
+                    component="span"
+                  />
+                </label>
 
-            <div className="mt-6">
-              <button
-                className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:shadow-outline hover:text-purple-700 hover:bg-purple-100"
-                type="submit"
-                onClick={(e) => forgot(e)}
-              >
-                Reset Password
-              </button>
-            </div>
-          </form>
+                <div className="mt-6">
+                  <button
+                    className={`${
+                      isSubmitting ? 'opacity-50' : 'opacity-100'
+                    } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:shadow-outline hover:text-purple-700 hover:bg-purple-100`}
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    Reset Password
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
 
           {/* back to login page */}
           <div className="mt-6 text-sm text-center">
@@ -122,4 +123,24 @@ export default function ForgotPasswordPage() {
       </div>
     </div>
   )
+}
+
+// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const cookies = parse(ctx.req.headers?.cookie ?? '')
+  const authCookie = cookies.auth // get only the cookie
+
+  // kalau auth cookie sudah ada
+  if (authCookie) {
+    return {
+      redirect: {
+        destination: '/dashboard',
+        permanent: false,
+      },
+    }
+  }
+
+  return {
+    props: {},
+  }
 }

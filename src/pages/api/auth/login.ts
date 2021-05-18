@@ -4,6 +4,8 @@ import Cors from 'cors'
 import setCookie from '../../../utils/setCookie'
 import initMiddleware from '../../../middlewares/initMiddleware'
 import captureException from '../../../utils/sentry/captureException'
+import yupMiddleware from '../../../middlewares/yupMiddleware'
+import { loginApiSchema } from '../../../utils/yup/schema'
 
 const cors = initMiddleware(
   Cors({
@@ -11,36 +13,18 @@ const cors = initMiddleware(
   })
 )
 
-export default async function login(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
 
   if (req.method === 'POST') {
-    // destructure request body form
-    const { id } = req.body
-
-    // validate client req.body
-    if (!id) {
-      // GET client error => Bad Request -----------------------------------------------------------------
-      res.status(400).json({
-        error: true,
-        message: 'Please input all fields',
-      })
-      return
-    } else if (typeof id !== 'string') {
-      // GET client error => Bad Request -----------------------------------------------------------------
-      res.status(400).json({
-        error: true,
-        message: 'Should be a valid string id from firebase uid',
-      })
-      return
-    }
+    const { id } = req.body // destructure request body form
 
     try {
       // set JWT token to cookie in headers
       setCookie({ sub: id }, res)
 
       // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json({ error: false, message: 'Login success.' })
+      res.status(200).json({ error: false, message: 'Login success' })
     } catch (err) {
       // capture exception sentry
       await captureException(err)
@@ -55,3 +39,5 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
     res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }
+
+export default yupMiddleware(loginApiSchema, handler)

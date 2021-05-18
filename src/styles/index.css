@@ -12,8 +12,8 @@ body {
 /* Stop purging. */
 
 /* Write your own custom component styles here */
-.btn-blue {
-  @apply px-4 py-2 font-bold text-white bg-blue-500 rounded;
+.error-message {
+  @apply block w-full px-4 py-2 mt-2 text-sm italic text-red-700 bg-red-200 rounded-md;
 }
 
 .hover-btn-dark {

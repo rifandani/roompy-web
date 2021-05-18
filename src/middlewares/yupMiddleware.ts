@@ -11,7 +11,9 @@ const yupMiddleware = (
 
   if (isSupportedMethod) {
     try {
+      // req.url === '/api/qrcode'
       // const newSchema = req.method === 'POST' ? schema : schema.concat(object({ id: number().required().positive() }))
+      // const newSchema = req.method === 'PUT' ? schema : schema.omit(['password', 'confirmPassword', 'termsConditions'])
 
       // validate req.body
       await schema.validate(req.body, {
@@ -22,12 +24,13 @@ const yupMiddleware = (
     } catch (err) {
       // STOP execution
       // client error => Bad Request ---------------------------------------
-      return res.status(400).json({
+      res.status(400).json({
         error: true,
         name: err.name,
         message: err.message,
         errors: err.errors,
       })
+      return
     }
   }
 

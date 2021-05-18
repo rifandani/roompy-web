@@ -1,38 +1,31 @@
 import Link from 'next/link'
-import { FormEvent, useState } from 'react'
-import validator from 'validator'
-import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
 import axios from 'axios'
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
 import { auth } from '../../configs/firebaseConfig'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import { loginSchema, TLoginSchema } from '../../utils/yup/schema'
 
 export default function LoginComp() {
+  const initialValues: TLoginSchema = {
+    email: '',
+    password: '',
+  }
+
   // hooks
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [busy, setBusy] = useState<boolean>(false)
   const { push } = useRouter()
 
-  // custom functions
-  async function login(e: FormEvent) {
-    e.preventDefault()
-
-    // validation
-    if (!email || !password) {
-      return toast.warning('Please input all required field')
-    } else if (!validator.isEmail(email)) {
-      return toast.warning('Please input a valid email')
-    } else if (!validator.isLength(password, { min: 6 })) {
-      return toast.warning('Please input min 6 chars PASSWORD')
-    }
-
+  async function onLogin(
+    values: TLoginSchema,
+    actions: FormikHelpers<TLoginSchema>
+  ) {
     try {
-      setBusy(true) // disable login button
-
       // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
-      const userCred = await auth.signInWithEmailAndPassword(email, password)
+      const userCred = await auth.signInWithEmailAndPassword(
+        values.email,
+        values.password
+      )
 
       // POST req
       await axios.post('/auth/login', {
@@ -41,16 +34,12 @@ export default function LoginComp() {
 
       // on SUCCESS
       await push('/dashboard')
-      return toast.success(`Welcome Back, ${userCred.user.displayName}`)
+      toast.success(`Welcome Back, ${userCred.user.displayName}`)
+      actions.setSubmitting(false) // finish formik cycle
     } catch (err) {
-      // on ERROR => Axios Response error
-      setBusy(false) // enable login button
-
-      if (err.message) {
-        toast.error(err.message)
-      } else {
-        axiosErrorHandle(err)
-      }
+      toast.error(err.message)
+      console.error('onLogin error => ', err)
+      actions.setSubmitting(false) // finish formik cycle
     }
   }
 
@@ -91,54 +80,62 @@ export default function LoginComp() {
 
         {/* <!-- Form --> */}
         <div className="p-6 bg-white border rounded shadow-sm lg:p-8">
-          <form autoComplete="on" onSubmit={login}>
-            <label className="block text-sm text-gray-700" htmlFor="email">
-              Email
-              <input
-                className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="elonmusk@email.com"
-                type="email"
-                name="email"
-                id="email"
-                autoComplete="username" // "username" is recognized by password managers in modern browsers
-                autoFocus
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </label>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={loginSchema}
+            onSubmit={onLogin}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <label className="block text-sm text-gray-700" htmlFor="email">
+                  Email
+                  <Field
+                    className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+                    placeholder="elonmusk@email.com"
+                    type="email"
+                    name="email"
+                    autoFocus
+                  />
+                  <ErrorMessage
+                    className="error-message"
+                    name="email"
+                    component="span"
+                  />
+                </label>
 
-            <label
-              className="block mt-4 text-sm text-gray-700"
-              htmlFor="current-password"
-            >
-              Password
-              <input
-                className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-                placeholder="******"
-                type="password"
-                name="current-password"
-                id="current-password"
-                autoComplete="current-password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </label>
+                <label
+                  className="block mt-4 text-sm text-gray-700"
+                  htmlFor="password"
+                >
+                  Password
+                  <Field
+                    className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
+                    placeholder="******"
+                    type="password"
+                    name="password"
+                  />
+                  <ErrorMessage
+                    className="error-message"
+                    name="password"
+                    component="span"
+                  />
+                </label>
 
-            <div className="mt-6">
-              <button
-                className={`${
-                  busy ? 'opacity-50' : 'opacity-100'
-                } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
-                type="submit"
-                disabled={busy}
-              >
-                {busy ? 'Loading' : 'Login'}
-              </button>
-            </div>
-          </form>
+                <div className="mt-6">
+                  <button
+                    className={`${
+                      isSubmitting ? 'opacity-50' : 'opacity-100'
+                    } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
+                    type="submit"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? 'Loading' : 'Login'}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+
           <div className="mt-6 text-sm text-center">
             <Link href="/register">
               <a className="block mb-2 italic text-gray-500 md:inline-block md:mb-0 hover:text-purple-700 hover:underline focus:text-purple-700 focus:underline">

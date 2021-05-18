@@ -1,9 +1,8 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useState, FormEvent, MouseEvent } from 'react'
-import { FaCheck } from 'react-icons/fa'
+import { FaCheck, FaQuestion } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import validator from 'validator'
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
 import {
   auth,
@@ -11,8 +10,11 @@ import {
   emailAuthProvider,
   nowMillis,
 } from '../../configs/firebaseConfig'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
 import { FireUser, User } from '../../utils/interfaces'
+import {
+  updateUserProfileSchema,
+  TUpdateUserProfileSchema,
+} from '../../utils/yup/schema'
 
 export default function AccountContent({
   dbUser,
@@ -21,60 +23,64 @@ export default function AccountContent({
   dbUser: User
   user: FireUser
 }) {
-  console.log('last signin time => ', user.metadata.lastSignInTime)
+  const currentEmail = user.email
+  const lastSignInTime = user.metadata.lastSignInTime
+  const initialValues: TUpdateUserProfileSchema = {
+    username: '',
+    newEmail: '',
+    currentPassword: '',
+    newPassword: '',
+  }
+
+  console.log('last signin time => ', lastSignInTime)
 
   // hooks
-  const [busy, setBusy] = useState<boolean>(false)
-  const [username, setUsername] = useState<string>('')
-  const [newEmail, setEmail] = useState<string>('')
-  const [currentEmail, setCurrentEmail] = useState<string>(user.email)
-  const [currentPassword, setCurrentPassword] = useState<string>('')
-  const [newPassword, setNewPassword] = useState<string>('')
   const { push } = useRouter()
 
   async function onVerifyEmail() {
-    if (user.emailVerified)
-      return toast.warning('Your email is already verified')
+    // if user already verified
+    if (user.emailVerified) {
+      toast.warning('Your email is already verified')
+      return
+    }
 
     try {
       await user.sendEmailVerification()
       toast.info('Please check your email to verify your account')
     } catch (err) {
       toast.error(err.message)
-      return console.error(err)
+      console.error('onVerifyEmail error => ', err)
+      return
     }
   }
 
-  async function onUpdateProfile(e: FormEvent) {
-    e.preventDefault()
-
-    // validation input
-    if (!username || !newEmail || !newPassword) {
-      return toast.warning("Don't empty the input field")
-    } else if (!validator.isEmail(newEmail)) {
-      return toast.warning('Please input a valid email')
-    } else if (!validator.isLength(username, { min: 3 })) {
-      return toast.warning('Please input min 3 chars for USERNAME')
-    } else if (!validator.isLength(newPassword, { min: 6 })) {
-      return toast.warning('Please input min 6 chars for NEW PASSWORD')
-    }
-
+  async function onUpdateProfile(
+    values: TUpdateUserProfileSchema,
+    actions: FormikHelpers<TUpdateUserProfileSchema>
+  ) {
     try {
-      setBusy(true) // disable button
-
       // reauth and update profile items
-      await reauthenticate(currentPassword)
-      await updateProfileItems(username, newEmail, newPassword)
+      await reauthenticate(values.currentPassword)
+      await updateProfileItems(
+        values.username,
+        values.newEmail,
+        values.newPassword
+      )
 
       // sign in again to set userCredential to React Context
-      await auth.signInWithEmailAndPassword(newEmail, newPassword)
+      await auth.signInWithEmailAndPassword(values.newEmail, values.newPassword)
 
+      // if all successful
       toast.success('Account Profile Updated')
+      actions.setSubmitting(false) // finish formik cycle
+
       return push('/dashboard')
     } catch (err) {
-      setBusy(false)
-      console.error('Update profile items error', err)
-      return toast.error(err.message)
+      toast.error(err.message)
+      console.error('onUpdateProfile error => ', err)
+      actions.setSubmitting(false) // finish formik cycle
+
+      return
     }
   }
 
@@ -85,17 +91,9 @@ export default function AccountContent({
       currentPassword
     )
 
-    // check if user valid
-    try {
-      await user.reauthenticateWithCredential(credential)
-      console.log('Reauthenticate success')
-      return true
-    } catch (err) {
-      setBusy(false)
-      console.error('Reauthenticate error', err)
-      toast.error(err.message)
-      return false
-    }
+    // check if user input credential valid
+    await user.reauthenticateWithCredential(credential)
+    console.log('reauthenticate success')
   }
 
   async function updateProfileItems(
@@ -103,71 +101,21 @@ export default function AccountContent({
     newEmail: string,
     newPassword: string
   ) {
-    try {
-      // update profile items in firebase.auth
-      await user.updateProfile({
-        displayName: username,
-      })
-      await user.updateEmail(newEmail)
-      await user.updatePassword(newPassword)
+    // update profile items in firebase.auth
+    await user.updateProfile({
+      displayName: username,
+    })
+    await user.updateEmail(newEmail)
+    await user.updatePassword(newPassword)
 
-      // update profile items in users collection
-      await db.collection('users').doc(user.uid).update({
-        username,
-        email: newEmail,
-        updatedAt: nowMillis,
-      })
+    // update profile items in users collection
+    await db.collection('users').doc(user.uid).update({
+      username,
+      email: newEmail,
+      updatedAt: nowMillis,
+    })
 
-      console.log('updateProfileItems success')
-    } catch (err) {
-      setBusy(false)
-      console.error('Update profile items error', err)
-      return toast.error(err.message)
-    }
-  }
-
-  async function onDeleteAccount(e: MouseEvent) {
-    e.preventDefault()
-
-    if (!currentPassword || !validator.isLength(currentPassword, { min: 6 })) {
-      toast.warning(
-        'Please input your current valid password to reauthenticate'
-      )
-      return
-    }
-
-    const userAgree = window.confirm(
-      'Are you sure you want to delete this account? \nThis action cannot be undone!'
-    )
-    if (!userAgree) return
-
-    try {
-      setBusy(true) // disable button
-
-      // reauthenticate first
-      const isAuth = await reauthenticate(currentPassword)
-
-      if (isAuth) {
-        // DELETE in users collection + postedRoompies
-        await axios.delete(`/users?id=${user.uid}`)
-
-        // delete in auth & signOut the user (move this to client-side)
-        await user.delete()
-
-        // delete cookies in header
-        await axios.get('/auth/logout')
-
-        // on SUCCESS
-        setBusy(false)
-        await push('/')
-        toast('Your account deleted successfully')
-      }
-    } catch (err) {
-      // on ERROR => Axios Response error
-      setBusy(false) // enable button
-
-      axiosErrorHandle(err)
-    }
+    console.log('updateProfileItems success')
   }
 
   return (
@@ -204,7 +152,11 @@ export default function AccountContent({
           onClick={onVerifyEmail}
           disabled={user.emailVerified}
         >
-          <FaCheck className="mr-2 text-lg text-blue-500" />
+          {user.emailVerified ? (
+            <FaCheck className="mr-2 text-lg text-blue-500" />
+          ) : (
+            <FaQuestion className="mr-2 text-lg text-red-500" />
+          )}
 
           <p className="flex-grow font-bold text-gray-900">
             {user.emailVerified ? 'Verified' : 'Verify Email'}
@@ -214,122 +166,162 @@ export default function AccountContent({
 
       {/* form */}
       <div className="flex w-full p-6">
-        <form
-          className="min-w-full"
-          autoComplete="on"
-          onSubmit={(e) => onUpdateProfile(e)}
+        <Formik
+          initialValues={initialValues}
+          validationSchema={updateUserProfileSchema}
+          onSubmit={onUpdateProfile}
         >
-          <label
-            className="block text-base font-bold text-gray-700"
-            htmlFor="username"
-          >
-            New Username
-            <input
-              className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
-              name="username"
-              id="username"
-              autoComplete="username"
-              required
-              minLength={3}
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </label>
+          {({ isSubmitting, setSubmitting, values, errors }) => (
+            <Form className="min-w-full">
+              <label
+                className="block text-base font-bold text-gray-700"
+                htmlFor="username"
+              >
+                New Username
+                <Field
+                  className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
+                  name="username"
+                  type="text"
+                  placeholder="Your new username..."
+                />
+                <ErrorMessage
+                  className="error-message"
+                  name="username"
+                  component="span"
+                />
+              </label>
 
-          <label
-            className="block mt-4 text-base font-bold text-gray-700"
-            htmlFor="email"
-          >
-            New Email
-            <input
-              className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
-              type="email"
-              name="email"
-              id="email"
-              autoComplete="email" // "username" is recognized by password managers in modern browsers
-              required
-              value={newEmail}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
+              <label
+                className="block mt-4 text-base font-bold text-gray-700"
+                htmlFor="newEmail"
+              >
+                New Email
+                <Field
+                  className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
+                  name="newEmail"
+                  type="email"
+                  placeholder="Your new email..."
+                />
+                <ErrorMessage
+                  className="error-message"
+                  name="newEmail"
+                  component="span"
+                />
+              </label>
 
-          <label
-            className="block mt-4 text-base font-bold text-gray-700"
-            htmlFor="new-password"
-          >
-            New Password
-            <input
-              className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
-              type="password"
-              name="new-password"
-              id="new-password"
-              autoComplete="new-password"
-              required
-              minLength={6}
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </label>
+              <label
+                className="block mt-4 text-base font-bold text-gray-700"
+                htmlFor="newPassword"
+              >
+                New Password
+                <Field
+                  className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
+                  name="newPassword"
+                  type="password"
+                  placeholder="Your new password..."
+                />
+                <ErrorMessage
+                  className="error-message"
+                  name="newPassword"
+                  component="span"
+                />
+              </label>
 
-          <label
-            className="block mt-4 text-base font-bold text-gray-700"
-            htmlFor="currentEmail"
-          >
-            Current Email
-            <input
-              className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
-              placeholder="elonmusk@email.com"
-              type="email"
-              name="currentEmail"
-              id="currentEmail"
-              autoComplete="email" // "username" is recognized by password managers in modern browsers
-              value={currentEmail}
-              onChange={(e) => setCurrentEmail(e.target.value)}
-              disabled
-            />
-          </label>
+              <label
+                className="block mt-4 text-base font-bold text-gray-700"
+                htmlFor="currentEmail"
+              >
+                Current Email
+                <input
+                  className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
+                  name="currentEmail"
+                  type="email"
+                  disabled
+                  value={currentEmail}
+                />
+              </label>
 
-          <label
-            className="block mt-4 text-base font-bold text-gray-700"
-            htmlFor="current-password"
-          >
-            Current Password
-            <input
-              className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
-              type="password"
-              name="current-password"
-              id="current-password"
-              required
-              minLength={6}
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
-          </label>
+              <label
+                className="block mt-4 text-base font-bold text-gray-700"
+                htmlFor="currentPassword"
+              >
+                Current Password
+                <Field
+                  className="block w-full px-4 py-3 mt-1 border-b-2 rounded-md outline-none appearance-none hover:border-blue-700 hover:shadow-xl focus:border-blue-700"
+                  name="currentPassword"
+                  type="password"
+                  placeholder="Your current password..."
+                />
+                <ErrorMessage
+                  className="error-message"
+                  name="currentPassword"
+                  component="span"
+                />
+              </label>
 
-          <div className="mt-6">
-            <button
-              className={`${
-                busy ? 'opacity-50' : 'opacity-100'
-              } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-blue-700 rounded-md focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 hover:text-blue-700 hover:bg-blue-100`}
-              type="submit"
-              disabled={busy}
-            >
-              {busy ? 'Loading' : 'Update Profile'}
-            </button>
-          </div>
+              <div className="mt-6">
+                <button
+                  className={`${
+                    isSubmitting ? 'opacity-50' : 'opacity-100'
+                  } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-blue-700 rounded-md focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 hover:text-blue-700 hover:bg-blue-100`}
+                  disabled={isSubmitting}
+                  type="submit"
+                >
+                  {isSubmitting ? 'Loading' : 'Update Profile'}
+                </button>
+              </div>
 
-          <div className="mt-6">
-            <button
-              className={`${
-                busy ? 'opacity-50' : 'opacity-100'
-              } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-red-700 rounded-md focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 hover:text-red-700 hover:bg-red-100`}
-              disabled={busy}
-              onClick={(e) => onDeleteAccount(e)}
-            >
-              {busy ? 'Loading' : 'Delete Account'}
-            </button>
-          </div>
-        </form>
+              <div className="mt-6">
+                <button
+                  className={`${
+                    isSubmitting ? 'opacity-50' : 'opacity-100'
+                  } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-red-700 rounded-md focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 hover:text-red-700 hover:bg-red-100`}
+                  disabled={isSubmitting}
+                  onClick={async (evt) => {
+                    evt.preventDefault()
+
+                    // validate only currentPassword
+                    if (errors.currentPassword) {
+                      toast.error('Please input a valid current password')
+                      return
+                    }
+
+                    // ask user permission
+                    const userAgree = window.confirm(
+                      'Are you sure you want to delete this account? \nThis action cannot be undone!'
+                    )
+                    if (!userAgree) return
+
+                    try {
+                      // reauthenticate first
+                      await reauthenticate(values.currentPassword)
+
+                      // DELETE in users collection + postedRoompies
+                      await axios.delete(`/users?id=${user.uid}`)
+
+                      // delete in auth & signOut the user (move this to client-side)
+                      await user.delete()
+
+                      // delete cookies in header
+                      await axios.get('/auth/logout')
+
+                      // on SUCCESS
+                      setSubmitting(false)
+                      toast.info('Your account deleted successfully')
+                      return push('/')
+                    } catch (err) {
+                      toast.error(err.message)
+                      console.error('onDelete error => ', err)
+                      setSubmitting(false) // finish formik cycle
+                    }
+                  }}
+                >
+                  {isSubmitting ? 'Loading' : 'Delete Account'}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
       </div>
     </div>
   )

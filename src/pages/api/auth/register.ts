@@ -1,11 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import validator from 'validator'
 import Cors from 'cors'
 // files
 import setCookie from '../../../utils/setCookie'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
 import initMiddleware from '../../../middlewares/initMiddleware'
 import captureException from '../../../utils/sentry/captureException'
+import yupMiddleware from '../../../middlewares/yupMiddleware'
+import { registerApiSchema } from '../../../utils/yup/schema'
 
 const cors = initMiddleware(
   Cors({
@@ -13,43 +14,12 @@ const cors = initMiddleware(
   })
 )
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
 
+  // POST /api/auth/register
   if (req.method === 'POST') {
-    // destructure request body form
-    const { id, username, email } = req.body
-
-    // clean/filter/validate client req.body
-    if (!id || !username || !email) {
-      // client error => Bad Request ----------------------------------------------------------------
-      res.status(400).json({
-        error: true,
-        message: 'Please input all fields',
-      })
-      return
-    } else if (typeof id !== 'string') {
-      // client error => Bad Request ----------------------------------------------------------------
-      res.status(400).json({
-        error: true,
-        message: 'Should be a valid string id from firebase uid',
-      })
-      return
-    } else if (!validator.isLength(username, { min: 3 })) {
-      // client error => Bad Request ----------------------------------------------------------------
-      res.status(400).json({
-        error: true,
-        message: 'Username should be minimal 3 characters',
-      })
-      return
-    } else if (!validator.isEmail(email)) {
-      // client error => Bad Request ----------------------------------------------------------------
-      res.status(400).json({
-        error: true,
-        message: 'Should be a valid email address',
-      })
-      return
-    }
+    const { id, username, email } = req.body // destructure request body form
 
     try {
       // save to firestore Users collection
@@ -95,3 +65,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }
+
+export default yupMiddleware(registerApiSchema, handler)
