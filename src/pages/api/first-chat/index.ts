@@ -9,6 +9,8 @@ import {
   databaseTimestamp,
 } from '../../../configs/firebaseConfig'
 import captureException from '../../../utils/sentry/captureException'
+import yupMiddleware from '../../../middlewares/yupMiddleware'
+import { firstChatApiSchema } from '../../../utils/yup/apiSchema'
 
 const cors = initMiddleware(
   Cors({
@@ -16,7 +18,7 @@ const cors = initMiddleware(
   })
 )
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // run cors
 
   const usersRef = db.collection('users')
@@ -86,3 +88,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }
+
+export default yupMiddleware(firstChatApiSchema, handler)

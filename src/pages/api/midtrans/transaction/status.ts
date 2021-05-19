@@ -1,20 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
-import * as Sentry from '@sentry/node'
 import axios from 'axios'
 // files
 import initMiddleware from '../../../../middlewares/initMiddleware'
-import init from '../../../../utils/sentry/init'
 import { getAsString } from '../../../../utils/getAsString'
+import captureException from '../../../../utils/sentry/captureException'
 
 const cors = initMiddleware(
   Cors({
     methods: ['GET'],
   })
 )
-
-// init sentry
-init()
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
@@ -49,15 +45,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({ error: false, data })
     } catch (err) {
-      Sentry.captureException(err, {
-        user: {
-          username: 'rifandani',
-        },
-      })
-
-      // Flushing before returning is necessary if deploying to Vercel, see
-      // https://vercel.com/docs/platform/limits#streaming-responses
-      await Sentry.flush(2000)
+      // capture exception sentry
+      await captureException(err)
 
       // GET server error => Internal Server Error -----------------------------------------------------------------
       res

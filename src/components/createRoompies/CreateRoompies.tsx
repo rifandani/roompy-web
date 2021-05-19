@@ -12,15 +12,12 @@ import ReactTooltip from 'react-tooltip'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-// import Select from 'react-select'
-// import makeAnimated from 'react-select/animated'
 // files
 import Dropzone from './Dropzone'
 import { CreateRoompiesProps } from '../../pages/dashboard/roompies/create'
 import axiosErrorHandle from '../../utils/axiosErrorHandle'
 import { LocPref } from '../../utils/interfaces'
 
-// const animatedComponents = makeAnimated() // animation on react-select isMulti
 const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
 
 const MapWithNoSSR = dynamic(() => import('../leaflet/CreateRoompiesLeaflet'), {
@@ -157,8 +154,8 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
           <h3 className="pl-2 font-bold">Create Roompies</h3>
         </div>
       </div>
-      {/* all form */}
 
+      {/* all form */}
       <form
         className="w-full min-h-screen bg-white"
         autoComplete="on"
@@ -524,18 +521,6 @@ export default function CreateRoompies({ user }: CreateRoompiesProps) {
 
             {/* leaflet map */}
             <MapWithNoSSR locPref={locPref} setLocPref={setLocPref} />
-
-            {/* <Select
-              className="w-full border-b-2 rounded-md outline-none appearance-none hover:border-purple-700 hover:shadow-xl focus:border-purple-700"
-              placeholder="List of sub-districts"
-              name="locPref"
-              id="locPref"
-              isMulti
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              options={subDistrictsOptions}
-              onChange={setSelectedSubDistricts}
-            /> */}
           </section>
         </div>
 

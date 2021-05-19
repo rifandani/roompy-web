@@ -5,7 +5,7 @@ import setCookie from '../../../utils/setCookie'
 import initMiddleware from '../../../middlewares/initMiddleware'
 import captureException from '../../../utils/sentry/captureException'
 import yupMiddleware from '../../../middlewares/yupMiddleware'
-import { loginApiSchema } from '../../../utils/yup/schema'
+import { loginApiSchema } from '../../../utils/yup/apiSchema'
 
 const cors = initMiddleware(
   Cors({

@@ -1,18 +1,17 @@
 import { useRouter } from 'next/router'
-import { FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   FaAngleLeft,
   FaAngleRight,
   FaMinusCircle,
   FaPlusCircle,
 } from 'react-icons/fa'
-import PhoneInput from 'react-phone-input-2'
-import id from 'react-phone-input-2/lang/id.json'
 import { toast } from 'react-toastify'
-import validator from 'validator'
+import axios from 'axios'
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
 import { ISubscribePageProps } from '../../pages/dashboard/subscribe'
-import axios from 'axios'
+import { subscribeSchema, TSubscribeSchema } from '../../utils/yup/schema'
 
 declare global {
   interface Window {
@@ -21,18 +20,21 @@ declare global {
 }
 
 export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
-  const { back, push, reload } = useRouter()
-  const [firstName, setFirstName] = useState<string>('')
-  const [lastName, setLastName] = useState<string>('')
-  const [email, setEmail] = useState<string>('')
-  const [address, setAddress] = useState<string>('')
-  const [phone, setPhone] = useState<string>('') // 62822
+  const initialValues: TSubscribeSchema = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    address: '',
+    phone: '',
+  }
 
+  // hooks
+  const { back, push, reload } = useRouter()
   const [price] = useState<number>(20000)
   const [quantity, setQuantity] = useState<number>(1)
 
   const decreaseQuantity = () => {
-    if (quantity === 1) {
+    if (quantity <= 1) {
       toast.warning('Quantity cannot be less than 1')
       return
     }
@@ -40,15 +42,11 @@ export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
     setQuantity((prev) => prev - 1)
   }
 
-  const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-
-    // validation
-    if (!validator.isEmail(email)) {
-      return toast.warning('Please input a valid email')
-    } else if (!validator.isLength(address, { min: 6 })) {
-      return toast.warning('Please input min 6 chars address')
-    }
+  const onSubscribe = async (
+    values: TSubscribeSchema,
+    actions: FormikHelpers<TSubscribeSchema>
+  ) => {
+    const { email, phone, firstName, lastName, address } = values
 
     const data = {
       user_id: dbUser.id,
@@ -80,8 +78,10 @@ export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
     }
 
     try {
+      // POST req
       const res = await axios.post('/midtrans/transaction', data)
 
+      // when POST success
       if (res.status === 201) {
         // pay midtrans
         // see more https://docs.midtrans.com/en/snap/advanced-feature?id=javascript-callback
@@ -95,8 +95,7 @@ export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
             return push('/dashboard')
           },
           onPending: (result: any) => {
-            // when payment is pending, which is for payment that requires further customer action,
-            // such as bank transfer / VA
+            // when payment is pending, which is for payment that requires further customer action, such as bank transfer / VA
             toast.warning(
               'We send you an email. Please check it to complete the payment'
             )
@@ -114,10 +113,13 @@ export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
             toast.warning('You closed the popup without finishing the payment')
           },
         })
+
+        actions.setSubmitting(false) // finish formik cycle
       }
     } catch (err) {
       toast.error(err.message)
       console.error(err)
+      actions.setSubmitting(false) // finish formik cycle
     }
   }
 
@@ -159,138 +161,152 @@ export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
         <div className="flex flex-col mt-8 lg:flex-row">
           <section className="order-2 w-full lg:w-1/2">
             {/* START FORM */}
-            <form
-              className="lg:w-3/4"
-              autoComplete="on"
-              onSubmit={onSubmitForm}
+            <Formik
+              initialValues={initialValues}
+              validationSchema={subscribeSchema}
+              onSubmit={onSubscribe}
             >
-              <div className="flex flex-col justify-between w-full md:flex-row">
-                <div className="flex flex-col">
-                  <h2 className="text-sm font-medium text-gray-500">
-                    First Name
-                  </h2>
+              {({ isSubmitting }) => (
+                <Form className="lg:w-3/4">
+                  <div className="flex flex-col justify-between w-full md:flex-row">
+                    {/* firstName input */}
+                    <div className="flex flex-col">
+                      <h2 className="text-sm font-medium text-gray-500">
+                        First Name
+                      </h2>
 
-                  <div className="flex mt-6">
-                    <label className="flex-1 block" htmlFor="firstName">
-                      <input
-                        className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
-                        placeholder="Your first name..."
-                        name="firstName"
-                        id="firstName"
-                        autoComplete="firstName"
-                        autoFocus
-                        required
-                        minLength={2}
-                        value={firstName}
-                        onChange={(e) => setFirstName(e.target.value)}
-                      />
-                    </label>
+                      <div className="flex mt-6">
+                        <label className="flex-1 block" htmlFor="firstName">
+                          <Field
+                            className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
+                            placeholder="Your first name..."
+                            type="text"
+                            name="firstName"
+                            autoFocus
+                          />
+                          <ErrorMessage
+                            className="error-message"
+                            name="firstName"
+                            component="span"
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* lastName input */}
+                    <div className="flex flex-col mt-8 md:mt-0">
+                      <h2 className="text-sm font-medium text-gray-500">
+                        Last Name
+                      </h2>
+
+                      <div className="flex mt-6">
+                        <label className="flex-1 block" htmlFor="lastName">
+                          <Field
+                            className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
+                            placeholder="Your last name..."
+                            type="text"
+                            name="lastName"
+                          />
+                          <ErrorMessage
+                            className="error-message"
+                            name="lastName"
+                            component="span"
+                          />
+                        </label>
+                      </div>
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex flex-col mt-8 md:mt-0">
-                  <h2 className="text-sm font-medium text-gray-500">
-                    Last Name
-                  </h2>
+                  {/* email input */}
+                  <div className="mt-8">
+                    <h2 className="text-sm font-medium text-gray-500">Email</h2>
 
-                  <div className="flex mt-6">
-                    <label className="flex-1 block" htmlFor="lastName">
-                      <input
-                        className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
-                        placeholder="Your last name..."
-                        name="lastName"
-                        id="lastName"
-                        autoComplete="lastName"
-                        required
-                        minLength={2}
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                      />
-                    </label>
+                    <div className="flex mt-6">
+                      <label className="flex-1 block" htmlFor="email">
+                        <Field
+                          className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
+                          placeholder="Your email..."
+                          name="email"
+                          type="email"
+                        />
+                        <ErrorMessage
+                          className="error-message"
+                          name="email"
+                          component="span"
+                        />
+                      </label>
+                    </div>
                   </div>
-                </div>
-              </div>
 
-              <div className="mt-8">
-                <h2 className="text-sm font-medium text-gray-500">Email</h2>
+                  {/* address input */}
+                  <div className="mt-8">
+                    <h2 className="text-sm font-medium text-gray-500">
+                      Address
+                    </h2>
 
-                <div className="flex mt-6">
-                  <label className="flex-1 block" htmlFor="email">
-                    <input
-                      className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
-                      placeholder="Your email..."
-                      name="email"
-                      id="email"
-                      autoComplete="email"
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </label>
-                </div>
-              </div>
+                    <div className="flex mt-6">
+                      <label className="flex-1 block" htmlFor="address">
+                        <Field
+                          className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
+                          placeholder="Your address..."
+                          name="address"
+                          type="text"
+                        />
+                        <ErrorMessage
+                          className="error-message"
+                          name="address"
+                          component="span"
+                        />
+                      </label>
+                    </div>
+                  </div>
 
-              <div className="mt-8">
-                <h2 className="text-sm font-medium text-gray-500">Address</h2>
+                  {/* phone input */}
+                  <div className="mt-8">
+                    <h2 className="text-sm font-medium text-gray-500">Phone</h2>
 
-                <div className="flex mt-6">
-                  <label className="flex-1 block" htmlFor="address">
-                    <input
-                      className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
-                      placeholder="Your address..."
-                      name="address"
-                      id="address"
-                      autoComplete="address"
-                      required
-                      minLength={6}
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                    />
-                  </label>
-                </div>
-              </div>
+                    <div className="flex mt-6">
+                      <label className="flex-1 block" htmlFor="phone">
+                        <Field
+                          className="block w-full mt-1 text-gray-700 border-b-2 rounded-md form-input hover:border-yellow-700 hover:shadow-xl focus:border-yellow-700"
+                          placeholder="082244449999"
+                          name="phone"
+                          type="tel"
+                        />
+                        <ErrorMessage
+                          className="error-message"
+                          name="phone"
+                          component="span"
+                        />
+                      </label>
+                    </div>
+                  </div>
 
-              <div className="mt-8">
-                <h2 className="text-sm font-medium text-gray-500">Phone</h2>
+                  {/* button proceed and go back */}
+                  <div className="flex items-center justify-between mt-8">
+                    <button
+                      className="flex items-center text-sm font-medium text-gray-700 rounded hover:underline focus:outline-none"
+                      onClick={() => back()}
+                      disabled={isSubmitting}
+                    >
+                      <FaAngleLeft className="w-5 h-5" />
+                      <span className="mx-2">Go Back</span>
+                    </button>
 
-                <div className="flex mt-6">
-                  <label className="flex-1 block" htmlFor="phone">
-                    <PhoneInput
-                      inputClass="block w-full mt-1"
-                      inputProps={{
-                        name: 'phone',
-                        required: true,
-                      }}
-                      localization={id}
-                      country="id"
-                      preferredCountries={['id']}
-                      value={phone}
-                      onChange={(val) => setPhone(val)}
-                    />
-                  </label>
-                </div>
-              </div>
-
-              {/* button proceed and go back */}
-              <div className="flex items-center justify-between mt-8">
-                <button
-                  onClick={() => back()}
-                  className="flex items-center text-sm font-medium text-gray-700 rounded hover:underline focus:outline-none"
-                >
-                  <FaAngleLeft className="w-5 h-5" />
-                  <span className="mx-2">Go Back</span>
-                </button>
-
-                <button
-                  type="submit"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-500 focus:outline-none focus:bg-yellow-500 focus:ring-4 focus:ring-yellow-500 focus:ring-opacity-50"
-                >
-                  <span>Proceed</span>
-                  <FaAngleRight className="w-5 h-5 ml-2" />
-                </button>
-              </div>
-            </form>
+                    <button
+                      className={`${
+                        isSubmitting ? 'opacity-50' : 'opacity-100'
+                      } flex items-center px-3 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-500 focus:outline-none focus:bg-yellow-500 focus:ring-4 focus:ring-yellow-500 focus:ring-opacity-50`}
+                      disabled={isSubmitting}
+                      type="submit"
+                    >
+                      <span>{isSubmitting ? 'Loading' : 'Proceed'}</span>
+                      <FaAngleRight className="w-5 h-5 ml-2" />
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
             {/* END FORM */}
           </section>
 

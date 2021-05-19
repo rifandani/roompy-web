@@ -9,7 +9,7 @@ import { nowMillis } from '../../../../configs/firebaseConfig'
 import getRoompy from '../../../../utils/getRoompy'
 import captureException from '../../../../utils/sentry/captureException'
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
+// Initialize the cors middleware, see more: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['PUT'],

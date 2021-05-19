@@ -8,7 +8,7 @@ import { Roompies } from '../../../../utils/interfaces'
 import { getAsString } from '../../../../utils/getAsString'
 import captureException from '../../../../utils/sentry/captureException'
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
+// Initialize the cors middleware, see more: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: 'GET',

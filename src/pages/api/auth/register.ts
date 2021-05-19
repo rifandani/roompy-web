@@ -6,7 +6,7 @@ import { db, nowMillis } from '../../../configs/firebaseConfig'
 import initMiddleware from '../../../middlewares/initMiddleware'
 import captureException from '../../../utils/sentry/captureException'
 import yupMiddleware from '../../../middlewares/yupMiddleware'
-import { registerApiSchema } from '../../../utils/yup/schema'
+import { registerApiSchema } from '../../../utils/yup/apiSchema'
 
 const cors = initMiddleware(
   Cors({

@@ -1,8 +1,5 @@
 import { object, string, boolean, ref, TypeOf } from 'yup'
-
-export const createQrcodeSchema = object({
-  url: string().required().url(),
-}) // .camelCase()
+import 'yup-phone'
 
 export const updateUserProfileSchema = object({
   username: string()
@@ -18,7 +15,7 @@ export const updateUserProfileSchema = object({
 
 export const forgotPasswordSchema = object({
   email: string().required('Email required').email('Invalid email'),
-}) // .camelCase()
+})
 
 export const registerSchema = object({
   username: string()
@@ -38,29 +35,34 @@ export const registerSchema = object({
     .oneOf([true], 'The terms and conditions must be accepted.'),
 }) // .camelCase()
 
-export const registerApiSchema = object({
-  id: string().required('Id required'),
-  username: string()
-    .required('Username required')
-    .min(3, 'Username must be 3 characters or more')
-    .max(50, 'Username must be 50 characters or less'),
-  email: string().required('Email required').email('Invalid email'),
-}) // .camelCase()
-
 export const loginSchema = object({
   email: string().required('Email required').email('Invalid email'),
   password: string()
     .required('Password required')
     .min(6, 'Password must be 6 characters or more'),
+})
+
+export const subscribeSchema = object({
+  firstName: string()
+    .required('First name required')
+    .min(2, 'First name must be 2 characters or more')
+    .max(30, 'First name must be 30 characters or less'),
+  lastName: string()
+    .required('Last name required')
+    .min(3, 'Last name must be 3 characters or more')
+    .max(30, 'Last name must be 30 characters or less'),
+  email: string().required('Email required').email('Invalid email'),
+  address: string()
+    .required('Address required')
+    .min(6, 'Address must be 6 characters or more')
+    .max(60, 'Address must be 30 characters or less'),
+  phone: string()
+    .phone('ID', true, 'Please enter a valid Indonesia phone number')
+    .required('Phone number required'),
 }) // .camelCase()
 
-export const loginApiSchema = object({
-  id: string().required('Id required'),
-}) // .camelCase()
-
-// export interface IQrcode extends TypeOf<typeof createQrcodeSchema> {}
-export type TQrcode = TypeOf<typeof createQrcodeSchema>
 export type TUpdateUserProfileSchema = TypeOf<typeof updateUserProfileSchema>
 export type TForgotPasswordSchema = TypeOf<typeof forgotPasswordSchema>
 export type TRegisterSchema = TypeOf<typeof registerSchema>
 export type TLoginSchema = TypeOf<typeof loginSchema>
+export type TSubscribeSchema = TypeOf<typeof subscribeSchema>

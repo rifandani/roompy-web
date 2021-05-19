@@ -6,15 +6,17 @@ import { db, nowMillis } from '../../../../configs/firebaseConfig'
 import { User } from '../../../../utils/interfaces'
 import { getAsString } from '../../../../utils/getAsString'
 import captureException from '../../../../utils/sentry/captureException'
+import yupMiddleware from '../../../../middlewares/yupMiddleware'
+import { favRoompiesApiSchema } from '../../../../utils/yup/apiSchema'
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
+// Initialize the cors middleware, see more: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['GET', 'POST', 'DELETE'],
   })
 )
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // run cors
 
   // GET req => /favorites/roompies?userId=userId
@@ -163,3 +165,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: true, message: 'Only support GET, POST and DELETE req' })
   }
 }
+
+export default yupMiddleware(favRoompiesApiSchema, handler)

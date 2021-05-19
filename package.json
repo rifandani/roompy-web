@@ -93,7 +93,8 @@
     "validator": "^13.5.2",
     "ws": "^7.4.5",
     "xhr2": "^0.2.1",
-    "yup": "^0.32.9"
+    "yup": "^0.32.9",
+    "yup-phone": "^1.2.19"
   },
   "devDependencies": {
     "@tailwindcss/custom-forms": "^0.2.1",

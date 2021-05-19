@@ -4,7 +4,8 @@ import QRCode from 'qrcode'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
 import yupMiddleware from '../../../middlewares/yupMiddleware'
-import { createQrcodeSchema } from '../../../utils/yup/schema'
+import { qrcodeApiSchema } from '../../../utils/yup/apiSchema'
+import captureException from '../../../utils/sentry/captureException'
 
 const cors = initMiddleware(
   Cors({
@@ -50,6 +51,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         url: qrcodeUrl,
       })
     } catch (err) {
+      // capture exception sentry
+      await captureException(err)
+
       // server error => Internal Server Error ---------------------------------------
       res.status(500).json({
         error: true,
@@ -64,4 +68,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 // apply yup middleware
-export default yupMiddleware(createQrcodeSchema, handler)
+export default yupMiddleware(qrcodeApiSchema, handler)

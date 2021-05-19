@@ -5,6 +5,8 @@ import initMiddleware from '../../../middlewares/initMiddleware'
 import { realDB, databaseTimestamp } from '../../../configs/firebaseConfig'
 import getUser from '../../../utils/getUser'
 import captureException from '../../../utils/sentry/captureException'
+import yupMiddleware from '../../../middlewares/yupMiddleware'
+import { chatsApiSchema } from '../../../utils/yup/apiSchema'
 
 const cors = initMiddleware(
   Cors({
@@ -12,7 +14,7 @@ const cors = initMiddleware(
   })
 )
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // run cors
 
   const chatsRef = realDB.ref('chats')
@@ -113,3 +115,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: true, message: 'Only support GET and POST req' })
   }
 }
+
+export default yupMiddleware(chatsApiSchema, handler)
