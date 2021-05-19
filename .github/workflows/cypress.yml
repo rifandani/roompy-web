@@ -22,11 +22,11 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          # config-file: tests/cypress-config.json
           # build: yarn build
           start: yarn dev
           record: true
           wait-on: 'http://localhost:3000'
-          # config-file: tests/cypress-config.json
           parallel: true
           group: '5 parallel actions tests'
         env:
@@ -34,3 +34,18 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ## my env
+          MY_SECRET_KEY: ${{ secrets.MY_SECRET_KEY }}
+          NEXT_PUBLIC_FIRE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIRE_API_KEY }}
+          NEXT_PUBLIC_FIRE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIRE_AUTH_DOMAIN }}
+          NEXT_PUBLIC_FIRE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIRE_PROJECT_ID }}
+          NEXT_PUBLIC_FIRE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIRE_STORAGE_BUCKET }}
+          NEXT_PUBLIC_FIRE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIRE_MESSAGING_SENDER_ID }}
+          NEXT_PUBLIC_FIRE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIRE_APP_ID }}
+          NEXT_PUBLIC_FIRE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIRE_MEASUREMENT_ID }}
+          NEXT_PUBLIC_FIRE_DATABASE_URL: ${{ secrets.NEXT_PUBLIC_FIRE_DATABASE_URL }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN }}
+          SERVICE_ACCOUNT_LINK: ${{ secrets.SERVICE_ACCOUNT_LINK }}
+          MIDTRANS_MERCHANT_ID: ${{ secrets.MIDTRANS_MERCHANT_ID }}
+          MIDTRANS_CLIENT_KEY: ${{ secrets.MIDTRANS_CLIENT_KEY }}
+          MIDTRANS_SERVER_KEY: ${{ secrets.MIDTRANS_SERVER_KEY }}
