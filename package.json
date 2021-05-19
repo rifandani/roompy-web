@@ -29,8 +29,7 @@
     "format": "prettier --write .",
     "cy:install": "cypress install",
     "cy:open": "cypress open --browser chrome",
-    "cy:run": "cypress run --headless --browser chrome",
-    "cy:run-record": "cypress run --record"
+    "cy:run": "cypress run --headless --browser chrome"
   },
   "husky": {
     "hooks": {
