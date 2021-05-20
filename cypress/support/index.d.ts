@@ -10,6 +10,10 @@ interface IPutUserRequestBody {
   email: string
 }
 
+interface IRegisterUserRequestBody extends IPutUserRequestBody {
+  id: string
+}
+
 declare namespace Cypress {
   interface Chainable {
     // qrcode
@@ -18,5 +22,8 @@ declare namespace Cypress {
     getUsers(): Chainable<Response>
     getUser(id: string): Chainable<Response>
     putUser(id: string, requestBody: IPutUserRequestBody): Chainable<Response>
+    deleteUser(id: string): Chainable<Response>
+    // auth
+    registerUser(requestBody: IRegisterUserRequestBody): Chainable<Response>
   }
 }

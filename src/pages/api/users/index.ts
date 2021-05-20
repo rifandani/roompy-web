@@ -94,7 +94,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
       const { user, userRef } = await getUser(req)
 
-      // can not delete premium user
+      // kalau query id tidak valid
+      if (!user.username) {
+        res.status(400).json({
+          error: true,
+          message: 'Invalid query user id',
+        })
+        return
+      }
+
+      // query id valid, but can not delete premium user
       if (user.premium) {
         // DELETE client error => Bad Request -----------------------------------------------------------------
         res.status(400).json({

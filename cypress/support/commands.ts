@@ -56,3 +56,25 @@ Cypress.Commands.add('putUser', (id, requestBody) => {
     failOnStatusCode: false,
   })
 })
+
+// DELETE /api/users
+Cypress.Commands.add('deleteUser', (id) => {
+  return cy.request({
+    method: 'DELETE',
+    url: '/api/users',
+    qs: {
+      id,
+    },
+    failOnStatusCode: false,
+  })
+})
+
+// POST /api/auth/register
+Cypress.Commands.add('registerUser', (requestBody) => {
+  return cy.request({
+    method: 'POST',
+    url: '/api/auth/register',
+    failOnStatusCode: false,
+    body: requestBody,
+  })
+})

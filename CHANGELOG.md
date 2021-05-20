@@ -1,5 +1,9 @@
 # Changelog
 
+## 17 Mei 2021
+
+- Integrasi Cypress ke dalam project
+
 ## 24 April 2021
 
 - Integrasi Sentry ke dalam project
@@ -10,9 +14,6 @@
 
 ## 20 April 2021
 
-- Mengupdate `README.md`
-- Menambahkan `CHANGELOG.md`
-- Menambahkan `DESIGN_GUIDELINES.md`
 - Membuat grup komunitas Roompy di [Discord](https://discord.gg/NZYu9K7dJf)
 
 ## 19 April 2021

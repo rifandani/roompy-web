@@ -2,9 +2,20 @@
 
 describe('users API test: /api/users', () => {
   const invalidUserId = 'as097801243hnasfasfhjxxx'
-  const validUserId = 'gjLF9J9LcJXcqtoNl5NxVNTi4Sl2'
+  const premiumUserId = 'gjLF9J9LcJXcqtoNl5NxVNTi4Sl2'
 
-  // GET /api/users
+  const newUser = {
+    id: 'username12345',
+    username: 'username',
+    email: 'username@email.com',
+  }
+
+  before(() => {
+    // create a new account before deleting it
+    cy.registerUser(newUser).as('registerUser')
+  })
+
+  // GET /
   context('with GET request', () => {
     // SUCCESS
     it('should SUCCESS getting all users', () => {
@@ -27,7 +38,7 @@ describe('users API test: /api/users', () => {
 
     // SUCCESS - valid req.query.id (userId)
     it('should SUCCESS getting 1 user - valid req.query.id (userId)', () => {
-      cy.getUser(validUserId).should((response) => {
+      cy.getUser(newUser.id).should((response) => {
         expect(response.status).to.eq(200)
         expect(response.body.username).to.be.a('string')
         expect(response.body.createdAt).to.be.a('number')
@@ -36,7 +47,7 @@ describe('users API test: /api/users', () => {
     })
   })
 
-  // PUT /api/users
+  // PUT /
   context('with PUT request', () => {
     // ERROR - invalid request.query.id
     it('should ERROR updating user - invalid request.query.id', () => {
@@ -59,7 +70,7 @@ describe('users API test: /api/users', () => {
         email: '',
       }
 
-      cy.putUser(validUserId, requestBody).should((response) => {
+      cy.putUser(newUser.id, requestBody).should((response) => {
         expect(response.status).to.eq(400)
         expect(response.body).to.have.property('error', true)
         expect(response.body).to.have.property('name', 'ValidationError')
@@ -74,7 +85,7 @@ describe('users API test: /api/users', () => {
         email: 'asdsadasdasd',
       }
 
-      cy.putUser(validUserId, requestBody).should((response) => {
+      cy.putUser(newUser.id, requestBody).should((response) => {
         expect(response.status).to.eq(400)
         expect(response.body).to.have.property('error', true)
         expect(response.body).to.have.property('name', 'ValidationError')
@@ -93,10 +104,49 @@ describe('users API test: /api/users', () => {
         email: 'gdragon@usako.net',
       }
 
-      cy.putUser(validUserId, requestBody).should((response) => {
+      cy.putUser(newUser.id, requestBody).should((response) => {
         expect(response.status).to.eq(201)
         expect(response.body).to.have.property('error', false)
         expect(response.body.message).to.be.a('string')
+      })
+    })
+  })
+
+  // DELETE /id={userId}
+  context('with DELETE request', () => {
+    // ERROR - invalid request.query.id
+    it('should ERROR deleting user - invalid request.query.id', () => {
+      cy.deleteUser(invalidUserId).should((response) => {
+        expect(response.status).to.eq(400)
+        expect(response.body).to.have.property('error', true)
+        expect(response.body).to.have.property(
+          'message',
+          'Invalid query user id'
+        )
+      })
+    })
+
+    // ERROR - user is premium
+    it('should ERROR deleting user - user is premium', () => {
+      cy.deleteUser(premiumUserId).should((response) => {
+        expect(response.status).to.eq(400)
+        expect(response.body).to.have.property('error', true)
+        expect(response.body).to.have.property(
+          'message',
+          'You can not delete a premium user'
+        )
+      })
+    })
+
+    // SUCCESS - valid request.query.id & user is not premium
+    it('should SUCCESS deleting user - valid request.query.id & user is not premium', () => {
+      cy.deleteUser(newUser.id).should((response) => {
+        expect(response.status).to.eq(200)
+        expect(response.body).to.have.property('error', false)
+        expect(response.body).to.have.property(
+          'message',
+          'User deleted successfully'
+        )
       })
     })
   })
