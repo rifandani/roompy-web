@@ -1,4 +1,5 @@
 import { object, string, array, number, TypeOf } from 'yup'
+import 'yup-phone'
 
 export const qrcodeApiSchema = object({
   url: string().required().url(),

@@ -28,9 +28,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
       const promo = {
         ...promoRef.data(),
+        id: promoRef.id,
       }
-
-      console.log('promo createdAt seconds', promo.createdAt.seconds)
 
       // GET success => OK +++++++++++++++++++++++++++++++
       res.status(200).json({

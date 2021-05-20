@@ -11,15 +11,15 @@ jobs:
       # https://github.com/cypress-io/github-action/issues/48
       fail-fast: false
       matrix:
-        # run 5 copies of the current job in parallel
-        containers: [1, 2, 3, 4, 5]
+        # run 3 copies of the current job in parallel
+        containers: [1, 2, 3]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       # Install NPM dependencies, cache them correctly and run all Cypress tests
       # Because of "record" and "parallel" parameters, these containers will load balance all found tests among themselves
-      - name: Cypress run
+      - name: Cypress run on chrome
         uses: cypress-io/github-action@v2
         with:
           # config-file: tests/cypress-config.json
@@ -29,6 +29,7 @@ jobs:
           wait-on: 'http://localhost:3000'
           parallel: true
           group: '5 parallel actions tests'
+          browser: chrome
         env:
           # pass the Dashboard record key as an environment variable
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}

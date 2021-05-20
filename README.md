@@ -26,13 +26,35 @@
   </a>
 </p>
 
+<p align="center">
+  <a href="https://deepscan.io/dashboard#view=project&tid=13942&pid=17010&bid=374253">
+    <img src="https://deepscan.io/api/teams/13942/projects/17010/branches/374253/badge/grade.svg" alt="roompy - DeepScan grade" />
+  </a>
+
+  <a href="https://dashboard.cypress.io/projects/1ptjsi/runs">
+    <img src="https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/detailed/1ptjsi/master&style=flat&logo=cypress" alt="roompy - Cypress test" />
+  </a>
+</p>
+
 <h3 align="center">
   <a href="https://discord.gg/NZYu9K7dJf">📢 Discord Community 📢</a>
 </h3>
 
 ---
 
-[![DeepScan grade](https://deepscan.io/api/teams/13942/projects/17010/branches/374253/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=13942&pid=17010&bid=374253)
+## What is Roompy ❓
+
+Roompy adalah platform gratis untuk menemukan teman satu kamar/rumah/apartemen di Indonesia. Platform ini cocok, baik bagi anda yang sudah mempunyai tempat tinggal dan ingin mencari teman serumah ataupun anda yang belum mempunyai tempat tinggal dan ingin mencari teman serumah agar dapat membagi harga sewa.
+
+## Why Roompy ❓
+
+- Harga sewa kos/rumah/apartemen di Indonesia masih terbilang cukup mahal, melihat bagaimana kebanyakan penghuni kos/rumah/apartemen tersebut adalah mahasiswa, perantau ataupun pekerja part-time.
+- Mencari teman satu kamar/rumah/apartemen tidaklah mudah.
+- Sampai saat ini masih belum ada platform di Indonesia yang fokus memecahkan masalah tersebut.
+
+Berdasarkan hal tersebut kami memutuskan untuk membangun **Roompy**, platform gratis dan _open source_ yang didasari transparansi, komunikasi dan persahabatan.
+
+Kami ingin semua yang terlibat, baik itu pengguna _(user)_ ataupun pengembang _(developer)_ dapat berkomunikasi dengan baik sehingga ketika ada masalah pada aplikasi, maka dapat segera diperbaiki. Oleh karena itu, kami telah menyediakan [Roompy Discord Community](https://discord.gg/NZYu9K7dJf) sebagai platform penghubung antara user dan developer.
 
 ## Services 📃
 
@@ -43,6 +65,7 @@
 |              [sentry](https://sentry.com/)               | Error logging/tracking |
 |            [formspree](https://formspree.io/)            |     Forms Solution     |
 |            [midtrans](https://midtrans.com/)             |    Payment Gateway     |
+|              [cypress](https://cypress.io/)              |      E2E Testing       |
 
 ## Branches 🔱
 

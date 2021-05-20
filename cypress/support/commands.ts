@@ -23,3 +23,36 @@ Cypress.Commands.add('postQrcode', (requestBody) => {
     failOnStatusCode: false,
   })
 })
+
+// GET /api/users
+Cypress.Commands.add('getUsers', () => {
+  return cy.request({
+    method: 'GET',
+    url: '/api/users',
+  })
+})
+
+// GET /api/user?id={userId}
+Cypress.Commands.add('getUser', (id) => {
+  return cy.request({
+    method: 'GET',
+    url: '/api/users',
+    qs: {
+      id,
+    },
+    failOnStatusCode: false,
+  })
+})
+
+// PUT /api/users
+Cypress.Commands.add('putUser', (id, requestBody) => {
+  return cy.request({
+    method: 'PUT',
+    url: '/api/users',
+    body: requestBody,
+    qs: {
+      id,
+    },
+    failOnStatusCode: false,
+  })
+})

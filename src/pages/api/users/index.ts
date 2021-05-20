@@ -1,15 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 import axios from 'axios'
-// Polyfills required for Firebase
-import XHR from 'xhr2'
-import WS from 'ws'
 // files
 import initMiddleware from '../../../middlewares/initMiddleware'
 import { db, nowMillis } from '../../../configs/firebaseConfig'
 import getUser from '../../../utils/getUser'
 import { getAsString } from '../../../utils/getAsString'
 import captureException from '../../../utils/sentry/captureException'
+import yupMiddleware from '../../../middlewares/yupMiddleware'
+import { usersApiSchema } from '../../../utils/yup/apiSchema'
 
 // Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
@@ -18,12 +17,8 @@ const cors = initMiddleware(
   })
 )
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // run cors
-
-  // polyfill
-  global.XMLHttpRequest = XHR
-  ;(global.WebSocket as any) = WS
 
   const usersRef = db.collection('users')
 
@@ -45,6 +40,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         // get user
         const { user } = await getUser(req)
+
+        // kalau query.id tidak valid
+        if (!user.username) {
+          res
+            .status(400)
+            .json({ error: true, message: 'Invalid query user id' })
+          return
+        }
 
         // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         res.status(200).json(user)
@@ -151,3 +154,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ error: true, message: 'Only support GET, PUT and DELETE req' })
   }
 }
+
+export default yupMiddleware(usersApiSchema, handler)
