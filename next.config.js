@@ -13,9 +13,6 @@ process.env.SENTRY_DSN = SENTRY_DSN
 const basePath = ''
 
 module.exports = {
-  future: {
-    webpack5: true,
-  },
   images: {
     domains: [
       'firebasestorage.googleapis.com',
@@ -24,12 +21,9 @@ module.exports = {
       'placeimg.com',
     ],
   },
-  typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if your project has type errors.
-    // !! WARN !!
-    ignoreBuildErrors: true,
-  },
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
   env: {
     // Make the COMMIT_SHA available to the client so that Sentry events can be
     // marked for the release they belong to. It may be undefined if running outside of Vercel

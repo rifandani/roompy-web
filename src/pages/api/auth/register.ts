@@ -17,12 +17,23 @@ const cors = initMiddleware(
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   await cors(req, res) // Run cors
 
-  // POST /api/auth/register
+  // SECTION POST /api/auth/register
   if (req.method === 'POST') {
-    const { id, username, email } = req.body // destructure request body form
+    // NOTE: id from firebase auth client
+    const { id, username, email } = req.body
 
     try {
-      // save to firestore Users collection
+      // check if the user.id is already exists
+      const userRef = await db.collection('users').doc(id).get()
+      const userIsExists = userRef.exists
+
+      if (!userIsExists) {
+        // ANCHOR POST error => client error ---------------------------------------------
+        res.status(400).json({ error: true, message: 'Id is already exists' })
+        return
+      }
+
+      /* ------------------- save to firestore users collection ------------------- */
       await db
         .collection('users')
         .doc(id)
@@ -44,10 +55,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           username,
         })
 
-      // set JWT token to cookie in headers
+      /* ------------------- set JWT token to cookie in headers ------------------- */
       setCookie({ sub: id }, res)
 
-      // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // ANCHOR POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Register success',
@@ -56,12 +67,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       // capture exception sentry
       await captureException(err)
 
+      // ANCHOR server error => Internal Server Error -----------------------------------------------------------------
       res
         .status(500)
         .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // client error => Method Not Allowed -----------------------------------------------------------------
+    // ANCHOR client error => Method Not Allowed -----------------------------------------------------------------
     res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }

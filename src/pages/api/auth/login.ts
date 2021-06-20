@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ error: true, name: err.name, message: err.message })
     }
   } else {
-    // client error => Method Not Allowed
+    // client error => Method Not Allowed -----------------------------------------------------------------
     res.status(405).json({ error: true, message: 'Only support POST req' })
   }
 }

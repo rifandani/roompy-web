@@ -7,7 +7,6 @@ import DatePicker from 'react-datepicker'
 import NumberFormat from 'react-number-format'
 import { Range, createSliderWithTooltip } from 'rc-slider'
 import Loader from 'react-loader-spinner'
-import validator from 'validator'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
 import axios from 'axios'
@@ -77,9 +76,7 @@ export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
     e.preventDefault()
 
     // validation
-    if (!validator.isLength(phone, { min: 9, max: 16 })) {
-      return toast.warning('Please input a valid phone numbers')
-    } else if (locPref.length < 1) {
+    if (locPref.length < 1) {
       return toast.warning('Please select minimal 1 location preferences')
     } else if (images.length < 1) {
       return toast.warning('Please select minimal 1 photo')

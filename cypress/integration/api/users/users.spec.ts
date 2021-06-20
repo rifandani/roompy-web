@@ -12,12 +12,16 @@ describe('users API test: /api/users', () => {
 
   before(() => {
     // create a new account before deleting it
-    cy.registerUser(newUser).as('registerUser')
+    cy.registerUser(newUser).then((response) => {
+      cy.log('register user', response.body)
+    })
   })
 
-  // GET /
+  /* -------------------------------------------------------------------------- */
+  /*                                SECTION GET /                               */
+  /* -------------------------------------------------------------------------- */
   context('with GET request', () => {
-    // SUCCESS
+    /* ----------------------------- ANCHOR SUCCESS ----------------------------- */
     it('should SUCCESS getting all users', () => {
       cy.getUsers().should((response) => {
         expect(response.status).to.eq(200)
@@ -27,7 +31,7 @@ describe('users API test: /api/users', () => {
       })
     })
 
-    // ERROR - invalid req.query.id (userId)
+    /* -------------- ANCHOR ERROR - invalid req.query.id (userId) -------------- */
     it('should ERROR getting 1 user - invalid req.query.id (userId)', () => {
       cy.getUser(invalidUserId).should((response) => {
         expect(response.status).to.eq(400)
@@ -36,9 +40,9 @@ describe('users API test: /api/users', () => {
       })
     })
 
-    // SUCCESS - valid req.query.id (userId)
+    /* -------------- ANCHOR SUCCESS - valid req.query.id (userId) -------------- */
     it('should SUCCESS getting 1 user - valid req.query.id (userId)', () => {
-      cy.getUser(newUser.id).should((response) => {
+      cy.getUser(premiumUserId).should((response) => {
         expect(response.status).to.eq(200)
         expect(response.body.username).to.be.a('string')
         expect(response.body.createdAt).to.be.a('number')
@@ -47,9 +51,11 @@ describe('users API test: /api/users', () => {
     })
   })
 
-  // PUT /
+  /* -------------------------------------------------------------------------- */
+  /*                            SECTION PUT /                                   */
+  /* -------------------------------------------------------------------------- */
   context('with PUT request', () => {
-    // ERROR - invalid request.query.id
+    /* ----------------- ANCHOR ERROR - invalid request.query.id ---------------- */
     it('should ERROR updating user - invalid request.query.id', () => {
       const requestBody = {
         username: 'rifandani',
@@ -63,7 +69,7 @@ describe('users API test: /api/users', () => {
       })
     })
 
-    // ERROR - empty request.body
+    /* -------------------- ANCHOR ERROR - empty request.body ------------------- */
     it('should ERROR updating user - empty request.body', () => {
       const requestBody = {
         username: '',
@@ -78,7 +84,7 @@ describe('users API test: /api/users', () => {
       })
     })
 
-    // ERROR - invalid request.body.email
+    /* ---------------- ANCHOR ERROR - invalid request.body.email --------------- */
     it('should ERROR updating user - invalid request.body.email', () => {
       const requestBody = {
         username: 'Rifandani',
@@ -89,15 +95,12 @@ describe('users API test: /api/users', () => {
         expect(response.status).to.eq(400)
         expect(response.body).to.have.property('error', true)
         expect(response.body).to.have.property('name', 'ValidationError')
-        expect(response.body).to.have.property(
-          'message',
-          'email must be a valid email'
-        )
+        expect(response.body).to.have.property('message', 'Invalid email')
         expect(response.body).to.have.property('errors')
       })
     })
 
-    // SUCCESS - valid request.body
+    /* ------------------- ANCHOR SUCCESS - valid request.body ------------------ */
     it('should SUCCESS updating user - valid request.body', () => {
       const requestBody = {
         username: 'gdragon',
@@ -112,9 +115,11 @@ describe('users API test: /api/users', () => {
     })
   })
 
-  // DELETE /id={userId}
+  /* -------------------------------------------------------------------------- */
+  /*                         SECTION DELETE /id={userId}                        */
+  /* -------------------------------------------------------------------------- */
   context('with DELETE request', () => {
-    // ERROR - invalid request.query.id
+    /* ----------------- ANCHOR ERROR - invalid request.query.id ---------------- */
     it('should ERROR deleting user - invalid request.query.id', () => {
       cy.deleteUser(invalidUserId).should((response) => {
         expect(response.status).to.eq(400)
@@ -126,7 +131,7 @@ describe('users API test: /api/users', () => {
       })
     })
 
-    // ERROR - user is premium
+    /* --------------------- ANCHOR ERROR - user is premium --------------------- */
     it('should ERROR deleting user - user is premium', () => {
       cy.deleteUser(premiumUserId).should((response) => {
         expect(response.status).to.eq(400)
@@ -138,7 +143,7 @@ describe('users API test: /api/users', () => {
       })
     })
 
-    // SUCCESS - valid request.query.id & user is not premium
+    /* ------ ANCHOR SUCCESS - valid request.query.id & user is not premium ----- */
     it('should SUCCESS deleting user - valid request.query.id & user is not premium', () => {
       cy.deleteUser(newUser.id).should((response) => {
         expect(response.status).to.eq(200)

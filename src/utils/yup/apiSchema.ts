@@ -11,7 +11,7 @@ export const registerApiSchema = object({
     .required('Username required')
     .min(3, 'Username must be 3 characters or more')
     .max(50, 'Username must be 50 characters or less'),
-  email: string().required('Email required').email('Invalid email'),
+  email: string().email('Invalid email').required('email required'),
 })
 
 export const loginApiSchema = object({
@@ -58,7 +58,9 @@ export const midtransTransactionApiSchema = object({
   customer_details: object({
     first_name: string().required('customer_details.first_name required'),
     last_name: string().required('customer_details.last_name required'),
-    email: string().email().required('customer_details.email required'),
+    email: string()
+      .email('Invalid email')
+      .required('customer_details.email required'),
     phone: string()
       .phone('ID', true, 'Please enter a valid Indonesia phone number')
       .required('customer_details.phone required'),
@@ -87,7 +89,7 @@ export const midtransTransactionApiSchema = object({
 
 export const usersApiSchema = object({
   username: string().required('username required'),
-  email: string().email().required('email required'),
+  email: string().email('Invalid email').required('email required'),
 })
 
 // export interface IQrcode extends TypeOf<typeof createQrcodeSchema> {}

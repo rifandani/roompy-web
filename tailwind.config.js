@@ -1,14 +1,13 @@
 module.exports = {
+  mode: 'jit',
   purge: [
+    './public/**/*.html',
     './src/components/**/*.{js,ts,jsx,tsx}',
     './src/pages/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: 'media', // 'media' or 'class'
   theme: {
     extend: {
-      colors: {
-        'accent-1': '#333',
-      },
       spacing: {
         72: '18rem',
         80: '20rem',
@@ -37,10 +36,22 @@ module.exports = {
         // selectIconOffset: defaultTheme.spacing[2],
         // selectIconSize: '1.5em',
       }),
+      lineClamp: {
+        10: '10',
+      },
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      // in JIT, every variants is enabled by default
+      // see more: https://tailwindcss.com/docs/just-in-time-mode
+      // opacity: ['disabled'],
+      // textColor: ['visited'],
+      lineClamp: ['responsive', 'hover'],
+    },
   },
-  plugins: [require('@tailwindcss/custom-forms')],
+  plugins: [
+    require('@tailwindcss/custom-forms'),
+    require('@tailwindcss/line-clamp'),
+  ],
 }
