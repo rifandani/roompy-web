@@ -1,15 +1,15 @@
-import Head from 'next/head'
-import type { AppProps /*, AppContext */ } from 'next/app'
-import Router from 'next/router'
-import { toast, ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-import { FormspreeProvider } from '@formspree/react'
 import axios from 'axios'
+import Router from 'next/router'
+import NProgress from 'nprogress'
+import { toast, ToastContainer } from 'react-toastify'
+import { FormspreeProvider } from '@formspree/react'
+import { DefaultSeo } from 'next-seo'
 import { SWRConfig } from 'swr'
+import type { AppProps /*, AppContext */ } from 'next/app'
 // styles
 import 'rodal/lib/rodal.css'
+import 'nprogress/nprogress.css'
+import 'react-toastify/dist/ReactToastify.css'
 import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css'
 import 'react-phone-input-2/lib/style.css'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -19,6 +19,7 @@ import '../styles/index.css'
 import useAuth from 'hooks/useAuth'
 import UserContext from 'contexts/UserContext'
 import init from 'utils/sentry/init'
+import SEO from 'configs/nextSeoConfig'
 
 // axios BASE URL
 axios.defaults.baseURL =
@@ -51,43 +52,7 @@ export default function MyApp({ Component, pageProps, err }: MyAppProps) {
 
   return (
     <>
-      <Head>
-        <title>Roompy | Cari teman sekamar atau serumah secara online</title>
-
-        {/* meta */}
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        />
-        <meta name="twitter:title" content="Roompy | Find your soul roommate" />
-        <meta name="twitter:card" content="summary" />
-        <meta property="og:type" content="website" />
-        <meta
-          name="description"
-          content="Temukan roommate sejati anda, dalam beberapa menit."
-        />
-        <meta property="og:image" content="favicon.ico" />
-        <meta name="twitter:image" content="favicon.ico" />
-
-        {/* icon */}
-        <link rel="icon" href="favicon.ico" />
-
-        {/* leaflet css */}
-        <link
-          rel="stylesheet"
-          href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-          crossOrigin=""
-        />
-        <link
-          rel="stylesheet"
-          href="https://unpkg.com/react-leaflet-markercluster/dist/styles.min.css"
-        />
-        <link
-          rel="stylesheet"
-          href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css"
-        />
-      </Head>
+      <DefaultSeo {...SEO} />
 
       {/* sets up a project context for all forms in the app, and associates your forms with the keys specified in your formspree.json config file */}
       <FormspreeProvider project="1571395310305935055">
