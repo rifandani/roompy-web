@@ -1,10 +1,15 @@
 import { NextApiRequest } from 'next'
 // files
-import { db } from '../configs/firebaseConfig'
+import { DocDataRef, Roompy } from './interfaces'
 import { getAsString } from './getAsString'
-import { Roompy } from './interfaces'
+import { db } from 'configs/firebaseConfig'
 
-export default async function getRoompy(req: NextApiRequest) {
+export interface GetRoompyReturn {
+  roompy: Roompy
+  roompyRef: DocDataRef
+}
+
+export async function getRoompy(req: NextApiRequest): Promise<GetRoompyReturn> {
   // ref
   const roompyId = getAsString(req.query.id)
   const roompyRef = db.collection('roompies').doc(roompyId)
@@ -15,7 +20,7 @@ export default async function getRoompy(req: NextApiRequest) {
   const roompy = {
     ...roompySnap.data(),
     id: roompySnap.id,
-  }
+  } as Roompy
 
-  return { roompy: roompy as Roompy, roompyRef }
+  return { roompy, roompyRef }
 }

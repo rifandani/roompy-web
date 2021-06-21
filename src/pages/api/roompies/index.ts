@@ -1,25 +1,13 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import multer from 'multer'
 import Cors from 'cors'
 // Polyfills required for Firebase
 import XHR from 'xhr2'
 import WS from 'ws'
-import nc from 'next-connect'
-import multer from 'multer'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import { db, nowMillis, storage } from '../../../configs/firebaseConfig'
-import getRoompy from '../../../utils/getRoompy'
-import captureException from '../../../utils/sentry/captureException'
-
-const upload = multer() // will ONLY support form-data
-const handler = nc()
-handler.use(upload.single('photo'))
-
-const cors = initMiddleware(
-  Cors({
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  })
-)
+import nc from 'middlewares/nc'
+import { getRoompy } from 'utils/getRoompy'
+import { db, nowMillis, storage } from 'configs/firebaseConfig'
+import { NextApiRequestWithMulterFile } from 'utils/interfaces'
 
 export const config = {
   api: {
@@ -29,11 +17,17 @@ export const config = {
 
 const roompiesRef = db.collection('roompies')
 
-// GET REQUEST => /roompies & /roompies?id=roompyId
-handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // run cors
-
-  try {
+export default nc
+  // cors middleware
+  .use(
+    Cors({
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    })
+  )
+  // handle files upload middleware - will ONLY support form-data
+  .use(multer().single('photo'))
+  /* ---------------------- GET => /roompies & /roompies?id=roompyId ---------------------- */
+  .get(async (req, res) => {
     // kalau gaada query berarti GET all roompies
     if (Object.keys(req.query).length === 0) {
       // get all roompies
@@ -48,43 +42,32 @@ handler.get(async (req: NextApiRequest, res: NextApiResponse) => {
       // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
       res.status(200).json(roompies)
-    } else {
-      // get roompy
-      const { roompy } = await getRoompy(req)
-
-      // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(200).json(roompy)
+      return
     }
-  } catch (err) {
-    // capture exception sentry
-    await captureException(err)
 
-    // GET server error => Internal Server Error -----------------------------------------------------------------
-    res.status(500).json({ error: true, name: err.name, message: err.message })
-  }
-})
+    // get roompy
+    const { roompy } = await getRoompy(req)
 
-// POST REQUEST => /roompies
-handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // Run cors
+    // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    res.status(200).json(roompy)
+  })
+  /* -------------------------------------- POST => /roompies ------------------------------------- */
+  .post(async (req: NextApiRequestWithMulterFile, res) => {
+    // TODO: validate client request body
 
-  // polyfill
-  global.XMLHttpRequest = XHR
-  ;(global.WebSocket as any) = WS
+    // polyfill
+    global.XMLHttpRequest = XHR
+    ;(global.WebSocket as any) = WS
 
-  // @ts-ignore
-  const file = req.file // hanya 1 file
-  const state = JSON.parse(req.body.roompy)
-  const userId = state.postedBy
+    const file = req.file // hanya 1 file
+    const state = JSON.parse(req.body.roompy)
+    const userId = state.postedBy
 
-  // console.log('file => ', file);
-  // console.log('JSON.parse req.body.roompy => ', state);
-  // console.log('string req.body.userId => ', userId);
-  // res.status(201).json({ file, body: req.body });
+    // console.log('file => ', file);
+    // console.log('JSON.parse req.body.roompy => ', state);
+    // console.log('string req.body.userId => ', userId);
+    // res.status(201).json({ file, body: req.body });
 
-  // TODO: validate client request body
-
-  try {
     // save to firestore with empty photoURL & get the roompiesId first
     const postedRoompiesRef = await roompiesRef.add({
       ...state,
@@ -95,10 +78,10 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
     // storageRef => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(
       `users/${userId}/roompies/${postedRoompiesRef.id}/${
-        file?.originalname ?? file?.name ?? file?.filename
+        file?.originalname ?? file?.filename // file?.name
       }`
     )
-    await storageRef.put(file?.buffer ?? file) // save to storage => File / Blob
+    await storageRef.put((file?.buffer ?? file) as ArrayBuffer) // should be casted as Blob | ArrayBuffer | Uint8Array
     const url = await storageRef.getDownloadURL() // get fileUrl from uploaded file
 
     if (url) {
@@ -122,38 +105,24 @@ handler.post(async (req: NextApiRequest, res: NextApiResponse) => {
         roompyId: postedRoompiesRef.id,
       })
     }
-  } catch (err) {
-    // capture exception sentry
-    await captureException(err)
+  })
+  /* ------------------------------ PUT req => /roompies?id=roompyId ------------------------------ */
+  .put(async (req: NextApiRequestWithMulterFile, res) => {
+    // TODO: validate client request body
 
-    // POST server error => Internal Server Error -----------------------------------------------------------------
-    return res
-      .status(500)
-      .json({ error: true, name: err.name, message: err.message })
-  }
-})
+    // polyfill
+    global.XMLHttpRequest = XHR
+    ;(global.WebSocket as any) = WS
 
-// PUT req => /roompies?id=roompyId
-handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // Run cors
+    const file = req.file // hanya 1 file
+    const state = JSON.parse(req.body.roompy)
+    const userId = state.postedBy
 
-  // polyfill
-  global.XMLHttpRequest = XHR
-  ;(global.WebSocket as any) = WS
+    // console.log('file => ', file);
+    // console.log('JSON.parse req.body.roompy => ', state);
+    // console.log('string req.body.userId => ', userId);
+    // res.status(201).json({ file, body: req.body });
 
-  // @ts-ignore
-  const file = req.file // hanya 1 file
-  const state = JSON.parse(req.body.roompy)
-  const userId = state.postedBy
-
-  // console.log('file => ', file);
-  // console.log('JSON.parse req.body.roompy => ', state);
-  // console.log('string req.body.userId => ', userId);
-  // res.status(201).json({ file, body: req.body });
-
-  // TODO: validate client request body
-
-  try {
     // get roompy & roompyRef
     const { roompy, roompyRef } = await getRoompy(req)
 
@@ -170,10 +139,10 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
     // POST new photo to storage => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(
       `users/${userId}/roompies/${roompy.id}/${
-        file?.originalname ?? file?.name ?? file?.filename
+        file?.originalname ?? file?.filename // file?.name
       }`
     )
-    await storageRef.put(file?.buffer ?? file) // save to storage => File / Blob
+    await storageRef.put((file?.buffer ?? file) as ArrayBuffer) // should be casted as Blob | ArrayBuffer | Uint8Array
     const url = await storageRef.getDownloadURL() // get fileUrl from uploaded file
 
     if (url) {
@@ -191,24 +160,9 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
         roompyId: roompyRef.id,
       })
     }
-  } catch (err) {
-    // capture exception sentry
-    await captureException(err)
-
-    // PUT server error => Internal Server Error -----------------------------------------------------------------
-    res.status(500).json({ error: true, name: err.name, message: err.message })
-  }
-})
-
-// DELETE req => /roompies?id=roompyId
-handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // Run cors
-
-  // polyfill
-  global.XMLHttpRequest = XHR
-  ;(global.WebSocket as any) = WS
-
-  try {
+  })
+  /* ----------------------------- DELETE req => /roompies?id=roompyId ---------------------------- */
+  .delete(async (req, res) => {
     // get roompy
     const { roompy, roompyRef } = await getRoompy(req)
 
@@ -240,13 +194,4 @@ handler.delete(async (req: NextApiRequest, res: NextApiResponse) => {
       error: false,
       message: 'Roompy deleted successfully',
     })
-  } catch (err) {
-    // capture exception sentry
-    await captureException(err)
-
-    // DELETE server error => Internal Server Error -----------------------------------------------------------------
-    res.status(500).json({ error: true, name: err.name, message: err.message })
-  }
-})
-
-export default handler
+  })

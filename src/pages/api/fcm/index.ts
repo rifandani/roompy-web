@@ -1,27 +1,22 @@
 import Cors from 'cors'
 import axios from 'axios'
 import * as admin from 'firebase-admin'
-import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import withYup from 'middlewares/withYup'
-import initMiddleware from 'middlewares/initMiddleware'
-import captureException from 'utils/sentry/captureException'
+import nc from 'middlewares/nc'
+import withYupConnect from 'middlewares/withYupConnect'
 import { fcmApiSchema, TFcmApi } from 'utils/yup/apiSchema'
 
-const cors = initMiddleware(
-  Cors({
-    methods: ['POST'],
-  })
-)
-
-const handler = async (
-  req: NextApiRequest,
-  res: NextApiResponse
-): Promise<void> => {
-  try {
-    await cors(req, res) // Run cors
-
-    /* ------------------------ setting up firebase-admin ----------------------- */
+export default nc
+  // cors middleware
+  .use(
+    Cors({
+      methods: ['POST'],
+    })
+  )
+  .use(withYupConnect(fcmApiSchema)) // yup middleware
+  /* -------------------------------------- POST req => /fcm -------------------------------------- */
+  .post(async (req, res) => {
+    // setting up firebase-admin
     let serviceAccount: admin.ServiceAccount
 
     if (!admin.apps.length) {
@@ -37,57 +32,30 @@ const handler = async (
       })
     }
 
-    if (req.method === 'POST') {
-      /* -------------------------------------------------------------------------- */
-      /*                              POST req => /fcm                              */
-      /* -------------------------------------------------------------------------- */
+    const { token, notification, data, webpush, android } = req.body as TFcmApi
 
-      const { token, notification, data, webpush, android } =
-        req.body as TFcmApi
-
-      // Send a message to the web
-      if (webpush) {
-        const messageIdWeb = await admin.messaging().send({
-          webpush,
-          token,
-          data,
-          notification,
-        })
-
-        // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.status(201).json({ error: false, messageId: messageIdWeb })
-        return
-      }
-
-      // Send a message to android device
-      const messageIdAndroid = await admin.messaging().send({
-        android,
+    // Send a message to the web
+    if (webpush) {
+      const messageIdWeb = await admin.messaging().send({
+        webpush,
         token,
         data,
         notification,
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-      res.status(201).json({ error: false, messageId: messageIdAndroid })
-    } else {
-      // client error => Method Not Allowed -----------------------------------------------------------------
-      res.status(405).json({
-        error: true,
-        name: 'METHOD NOT ALLOWED',
-        message: 'Only support POST req',
-      })
+      res.status(201).json({ error: false, messageId: messageIdWeb })
+      return
     }
-  } catch (err) {
-    // capture exception sentry
-    await captureException(err)
 
-    // server error => Internal Server Error -----------------------------------------------------------------
-    res.status(500).json({
-      error: true,
-      name: err.name,
-      message: err.message,
+    // Send a message to android device
+    const messageIdAndroid = await admin.messaging().send({
+      android,
+      token,
+      data,
+      notification,
     })
-  }
-}
 
-export default withYup(fcmApiSchema, handler)
+    // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+    res.status(201).json({ error: false, messageId: messageIdAndroid })
+  })

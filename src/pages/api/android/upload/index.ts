@@ -1,27 +1,13 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import multer from 'multer'
 import Cors from 'cors'
 // Polyfills required for Firebase
 import XHR from 'xhr2'
 import WS from 'ws'
-import nc from 'next-connect'
-import multer from 'multer'
 // files
-import initMiddleware from '../../../../middlewares/initMiddleware'
-import { nowMillis, storage } from '../../../../configs/firebaseConfig'
-import getRoompy from '../../../../utils/getRoompy'
-import captureException from '../../../../utils/sentry/captureException'
-
-// handle files upload middleware
-const upload = multer()
-const handler = nc()
-handler.use(upload.single('photo'))
-
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
-const cors = initMiddleware(
-  Cors({
-    methods: ['PUT'],
-  })
-)
+import nc from 'middlewares/nc'
+import { getRoompy } from 'utils/getRoompy'
+import { nowMillis, storage } from 'configs/firebaseConfig'
+import { NextApiRequestWithMulterFile } from 'utils/interfaces'
 
 export const config = {
   api: {
@@ -29,22 +15,26 @@ export const config = {
   },
 }
 
-// ONLY update or add new photo for roompy (not other roompy data)
-// PUT req => /upload?id=roompyId
-handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // Run cors
+export default nc
+  // cors middleware
+  .use(
+    Cors({
+      methods: ['PUT'],
+    })
+  )
+  // handle files upload middleware
+  .use(multer().single('photo'))
+  /* ------------------------------- PUT req => /upload?id=roompyId ------------------------------- */
+  /* --------------- ONLY update or add new photo for roompy (not other roompy data) -------------- */
+  .put(async (req: NextApiRequestWithMulterFile, res) => {
+    // polyfill
+    global.XMLHttpRequest = XHR
+    ;(global.WebSocket as any) = WS
 
-  // polyfill
-  global.XMLHttpRequest = XHR
-  ;(global.WebSocket as any) = WS
+    const file = req.file
+    // console.log('file => ', file);
+    // res.status(201).json({ file, body: req.body });
 
-  // @ts-ignore
-  const file = req.file
-
-  // console.log('file => ', file);
-  // res.status(201).json({ file, body: req.body });
-
-  try {
     // get roompy & roompyRef
     const { roompy, roompyRef } = await getRoompy(req)
 
@@ -61,10 +51,10 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
     // POST new photo to storage => /users/{userId}/roompies/{roompiesId}/img.png
     const storageRef = storage.ref(
       `users/${roompy.postedBy}/roompies/${roompy.id}/${
-        file?.originalname ?? file?.name ?? file?.filename
+        file?.originalname ?? file?.filename // file?.name
       }`
     )
-    await storageRef.put(file?.buffer ?? file) // save to storage => File / Blob
+    await storageRef.put((file?.buffer ?? file) as ArrayBuffer) // should be casted as Blob | ArrayBuffer | Uint8Array
     const url = await storageRef.getDownloadURL() // get fileUrl from uploaded file
 
     if (url) {
@@ -80,13 +70,4 @@ handler.put(async (req: NextApiRequest, res: NextApiResponse) => {
         message: 'Photo updated successfully',
       })
     }
-  } catch (err) {
-    // capture exception sentry
-    await captureException(err)
-
-    // PUT server error => Internal Server Error -----------------------------------------------------------------
-    res.status(500).json({ error: true, name: err.name, message: err.message })
-  }
-})
-
-export default handler
+  })
