@@ -1,7 +1,7 @@
 import firebase from 'firebase'
 import { useState, useEffect } from 'react'
 // files
-import { storage } from 'firebase/config'
+import { storage } from '../configs/firebaseConfig'
 
 interface IUseStorage {
   progress: number
