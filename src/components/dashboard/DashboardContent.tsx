@@ -1,12 +1,18 @@
+import useSWR from 'swr'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { MdTimelapse } from 'react-icons/md'
 import { FaCrown, FaShoppingCart, FaUserPlus, FaDoorOpen } from 'react-icons/fa'
-import { toast } from 'react-toastify'
-import useSWR from 'swr'
 // files
-import { DashboardProps } from '../../pages/dashboard'
-import { Roompies } from '../../utils/interfaces'
+import { DashboardProps } from 'pages/dashboard'
+import { Roompy } from 'utils/interfaces'
+
+interface APIResponsePostedRoompies {
+  error: boolean
+  postedRoompies: Roompy[]
+  havePostedRoompies: boolean
+}
 
 function NoListings({ color }: { color: string }) {
   return (
@@ -34,10 +40,14 @@ function NoListings({ color }: { color: string }) {
   )
 }
 
-export default function DashboardContent({ dbUser }: DashboardProps) {
+export default function DashboardContent({
+  dbUser,
+}: DashboardProps): JSX.Element {
   // hooks
   const { push } = useRouter()
-  const { data } = useSWR(`/posted/roompies?userId=${dbUser.id}`)
+  const { data } = useSWR<APIResponsePostedRoompies>(
+    `/posted/roompies?userId=${dbUser.id}`
+  )
 
   function onCreateRoompies() {
     // check if the 'dbUser' is premium / postedRoompies less than 1, then can upload more than 1 post
@@ -48,6 +58,10 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
         'Sorry, free dbUser can only create 1 roompies. Please, extend your subscription plan.'
       )
     }
+  }
+
+  function onCreateRooms() {
+    toast('Coming soon')
   }
 
   return (
@@ -160,7 +174,7 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
 
         {/* roompies cards */}
         {data?.postedRoompies.length > 0 ? (
-          (data.postedRoompies as Roompies).map((roompy) => (
+          data.postedRoompies.map((roompy) => (
             <Link
               key={roompy.id}
               href={`/dashboard/roompies/edit/${roompy.id}`}
@@ -210,7 +224,7 @@ export default function DashboardContent({ dbUser }: DashboardProps) {
 
           <button
             className="flex items-center p-2 mt-2 ml-6 mr-6 transition duration-500 transform border-2 border-pink-500 rounded-lg hover:scale-125 md:ml-0 md:mt-0 bg-pink-50 focus:ring-4 focus:outline-none focus:ring-pink-300"
-            onClick={() => {}}
+            onClick={onCreateRooms}
           >
             <FaDoorOpen className="mr-2 text-lg text-pink-500" />
 

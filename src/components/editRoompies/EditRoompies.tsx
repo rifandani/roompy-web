@@ -1,23 +1,23 @@
-import { useRouter } from 'next/router'
-import { useState, FormEvent } from 'react'
-import { FaQuestionCircle } from 'react-icons/fa'
+import axios from 'axios'
+import dynamic from 'next/dynamic'
 import PhoneInput from 'react-phone-input-2'
 import id from 'react-phone-input-2/lang/id.json'
 import DatePicker from 'react-datepicker'
 import NumberFormat from 'react-number-format'
-import { Range, createSliderWithTooltip } from 'rc-slider'
 import Loader from 'react-loader-spinner'
-import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
-import axios from 'axios'
-import dynamic from 'next/dynamic'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
+import { useState, FormEvent } from 'react'
+import { FaQuestionCircle } from 'react-icons/fa'
+import { Range, createSliderWithTooltip } from 'rc-slider'
 // import Select from 'react-select'
 // import makeAnimated from 'react-select/animated'
 // files
-import Dropzone from '../createRoompies/Dropzone'
-import { EditRoompiesProps } from '../../pages/dashboard/roompies/edit/[id]'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
-import { LocPref } from '../../utils/interfaces'
+import Dropzone from 'components/createRoompies/Dropzone'
+import axiosErrorHandle from 'utils/axiosErrorHandle'
+import { LocPref } from 'utils/interfaces'
+import { EditRoompiesProps } from 'pages/dashboard/roompies/edit/[id]'
 
 // const animatedComponents = makeAnimated() // animation on react-select isMulti
 const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
@@ -26,7 +26,10 @@ const MapWithNoSSR = dynamic(() => import('../leaflet/EditRoompiesLeaflet'), {
   ssr: false,
 })
 
-export default function EditRoompies({ user, roompy }: EditRoompiesProps) {
+export default function EditRoompies({
+  user,
+  roompy,
+}: EditRoompiesProps): JSX.Element {
   const { push } = useRouter()
   const [busy, setBusy] = useState<boolean>(false)
   // contact info

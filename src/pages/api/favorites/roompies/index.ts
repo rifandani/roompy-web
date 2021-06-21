@@ -2,7 +2,7 @@ import Cors from 'cors'
 // files
 import nc from 'middlewares/nc'
 import withYupConnect from 'middlewares/withYupConnect'
-import { User } from 'utils/interfaces'
+import { Roompy, User } from 'utils/interfaces'
 import { getAsString } from 'utils/getAsString'
 import { db, nowMillis } from 'configs/firebaseConfig'
 import { favRoompiesApiSchema, TFavRoompiesApi } from 'utils/yup/apiSchema'
@@ -30,7 +30,7 @@ export default nc
 
     // get all favorited roompies
     const favoritedRoompies = dbUser.favorites.roompies
-    const favRoompies = []
+    const favRoompies = [] as Roompy[]
 
     if (favoritedRoompies.length > 0) {
       for (const roompyId of favoritedRoompies) {
@@ -39,7 +39,7 @@ export default nc
         favRoompies.push({
           ...roompySnap.data(),
           id: roompySnap.id,
-        })
+        } as Roompy)
       }
     }
 

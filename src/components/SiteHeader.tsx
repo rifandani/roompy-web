@@ -12,7 +12,7 @@ import { auth } from '../configs/firebaseConfig'
 import axiosErrorHandle from '../utils/axiosErrorHandle'
 import UserContext from '../contexts/UserContext'
 
-export default function SiteHeader() {
+export default function SiteHeader(): JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [searchQue, setSearchQue] = useState<string>('')
   const { user } = useContext(UserContext)
@@ -95,9 +95,7 @@ export default function SiteHeader() {
             value={searchQue}
             onChange={(e) => setSearchQue(e.target.value)}
             onKeyDown={(e) =>
-              e.key === 'Enter'
-                ? console.log('Enter pressed')
-                : console.log(e.key)
+              e.key === 'Enter' ? alert('Enter pressed') : alert(e.key)
             }
           />
         </div>

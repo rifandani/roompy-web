@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction } from 'react'
 import ReactPaginate from 'react-paginate'
+import { Dispatch, SetStateAction } from 'react'
 // files
-import { Roompies } from '../utils/interfaces'
+import { Roompy } from 'utils/interfaces'
 
 export interface PaginationProps {
-  roompies: Roompies
+  roompies: Roompy[]
   currentPage: number
   setCurrentPage: Dispatch<SetStateAction<number>>
   limit: number
@@ -15,7 +15,7 @@ export default function Pagination({
   currentPage,
   setCurrentPage,
   limit,
-}: PaginationProps) {
+}: PaginationProps): JSX.Element {
   const classNames =
     'bg-white text-purple-500 hover:bg-purple-100 px-2 py-1 border cursor-pointer rounded-md appearance-none focus:outline-none focus:ring focus:border-purple-300 list-none'
 

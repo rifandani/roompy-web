@@ -34,8 +34,9 @@ export default nc
       // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({
         error: false,
+        havePostedRoompies: false,
         matchRoompies: [],
-        message: 'There is no posted roompies in this user document',
+        userLocPref: [],
       })
       return
     }
@@ -50,7 +51,8 @@ export default nc
     const roompiesExcept = roompies.filter((el) => el.postedBy !== userId)
 
     // filter all roompies based on userPref
-    const matchRoompies = []
+    const matchRoompies = [] as Roompy[]
+
     roompiesExcept.forEach((roompy) => {
       const roompyLocPref = roompy.locPref.map(
         (el) => turf.point([el.lng, el.lat]) // Note order: longitude, latitude.
@@ -71,6 +73,7 @@ export default nc
     res.status(200).json({
       matchRoompies,
       error: false,
+      havePostedRoompies: true,
       userLocPref: userPostedRoompies[0].locPref,
     })
   })

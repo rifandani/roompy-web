@@ -1,14 +1,14 @@
+import axios from 'axios'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 import { useContext, useState } from 'react'
 import { JackInTheBox } from 'react-awesome-reveal'
-import { toast } from 'react-toastify'
-import axios from 'axios'
 // files
-import UserContext from '../../contexts/UserContext'
-import { auth } from '../../configs/firebaseConfig'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import UserContext from 'contexts/UserContext'
+import axiosErrorHandle from 'utils/axiosErrorHandle'
+import { auth } from 'configs/firebaseConfig'
 
-const NavAbout = () => {
+const NavAbout = (): JSX.Element => {
   // toggle menu
   const [toggleMenu, setToggleMenu] = useState(false)
 
@@ -217,8 +217,8 @@ const NavAbout = () => {
               </h2>
 
               <p className="mt-5 text-base italic text-gray-500 sm:text-lg md:text-xl sm:max-w-xl sm:mx-auto lg:mx-0">
-                Bukan tentang 'kemana', tetapi dengan
-                <span className="text-purple-700"> 'siapa'</span>
+                Bukan tentang &apos;kemana&apos;, tetapi dengan
+                <span className="text-purple-700"> &apos;siapa&apos;</span>
               </p>
 
               <div className="mt-10 sm:flex sm:justify-center lg:justify-start">

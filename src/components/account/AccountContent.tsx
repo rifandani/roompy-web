@@ -1,38 +1,29 @@
 import axios from 'axios'
+import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { FaCheck, FaQuestion } from 'react-icons/fa'
-import { toast } from 'react-toastify'
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
-import {
-  auth,
-  db,
-  emailAuthProvider,
-  nowMillis,
-} from '../../configs/firebaseConfig'
-import { FireUser, User } from '../../utils/interfaces'
+import { FireUser, User } from 'utils/interfaces'
 import {
   updateUserProfileSchema,
   TUpdateUserProfileSchema,
-} from '../../utils/yup/schema'
+} from 'utils/yup/schema'
+import { auth, db, emailAuthProvider, nowMillis } from 'configs/firebaseConfig'
 
-export default function AccountContent({
-  dbUser,
-  user,
-}: {
-  dbUser: User
+interface Props {
   user: FireUser
-}) {
+  dbUser: User
+}
+
+export default function AccountContent({ user }: Props): JSX.Element {
   const currentEmail = user.email
-  const lastSignInTime = user.metadata.lastSignInTime
   const initialValues: TUpdateUserProfileSchema = {
     username: '',
     newEmail: '',
     currentPassword: '',
     newPassword: '',
   }
-
-  console.log('last signin time => ', lastSignInTime)
 
   // hooks
   const { push } = useRouter()
@@ -93,7 +84,6 @@ export default function AccountContent({
 
     // check if user input credential valid
     await user.reauthenticateWithCredential(credential)
-    console.log('reauthenticate success')
   }
 
   async function updateProfileItems(
@@ -114,8 +104,6 @@ export default function AccountContent({
       email: newEmail,
       updatedAt: nowMillis,
     })
-
-    console.log('updateProfileItems success')
   }
 
   return (

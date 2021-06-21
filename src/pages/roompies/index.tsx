@@ -1,15 +1,16 @@
-import { GetServerSideProps } from 'next'
-import { useState } from 'react'
+/* eslint-disable no-case-declarations */
 import Loader from 'react-loader-spinner'
+import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { GetServerSideProps } from 'next'
 // files
-import RoompiesComp from '../../components/roompies/RoompiesComp'
-import { db } from '../../configs/firebaseConfig'
-import { Roompies } from '../../utils/interfaces'
+import RoompiesComp from 'components/roompies/RoompiesComp'
+import { db } from 'configs/firebaseConfig'
+import { Roompy } from 'utils/interfaces'
 
 export interface RoompiesPageProps {
   error: boolean
-  roompies: Roompies | []
+  roompies: Roompy[]
   err: any
 }
 
@@ -17,8 +18,8 @@ export default function RoompiesPage({
   error,
   roompies,
   err,
-}: RoompiesPageProps) {
-  const [busy, setBusy] = useState<boolean>(false)
+}: RoompiesPageProps): JSX.Element {
+  const [busy] = useState<boolean>(false)
 
   if (error) {
     toast.error(err.message)
@@ -50,11 +51,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     // initial roompies
     const roompiesRef = db.collection('roompies') // roompies firestore Ref
-    const snap = await roompiesRef.get()
-    let arr = snap.docs.map((el) => ({
+    const roompiesSnap = await roompiesRef.get()
+
+    const arr = roompiesSnap.docs.map((el) => ({
       ...el.data(),
       id: el.id,
-    }))
+    })) as Roompy[]
 
     // render pertama kali tanpa ada query
     if (Object.keys(ctx.query).length === 0) {
@@ -69,57 +71,51 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     // destructure query objects
     const { ageQue, budgetQue, genderQue, ownPetQue, smokerQue } = ctx.query
-    let result = []
+    const result = []
 
     if (ageQue) {
       // ageQue => string '20', '30', '40', '50', '51'
       switch (ageQue) {
         case '51':
-          const fAgeQueDiatas = (arr as Roompies).filter(
-            (el) => el.age >= Number(ageQue)
-          )
+          const fAgeQueDiatas = arr.filter((el) => el.age >= Number(ageQue))
           result.push(...fAgeQueDiatas)
           break // kalo gak di break eksekusi code berlanjut ke default statement
 
         default:
-          const fAgeQueDibawah = (arr as Roompies).filter(
-            (el) => el.age <= Number(ageQue)
-          )
+          const fAgeQueDibawah = arr.filter((el) => el.age <= Number(ageQue))
           result.push(...fAgeQueDibawah)
       }
     } else if (budgetQue) {
       // budgetQue => string '500000', '1000000', '2000000', '3000000', '3100000'
       switch (budgetQue) {
         case '3100000':
-          const fBudgetQueDiatas = (arr as Roompies).filter(
+          const fBudgetQueDiatas = arr.filter(
             (el) => el.budget >= Number(budgetQue)
           )
           result.push(...fBudgetQueDiatas)
           break // kalo gak di break eksekusi code berlanjut ke default statement
 
         default:
-          const fBudgetQueDibawah = (arr as Roompies).filter(
+          const fBudgetQueDibawah = arr.filter(
             (el) => el.budget <= Number(budgetQue)
           )
           result.push(...fBudgetQueDibawah)
       }
     } else if (ownPetQue) {
       // ownPetQue => string 'true', ''
-      const fOwnPetQue = (arr as Roompies).filter(
+      const fOwnPetQue = arr.filter(
         (el) => el.ownPet === (ownPetQue === 'true')
       )
       result.push(...fOwnPetQue)
     } else if (smokerQue) {
       // smokerQue => string 'true', ''
-      const fSmokerQue = (arr as Roompies).filter(
+      const fSmokerQue = arr.filter(
         (el) => el.smoker === (smokerQue === 'true')
       )
       result.push(...fSmokerQue)
     } else if (genderQue) {
       // genderQue => string 'Pria', 'Wanita'
-      const fGenderQue = (arr as Roompies).filter(
-        (el) => el.gender === genderQue
-      )
+      const fGenderQue = arr.filter((el) => el.gender === genderQue)
       result.push(...fGenderQue)
     }
 

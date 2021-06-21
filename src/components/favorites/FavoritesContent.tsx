@@ -7,8 +7,14 @@ import { toast } from 'react-toastify'
 // files
 import RoompyCard2 from 'components/roompies/RoompyCard2'
 import axiosErrorHandle from 'utils/axiosErrorHandle'
-import { Roompies } from 'utils/interfaces'
+import { Roompy, User } from 'utils/interfaces'
 import { FavoritesPageProps } from 'pages/dashboard/favorites'
+
+interface APIResponseFavoritesRoompies {
+  error: boolean
+  user: User
+  favRoompies: Roompy[]
+}
 
 interface Props extends FavoritesPageProps {
   setBusy: Dispatch<SetStateAction<boolean>>
@@ -16,7 +22,9 @@ interface Props extends FavoritesPageProps {
 
 export default function InboxContent({ setBusy, userId }: Props): JSX.Element {
   // hooks
-  const { data, error } = useSWR(`/favorites/roompies?userId=${userId}`)
+  const { data, error } = useSWR<APIResponseFavoritesRoompies>(
+    `/favorites/roompies?userId=${userId}`
+  )
 
   const onDeleteFav = async (_userId: string, _roompyId: string) => {
     try {
@@ -64,7 +72,7 @@ export default function InboxContent({ setBusy, userId }: Props): JSX.Element {
           <div className="mt-6 sm:overflow-x-auto sm:overflow-y-hidden">
             <div className="px-4 sm:inline-flex sm:pt-2 sm:pb-8">
               {data?.favRoompies.length > 0 ? (
-                (data.favRoompies as Roompies).map((roompy, i) => (
+                data.favRoompies.map((roompy, i) => (
                   <div
                     key={roompy.id}
                     className={`${
@@ -109,7 +117,7 @@ export default function InboxContent({ setBusy, userId }: Props): JSX.Element {
           <div className="mt-6 sm:overflow-x-auto sm:overflow-y-hidden">
             <div className="px-4 sm:inline-flex sm:pt-2 sm:pb-8">
               {data?.favRoompies.length > 0 ? (
-                (data.favRoompies as Roompies).map((roompy, i) => (
+                data.favRoompies.map((roompy, i) => (
                   <div
                     key={roompy.id}
                     className={`${

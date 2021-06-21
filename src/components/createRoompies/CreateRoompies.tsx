@@ -1,21 +1,21 @@
-import { useState, FormEvent } from 'react'
-import { FaQuestionCircle } from 'react-icons/fa'
+import axios from 'axios'
+import dynamic from 'next/dynamic'
 import PhoneInput from 'react-phone-input-2'
 import id from 'react-phone-input-2/lang/id.json'
 import DatePicker from 'react-datepicker'
 import NumberFormat from 'react-number-format'
-import { Range, createSliderWithTooltip } from 'rc-slider'
 import Loader from 'react-loader-spinner'
-import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
-import axios from 'axios'
+import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
-import dynamic from 'next/dynamic'
+import { useState, FormEvent } from 'react'
+import { FaQuestionCircle } from 'react-icons/fa'
+import { Range, createSliderWithTooltip } from 'rc-slider'
 // files
 import Dropzone from './Dropzone'
-import { CreateRoompiesProps } from '../../pages/dashboard/roompies/create'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
-import { LocPref } from '../../utils/interfaces'
+import axiosErrorHandle from 'utils/axiosErrorHandle'
+import { LocPref } from 'utils/interfaces'
+import { CreateRoompiesProps } from 'pages/dashboard/roompies/create'
 
 const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
 
@@ -23,7 +23,9 @@ const MapWithNoSSR = dynamic(() => import('../leaflet/CreateRoompiesLeaflet'), {
   ssr: false,
 })
 
-export default function CreateRoompies({ user }: CreateRoompiesProps) {
+export default function CreateRoompies({
+  user,
+}: CreateRoompiesProps): JSX.Element {
   const { push } = useRouter()
   const [busy, setBusy] = useState<boolean>(false)
   // contact info
