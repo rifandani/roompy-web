@@ -1,20 +1,21 @@
 import { GetServerSideProps } from 'next'
 import { verify } from 'jsonwebtoken'
 // files
-import DashboardLayout from '../../../../../components/dashboard/DashboardLayout'
-import EditRoompies from '../../../../../components/editRoompies/EditRoompies'
-import { db } from '../../../../../configs/firebaseConfig'
-import { Roompy, User } from '../../../../../utils/interfaces'
-import { getAsString } from '../../../../../utils/getAsString'
+import DashboardLayout from 'components/dashboard/DashboardLayout'
+import EditRoompies from 'components/editRoompies/EditRoompies'
+import { db } from 'configs/firebaseConfig'
+import { Roompy, User } from 'utils/interfaces'
+import { getAsString } from 'utils/getAsString'
 
 export interface EditRoompiesProps {
   user: User
   roompy: Roompy
 }
 
-export default function EditRoompiesPage({ user, roompy }: EditRoompiesProps) {
-  console.log(roompy)
-
+export default function EditRoompiesPage({
+  user,
+  roompy,
+}: EditRoompiesProps): JSX.Element {
   return (
     <div className="">
       <DashboardLayout ver2>
@@ -41,7 +42,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     // decoded === payload { sub: user.uid }
-    const decoded = verify(authCookie!, process.env.MY_SECRET_KEY)
+    const decoded = verify(authCookie, process.env.MY_SECRET_KEY)
 
     // get user from firestore
     const userSnap = await db
