@@ -1,12 +1,15 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../../middlewares/initMiddleware'
-import { db, nowMillis } from '../../../../configs/firebaseConfig'
-import { snapClient } from '../../../../configs/midtransConfig'
-import captureException from '../../../../utils/sentry/captureException'
-import yupMiddleware from '../../../../middlewares/yupMiddleware'
-import { midtransTransactionApiSchema } from '../../../../utils/yup/apiSchema'
+import withYup from 'middlewares/withYup'
+import initMiddleware from 'middlewares/initMiddleware'
+import captureException from 'utils/sentry/captureException'
+import { snapClient } from 'configs/midtransConfig'
+import { db, nowMillis } from 'configs/firebaseConfig'
+import {
+  midtransTransactionApiSchema,
+  TMidtransTransactionApi,
+} from 'utils/yup/apiSchema'
 
 const cors = initMiddleware(
   Cors({
@@ -14,17 +17,24 @@ const cors = initMiddleware(
   })
 )
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // Run cors
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
+  try {
+    await cors(req, res) // Run cors
 
-  // POST /api/midtrans/transaction
-  if (req.method === 'POST') {
-    try {
-      const { user_id, customer_details, item_details } = req.body // destructure body
+    if (req.method === 'POST') {
+      /* -------------------------------------------------------------------------- */
+      /*                       POST /api/midtrans/transaction                       */
+      /* -------------------------------------------------------------------------- */
+
+      const { user_id, customer_details, item_details } =
+        req.body as TMidtransTransactionApi
 
       // calculate total gross amount
       const grossAmount = item_details.reduce(
-        (acc: number, item: any) => item.quantity * item.price + acc,
+        (acc, item) => item.quantity * item.price + acc,
         0
       )
 
@@ -48,6 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const transaction = await snapClient.createTransaction(data)
 
       // save to orders collection with id === order_id
+      // see https://docs.midtrans.com/en/after-payment/get-status?id=transaction-status
       await db.collection('orders').doc(data.transaction_details.order_id).set({
         user_id,
         customer_details: data.customer_details,
@@ -55,7 +66,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         item_details: data.item_details,
         created_at: nowMillis,
         updated_at: nowMillis,
-        transaction_status: 'token_created', // see https://docs.midtrans.com/en/after-payment/get-status?id=transaction-status
+        transaction_status: 'token_created',
       })
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -64,19 +75,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         orderId: data.transaction_details.order_id,
         error: false,
       })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
-
-      // POST server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
+    } else {
+      // client error => Method Not Allowed -----------------------------------------------------------------
+      res.status(405).json({
+        error: true,
+        name: 'METHOD NOT ALLOWED',
+        message: 'Only support POST req',
+      })
     }
-  } else {
-    // client error => Method Not Allowed
-    res.status(405).json({ error: true, message: 'Only support POST req' })
+  } catch (err) {
+    // capture exception sentry
+    await captureException(err)
+
+    // server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({
+      error: true,
+      name: err.name,
+      message: err.message,
+    })
   }
 }
 
-export default yupMiddleware(midtransTransactionApiSchema, handler)
+export default withYup(midtransTransactionApiSchema, handler)

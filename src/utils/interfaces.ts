@@ -1,6 +1,8 @@
 import firebase from 'firebase'
 import { Dispatch, SetStateAction } from 'react'
 
+/* --------------------------------- roompy --------------------------------- */
+
 export interface Favorites {
   roompies: string[]
   rooms: string[]
@@ -49,12 +51,14 @@ export interface Roompy {
 }
 
 export interface RoompyProps {
-  roompy: Roompy | null
+  roompy: Roompy
 }
 
 export interface RoompiesProps {
-  roompies: Roompies | []
+  roompies: Roompy[]
 }
+
+/* ---------------------------------- user ---------------------------------- */
 
 export interface User {
   id?: string
@@ -63,8 +67,8 @@ export interface User {
   favorites: Favorites
   messagesFrom: string[]
   messagesTo: string[]
-  postedRoompies: string[] | [] // awalnya DocRef
-  postedRooms: string[] | [] // awalnya DocRef
+  postedRoompies: string[] // awalnya DocRef
+  postedRooms: string[] // awalnya DocRef
   premium: boolean
   premiumUntil: number
   token: string
@@ -96,14 +100,10 @@ export interface PhotoURL {
   webkitRelativePath: string
 }
 
-export type Roompies = Roompy[]
-export type Users = User[]
-export type Postals = Postal[]
-export type PhotoURLs = PhotoURL[]
-
 // firebase type
 export type DocRef = firebase.firestore.DocumentReference
-export type DocDataRef = firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
+export type DocDataRef =
+  firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
 export type Timestamp = firebase.firestore.Timestamp
 export type FireUser = firebase.User
 export type UserCredential = firebase.UserInfo

@@ -1,20 +1,20 @@
+import axios from 'axios'
 import Link from 'next/link'
+import useSWR, { mutate } from 'swr'
 import React, { Dispatch, SetStateAction } from 'react'
 import { FaWindowClose } from 'react-icons/fa'
 import { toast } from 'react-toastify'
-import axios from 'axios'
-import useSWR, { mutate } from 'swr'
 // files
-import RoompyCard2 from '../roompies/RoompyCard2'
-import { FavoritesPageProps } from '../../pages/dashboard/favorites'
-import { Roompies } from '../../utils/interfaces'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import RoompyCard2 from 'components/roompies/RoompyCard2'
+import axiosErrorHandle from 'utils/axiosErrorHandle'
+import { Roompies } from 'utils/interfaces'
+import { FavoritesPageProps } from 'pages/dashboard/favorites'
 
 interface Props extends FavoritesPageProps {
   setBusy: Dispatch<SetStateAction<boolean>>
 }
 
-export default function InboxContent({ setBusy, userId }: Props) {
+export default function InboxContent({ setBusy, userId }: Props): JSX.Element {
   // hooks
   const { data, error } = useSWR(`/favorites/roompies?userId=${userId}`)
 

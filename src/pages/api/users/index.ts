@@ -1,30 +1,35 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 import axios from 'axios'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import { db, nowMillis } from '../../../configs/firebaseConfig'
-import getUser from '../../../utils/getUser'
-import { getAsString } from '../../../utils/getAsString'
-import captureException from '../../../utils/sentry/captureException'
-import yupMiddleware from '../../../middlewares/yupMiddleware'
-import { usersApiSchema } from '../../../utils/yup/apiSchema'
+import withYup from 'middlewares/withYup'
+import initMiddleware from 'middlewares/initMiddleware'
+import captureException from 'utils/sentry/captureException'
+import getUser from 'utils/getUser'
+import { getAsString } from 'utils/getAsString'
+import { usersApiSchema } from 'utils/yup/apiSchema'
+import { db, nowMillis } from 'configs/firebaseConfig'
 
-// Initialize the cors middleware, more available options here: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['GET', 'PUT', 'DELETE'],
   })
 )
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // run cors
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
+  try {
+    await cors(req, res) // run cors
 
-  const usersRef = db.collection('users')
+    const usersRef = db.collection('users')
 
-  // GET req => /users & /users?id=userId
-  if (req.method === 'GET') {
-    try {
+    if (req.method === 'GET') {
+      /* -------------------------------------------------------------------------- */
+      /*                    GET req => /users & /users?id=userId                    */
+      /* -------------------------------------------------------------------------- */
+
       // if there is no query === get ALL users
       if (Object.keys(req.query).length === 0) {
         // get all users
@@ -37,33 +42,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         // res.setHeader('Cache-Control', 'public, max-age=900, max-stale=604800') // tambahin cache untuk android
         res.status(200).json(users)
-      } else {
-        // get user
-        const { user } = await getUser(req)
-
-        // kalau query.id tidak valid
-        if (!user.username) {
-          res
-            .status(400)
-            .json({ error: true, message: 'Invalid query user id' })
-          return
-        }
-
-        // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-        res.status(200).json(user)
+        return
       }
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
 
-      // GET server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
-    }
-    // PUT req => /users?id=userId
-  } else if (req.method === 'PUT') {
-    try {
+      // get user
+      const { user } = await getUser(req)
+
+      // kalau query.id tidak valid
+      if (!user.username) {
+        res.status(400).json({ error: true, message: 'Invalid query user id' })
+        return
+      }
+
+      // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      res.status(200).json(user)
+    } else if (req.method === 'PUT') {
+      /* -------------------------------------------------------------------------- */
+      /*                         PUT req => /users?id=userId                        */
+      /* -------------------------------------------------------------------------- */
+
       // get request query and body
       const userId = getAsString(req.query.id)
       const { username, email } = req.body
@@ -80,18 +77,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res
         .status(201)
         .json({ error: false, message: 'User updated successfully' })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
+    } else if (req.method === 'DELETE') {
+      /* -------------------------------------------------------------------------- */
+      /*                       DELETE req => /users?id=userId                       */
+      /* -------------------------------------------------------------------------- */
 
-      // PUT server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
-    }
-    // DELETE req => /users?id=userId
-  } else if (req.method === 'DELETE') {
-    try {
       const { user, userRef } = await getUser(req)
 
       // kalau query id tidak valid
@@ -147,21 +137,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: false,
         message: 'User deleted successfully',
       })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
-
-      // DELETE ERROR -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
+    } else {
+      // client error => Method Not Allowed
+      res.status(405).json({
+        error: true,
+        name: 'METHOD NOT ALLOWED',
+        message: 'Only support GET, PUT, DELETE req',
+      })
     }
-  } else {
-    // client error => Method Not Allowed
-    res
-      .status(405)
-      .json({ error: true, message: 'Only support GET, PUT and DELETE req' })
+  } catch (err) {
+    // capture exception sentry
+    await captureException(err)
+
+    // server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({
+      error: true,
+      name: err.name,
+      message: err.message,
+    })
   }
 }
 
-export default yupMiddleware(usersApiSchema, handler)
+export default withYup(usersApiSchema, handler)

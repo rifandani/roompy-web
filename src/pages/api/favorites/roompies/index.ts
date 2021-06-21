@@ -1,41 +1,46 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../../middlewares/initMiddleware'
-import { db, nowMillis } from '../../../../configs/firebaseConfig'
-import { User } from '../../../../utils/interfaces'
-import { getAsString } from '../../../../utils/getAsString'
-import captureException from '../../../../utils/sentry/captureException'
-import yupMiddleware from '../../../../middlewares/yupMiddleware'
-import { favRoompiesApiSchema } from '../../../../utils/yup/apiSchema'
+import captureException from 'utils/sentry/captureException'
+import initMiddleware from 'middlewares/initMiddleware'
+import withYup from 'middlewares/withYup'
+import { User } from 'utils/interfaces'
+import { getAsString } from 'utils/getAsString'
+import { favRoompiesApiSchema, TFavRoompiesApi } from 'utils/yup/apiSchema'
+import { db, nowMillis } from 'configs/firebaseConfig'
 
-// Initialize the cors middleware, see more: https://github.com/expressjs/cors#configuration-options
 const cors = initMiddleware(
   Cors({
     methods: ['GET', 'POST', 'DELETE'],
   })
 )
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // run cors
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
+  try {
+    await cors(req, res) // run cors
 
-  // GET req => /favorites/roompies?userId=userId
-  if (req.method === 'GET') {
-    try {
+    if (req.method === 'GET') {
+      /* -------------------------------------------------------------------------- */
+      /*                GET req => /favorites/roompies?userId=userId                */
+      /* -------------------------------------------------------------------------- */
+
       const userId = getAsString(req.query.userId)
 
       // get user from firestore
       const userSnap = await db.collection('users').doc(userId).get()
 
-      // append id to user object
+      // append id, and casting as User
       const dbUser = {
         ...userSnap.data(),
         id: userSnap.id,
-      }
+      } as User
 
       // get all favorited roompies
-      const favoritedRoompies = (dbUser as User).favorites.roompies
-      let favRoompies = []
+      const favoritedRoompies = dbUser.favorites.roompies
+      const favRoompies = []
 
       if (favoritedRoompies.length > 0) {
         for (const roompyId of favoritedRoompies) {
@@ -50,19 +55,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // GET success => OK +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(200).json({ error: false, user: dbUser, favRoompies })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
+    } else if (req.method === 'POST') {
+      /* -------------------------------------------------------------------------- */
+      /*                       POST req => /favorites/roompies                      */
+      /* -------------------------------------------------------------------------- */
 
-      // GET server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
-    }
-    // POST req => /favorites/roompies
-  } else if (req.method === 'POST') {
-    try {
-      const { userId, roompyId } = req.body // destructure req.body
+      const { userId, roompyId } = req.body as TFavRoompiesApi
+
       const userRef = db.collection('users').doc(userId) // user ref
 
       // get user
@@ -70,15 +69,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const user = {
         ...userSnap.data(),
         id: userSnap.id,
-      }
+      } as User
 
       // add favorited roompies to user document
-      const prevFavRoompies = (user as User).favorites.roompies
+      const prevFavRoompies = user.favorites.roompies
       const isAlreadyExists = prevFavRoompies.includes(roompyId)
 
       // kalau roompyId sudah ada di list
       if (isAlreadyExists) {
-        // POST client error => Bad Request -----------------------------------------------------------------
         res.status(400).json({
           error: true,
           message: `${roompyId} is already exists in the favorites list`,
@@ -86,7 +84,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return
       }
 
-      // if roompyId belum ada di list
+      // update user's favorites
       await userRef.update({
         favorites: {
           roompies: [...prevFavRoompies, roompyId],
@@ -98,21 +96,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: false,
         message: 'Success adding to the favorites list',
       })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
+    } else if (req.method === 'DELETE') {
+      /* -------------------------------------------------------------------------- */
+      /*      DELETE req => /favorites/roompies?userId=userId&roompyId=roompyId     */
+      /* -------------------------------------------------------------------------- */
 
-      // POST server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
-    }
-    // DELETE req => /favorites/roompies?userId=userId&roompyId=roompyId
-  } else if (req.method === 'DELETE') {
-    try {
-      // destructuring
       const userId = getAsString(req.query.userId)
       const roompyId = getAsString(req.query.roompyId)
+
       const userRef = db.collection('users').doc(userId) // user ref
 
       // get user
@@ -120,23 +111,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const user = {
         ...userSnap.data(),
         id: userSnap.id,
-      }
+      } as User
 
       // delete favorited roompies from user document
-      const favRoompies = (user as User).favorites.roompies
+      const favRoompies = user.favorites.roompies
       const filteredFavRoompies = favRoompies.filter(
         (favId) => favId !== roompyId
       )
 
       // kalau favRoompies tidak ada isinya
       if (favRoompies.length === 0) {
-        // DELETE client error => Bad Request -----------------------------------------------------------------
         res.status(400).json({
           error: true,
           message: 'Favorited roompies is already empty, please check again!',
         })
       }
 
+      // update user's favorites
       await userRef.update({
         favorites: {
           roompies: filteredFavRoompies,
@@ -149,21 +140,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: false,
         message: 'Favorited roompies deleted successfully',
       })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
-
-      // DELETE server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
+    } else {
+      // client error => Method Not Allowed -----------------------------------------------------------------
+      res.status(405).json({
+        error: true,
+        name: 'METHOD NOT ALLOWED',
+        message: 'Only support GET, POST, DELETE req',
+      })
     }
-  } else {
-    // client error => Method Not Allowed
-    res
-      .status(405)
-      .json({ error: true, message: 'Only support GET, POST and DELETE req' })
+  } catch (err) {
+    // capture exception sentry
+    await captureException(err)
+
+    // server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({
+      error: true,
+      name: err.name,
+      message: err.message,
+    })
   }
 }
 
-export default yupMiddleware(favRoompiesApiSchema, handler)
+export default withYup(favRoompiesApiSchema, handler)

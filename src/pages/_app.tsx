@@ -27,6 +27,10 @@ axios.defaults.baseURL =
     ? 'http://localhost:3000/api'
     : 'https://roompy.vercel.app/api'
 
+// axios default validateStatus
+axios.defaults.validateStatus = (status) =>
+  (status >= 200 && status < 300) || (status >= 400 && status < 500) // Resolve only if the status code is 200 more and less than 500
+
 // create a custom progress bar
 NProgress.configure({ showSpinner: false })
 Router.events.on('routeChangeStart', () => {
@@ -47,7 +51,11 @@ interface MyAppProps extends AppProps {
 // init sentry untuk client
 init()
 
-export default function MyApp({ Component, pageProps, err }: MyAppProps) {
+export default function MyApp({
+  Component,
+  pageProps,
+  err,
+}: MyAppProps): JSX.Element {
   const [user, setUser] = useAuth() // user auth context
 
   return (
@@ -56,7 +64,6 @@ export default function MyApp({ Component, pageProps, err }: MyAppProps) {
 
       {/* sets up a project context for all forms in the app, and associates your forms with the keys specified in your formspree.json config file */}
       <FormspreeProvider project="1571395310305935055">
-        {/* @ts-ignore: Unreachable code error */}
         <UserContext.Provider value={{ user, setUser }}>
           <SWRConfig
             value={{

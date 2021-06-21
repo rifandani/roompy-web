@@ -1,12 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import { realDB, databaseTimestamp } from '../../../configs/firebaseConfig'
-import getUser from '../../../utils/getUser'
-import captureException from '../../../utils/sentry/captureException'
-import yupMiddleware from '../../../middlewares/yupMiddleware'
-import { chatsApiSchema } from '../../../utils/yup/apiSchema'
+import getUser from 'utils/getUser'
+import captureException from 'utils/sentry/captureException'
+import initMiddleware from 'middlewares/initMiddleware'
+import withYup from 'middlewares/withYup'
+import { chatsApiSchema, TChatsApi } from 'utils/yup/apiSchema'
+import { realDB, databaseTimestamp } from 'configs/firebaseConfig'
 
 const cors = initMiddleware(
   Cors({
@@ -15,18 +15,21 @@ const cors = initMiddleware(
 )
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // run cors
+  try {
+    await cors(req, res) // run cors
 
-  const chatsRef = realDB.ref('chats')
+    const chatsRef = realDB.ref('chats')
 
-  // GET req => /chats?id=userId
-  if (req.method === 'GET') {
-    try {
+    if (req.method === 'GET') {
+      /* -------------------------------------------------------------------------- */
+      /*                         GET req => /chats?id=userId                        */
+      /* -------------------------------------------------------------------------- */
+
       // get user
       const { user } = await getUser(req)
 
       // variables
-      let promises = []
+      const promises = []
       const userMessagesFromLength = user.messagesFrom.length
       const userMessagesToLength = user.messagesTo.length
 
@@ -65,26 +68,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         messages,
         error: false,
       })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
+    } else if (req.method === 'POST') {
+      /* -------------------------------------------------------------------------- */
+      /*                             POST req => /chats                             */
+      /* -------------------------------------------------------------------------- */
 
-      // GET server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
-    }
-    // POST req => /chats
-  } else if (req.method === 'POST') {
-    try {
-      const { senderUserId, text, chatId } = req.body // destructure body
+      const { senderUserId, text, chatId } = req.body as TChatsApi
 
       // chat ref
-      const chatRef = chatsRef.child(chatId) // ref ke chatId
+      const chatRef = chatsRef.child(chatId)
 
       // TODO: kalo FREE user max. 3 chats
 
-      // update updatedAt, lastMessage
+      // update updatedAt & lastMessage
       await chatRef.update({
         updatedAt: databaseTimestamp,
         lastMessage: text,
@@ -99,21 +95,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({ error: false, message: 'Message sent' })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
-
-      // POST server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
+    } else {
+      // client error => Method Not Allowed -----------------------------------------------------------------
+      res.status(405).json({
+        error: true,
+        name: 'METHOD NOT ALLOWED',
+        message: 'Only support GET, POST req',
+      })
     }
-  } else {
-    // client error => Method Not Allowed -----------------------------------------------------------------
-    res
-      .status(405)
-      .json({ error: true, message: 'Only support GET and POST req' })
+  } catch (err) {
+    // capture exception sentry
+    await captureException(err)
+
+    // server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({
+      error: true,
+      name: err.name,
+      message: err.message,
+    })
   }
 }
 
-export default yupMiddleware(chatsApiSchema, handler)
+export default withYup(chatsApiSchema, handler)

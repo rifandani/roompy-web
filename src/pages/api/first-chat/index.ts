@@ -1,16 +1,16 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
+import withYup from 'middlewares/withYup'
+import initMiddleware from 'middlewares/initMiddleware'
+import captureException from 'utils/sentry/captureException'
+import { firstChatApiSchema, TFirstChatApi } from 'utils/yup/apiSchema'
 import {
   db,
   realDB,
   nowMillis,
   databaseTimestamp,
-} from '../../../configs/firebaseConfig'
-import captureException from '../../../utils/sentry/captureException'
-import yupMiddleware from '../../../middlewares/yupMiddleware'
-import { firstChatApiSchema } from '../../../utils/yup/apiSchema'
+} from 'configs/firebaseConfig'
 
 const cors = initMiddleware(
   Cors({
@@ -19,19 +19,18 @@ const cors = initMiddleware(
 )
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // run cors
+  try {
+    await cors(req, res) // run cors
 
-  const usersRef = db.collection('users')
+    const usersRef = db.collection('users') // users ref
 
-  // POST req => /api/first-chat
-  if (req.method === 'POST') {
-    try {
-      const {
-        senderUserId,
-        senderRoompyId,
-        receiverUserId,
-        receiverRoompyId,
-      } = req.body
+    if (req.method === 'POST') {
+      /* -------------------------------------------------------------------------- */
+      /*                         POST req => /api/first-chat                        */
+      /* -------------------------------------------------------------------------- */
+
+      const { senderUserId, senderRoompyId, receiverUserId, receiverRoompyId } =
+        req.body as TFirstChatApi
 
       // chatId
       const chatId = senderRoompyId + '-' + receiverRoompyId
@@ -72,21 +71,26 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(201).json({
         chatId,
         error: false,
-        message: 'Sender messagesTo updated & receiver messagesFrom updated',
       })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
-
-      // POST server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
+    } else {
+      // client error => Method Not Allowed -----------------------------------------------------------------
+      res.status(405).json({
+        error: true,
+        name: 'METHOD NOT ALLOWED',
+        message: 'Only support POST req',
+      })
     }
-  } else {
-    // client error => Method Not Allowed -----------------------------------------------------------------
-    res.status(405).json({ error: true, message: 'Only support POST req' })
+  } catch (err) {
+    // capture exception sentry
+    await captureException(err)
+
+    // server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({
+      error: true,
+      name: err.name,
+      message: err.message,
+    })
   }
 }
 
-export default yupMiddleware(firstChatApiSchema, handler)
+export default withYup(firstChatApiSchema, handler)

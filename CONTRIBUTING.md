@@ -1,157 +1,87 @@
-# Contributing to DogeHouse
+# Kontribusi ke Roompy
 
-> Please read the [PRIORITY LIST](https://github.com/benawad/dogehouse/issues/1969) before contributing.
+Kami menghargai semua masukan dari kalian. Kami ingin kontribusi kalian terjadi semudah mungkin, baik itu:
 
-We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
+- Melaporkan issue 🙋‍♂️
+- Diskusi kondisi code yang ada sekarang ✍ _(dalam artian apakah code tersebut sudah sesuai dengan design pattern ataukah masih berantakan)_
+- Submitting fix 🔨
+- Mencanangkan ide / fitur baru ⭐
+- Menjadi maintainer 👑
 
-- Reporting an issue
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
+## Bagaimana proses _development_ di Roompy ?
 
-## Code of Conduct
+Semua perubahan terhadap `master` branch terjadi melalui Pull Requests (PR). PR merupakan cara terbaik untuk mengusulkan suatu perubahan. Kami secara aktif menyambut PR anda dan mengundang anda untuk mengirimkan PR secara langsung [disini](https://github.com/rifandani/roompy/pulls), dan setelah di review, PR tersebut dapat lgsg digabungkan ke dalam `master` branch.
 
-The code of conduct is described in [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
+## Menggunakan standar commit message
 
-## Our Development Process
+Project ini menggunakan [conventional commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) standard. Hal ini dilakukan agar setiap commit yang dilakukan oleh para contributor terstandarisasi. Library yang digunakan untuk mengimplementasikan hal tersebut adalah [commitizen](https://github.com/commitizen/cz-cli).
 
-All changes happen through **pull requests**. Pull requests are the best way to propose changes. We actively welcome your pull requests and invite you to submit pull requests directly <a href="https://github.com/benawad/dogehouse/pulls">here</a>, and after review, these can be merged into the project.
+Ikuti langkah berikut untuk memastikan setiap commit message yang anda tulis terstandarisasi:
 
-## Using the Project's Standard Commit Messages
+1. Pastikan console shell path anda berada di dalam root project dengan benar 1️⃣
+2. Jalankan `yarn` atau `yarn install` atau `npm install` 2️⃣
+3. Lakukan staging file2 yang ingin anda commit dengan menjalankan `git add [files]` atau `git add .` 3️⃣
+4. Jalankan `yarn cm`. Ini akan memulai prompt interaktif yang akan menghasilkan commit message Anda 4️⃣:
+   1. Pilih `type` dari perubahan.
+   2. Tulis `scope`. Pilih antara `global` untuk perubahan project secara umum, `frontend` untuk perubahan khusus pada frontend, `backend` untuk perubahan khusus pada backend, `cypress` untuk perubahan pada cypress code.
+   3. Tuliskan `subject` yaitu pesan berisi penjelasan yang pendek, namun informatif mengenai perubahan yang anda lakukan.
+   4. Kalau hal diatas masih dirasa kurang, anda dapat menambahkan penjelasannya lebih jelasnya setelahnya. Kalau tidak anda bisa langsung klik `enter` untuk membiarkannya ksoong.
+   5. `y/n` klik `y` = yes, jika ada perubahan sangat signifikan sehingga menyebabkan breaking changes (contoh: mengubah input props dari suatu component, mengubah struktur JSON dari API response), klik `n` jika tidak ada.
+   6. `y/n` klik `y` jika perubahan ini berdampak pada open issue, dan jika iya maka anda akan diminta untuk memasukkan issue number yang merujuk pada issue tersebut. Jika tidak maka klik `n`.
+5. Commit message anda sekarang telah berhasil terbuat 🎉. Anda dipersilahkan untuk push ke fork anda dan membuka PR baru 5️⃣
 
-This project is using the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) standard. Please follow these steps to ensure your
-commit messages are standardized:
+## Tutorial kontribusi
 
-1. Make sure your shell path is in the root of the project (not inside any of the packages).
-2. Run `yarn`.
-3. Stage the files you are commiting with `git add [files]`.
-4. Run `yarn commit`. This will start an interactive prompt that generates your commit message:
-   1. Select the type of change.
-   2. Type the scope. This is either `global` for project-wide changes or one of the packages (kibbeh, shawarma etc.).
-   3. Write a short, imperative tense description of the change.
-   4. If the above was not sufficient, you may now write a longer description of your change (otherwise press enter to leave blank).
-   5. y or n for whether there are any breaking changes (e.g. changing the props of a component, changing the JSON structure of an API response).
-   6. y or n for whether this change affects an open issue, if positive you will be prompted to enter the issue number.
-5. Your commit message has now been created, you may push to your fork and open a pull request (read below for further instructions).
+1. [Submit new issue](https://github.com/rifandani/roompy/issues)
+2. Fork repository ini
+3. Buat branch baru dari develop branch (jangan pernah bekerja di _master branch_), contoh:
 
-## Pull Requests
+   ```bash
+    # ketika ingin menambah feature baru
+    git checkout -b feat/redux
+    # ketika ingin memperbaiki bug
+    git checkout -b fix/dashboard
+   ```
 
-1. Fork the repo and create your branch (usually named `patch-%the number of PRs you've already made%`) from `staging`.
-2. If you've added code that should be tested, add some test examples.
-3. Ensure to describe your pull request.
+4. Install semua dependencies `yarn install`
+5. Buat file `.env.local` di root folder:
 
-## Quickstart Local Frontend Development
+   ```py
+    # jwt secret
+    MY_SECRET_KEY=''
+    # firebase secret
+    NEXT_PUBLIC_FIRE_API_KEY=''
+    NEXT_PUBLIC_FIRE_AUTH_DOMAIN=''
+    NEXT_PUBLIC_FIRE_PROJECT_ID=''
+    NEXT_PUBLIC_FIRE_STORAGE_BUCKET=''
+    NEXT_PUBLIC_FIRE_MESSAGING_SENDER_ID=''
+    NEXT_PUBLIC_FIRE_APP_ID=''
+    NEXT_PUBLIC_FIRE_MEASUREMENT_ID=''
+    NEXT_PUBLIC_FIRE_DATABASE_URL=''
+    # sentry
+    NEXT_PUBLIC_SENTRY_DSN=''
+    # firebase service account JSON link, uploaded to code hosting like gist
+    SERVICE_ACCOUNT_LINK=''
+    # midtrans secret
+    MIDTRANS_MERCHANT_ID=''
+    MIDTRANS_CLIENT_KEY=''
+    MIDTRANS_SERVER_KEY=''
+    # cypress secret
+    CYPRESS_RECORD_KEY=''
+   ```
 
-Do this if you only want to do React stuff and don't want to touch Elixir:
+6. Jalankan dev server `yarn dev`
+7. Fix bugs atau implementasi new features
+8. Commit changes dengan standar yang telah dijelaskan sebelumnya
+9. Pastikan tidak ada error ataupun warning ketika menjalankan perintah `yarn lint` ✔
+10. Push changes ke remote repo, dan buat pull request ke `develop` branch
+11. Kalau memungkinkan gunakan [reference keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/creating-issues/linking-a-pull-request-to-an-issue) di description untuk mereferensikan ke issues yang bersangkutan dengan pull request yang telah anda buat
 
-### UI _(react + next.js)_
+    ```json
+    changed transform prop of the modal so it can render text properly
 
-Navigate to `/kibbeh`
+    fix #14 // reference ke issues #14
+    ```
 
-- Run `yarn`
-- Run `yarn staging` (this tells React to connect to a hosted version of the backend for development purposes)
-- Read `kibbeh/README.md` for more information and a fixes for known development issues.
-
-> **NOTE:** Please follow the [design guidelines](https://github.com/benawad/dogehouse/blob/staging/DESIGN_GUIDELINES.md) and [figma mockups](https://www.figma.com/file/CS01VVLR7ArQl0afYFkNj3/Web-App) and if what you're trying to do isn't in there, consult [@ajmnz](https://github.com/ajmnz)/[@benawad](https://github.com/benawad) beforehand.
-
-## Devcontainer Full Local Development
-
-For VSCode users, we're able to use devcontainers which allows to create development environments that already have all the tools and services configured and ready to go.
-
-### Usage
-
-_Prerequisite: [Install Docker](https://docs.docker.com/install) on your local environment._
-To get started, read and follow the instructions in [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers). The [.devcontainer/](./.devcontainer) directory contains pre-configured `devcontainer.json`, `docker-compose.yml` and `Dockerfile` files, which you can use to set up remote development within a docker container.
-
-- Install the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension.
-- Open VSCode and bring up the [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette).
-- Type `Remote-Containers: Open Folder in Container`, this will build the container with Elixir and Node installed, this will also start Postgres and RabbitMQ instances.
-
-> If you need to modify environment variables for kousa, you need to modify them inside `/home/doge/.bashrc` and restart your terminal.
-
-### Run
-
-#### `kousa`
-
-```shell
-mix deps.get
-mix ecto.migrate
-iex -S mix
-```
-
-#### `shawarma`
-
-```shell
-yarn
-yarn build
-yarn start
-```
-
-#### `kibbeh`
-
-```shell
-yarn
-yarn dev
-```
-
-## Manual Full Local Development
-
-How to run locally:
-
-### Backend
-
-#### RabbitMQ
-
-Install RabbitMQ:
-
-- **macOS**: Run `brew install rabbitmq`.
-- **Windows**: Run `choco install rabbitmq`.
-- **Linux**: Follow their installation guide [here](https://www.rabbitmq.com/download.html).
-  Start RabbitMQ
-- **macOS**: Run `brew services start rabbitmq`.
-- **Windows**: Setup guide [here](https://www.rabbitmq.com/install-windows.html).
-- **Linux**: Setup guide [here](https://www.rabbitmq.com/install-debian.html).
-
-#### PostgreSQL
-
-Install PostgreSQL:
-
-- **macOS**: Run `brew install postgresql`.
-- **Windows**: Follow [this](https://www.postgresqltutorial.com/install-postgresql/) guide.
-- **Linux**: Follow [this](https://www.postgresqltutorial.com/install-postgresql-linux/) guide.
-  Start PostgreSQL:
-- **macOS**: Run `brew services start postgresql`.
-- **Windows**: Start PostgreSQL through the control panel or run `net start postgresql-{version}`.
-- **Linux**: Run `/etc/rc.d/init.d/postgresql start`.
-  Create a DB named `kousa_repo2`:
-
-```shell
-psql postgres
-CREATE DATABASE kousa_repo2;
-```
-
-## Issues
-
-We use GitHub issues to track public bugs. Please ensure your description is
-clear and has sufficient instructions to be able to reproduce the issue. Report a bug by <a href="https://github.com/benawad/dogehouse/issues">opening a new issue</a>; it's that easy!
-
-## Frequently Asked Questions (FAQs)
-
-<!--- I thought it would be great to have a list of FAQs for the project to help save time for new contributors --->
-
-    - Q: [The Question?]
-    - A: [The Answer!]
-
-## Feature Request
-
-Great Feature Requests tend to have:
-
-- A quick idea summary.
-- What & why you wanted to add the specific feature.
-- Additional context like images, links to resources to implement the feature etc, etc.
-
-## License
-
-By contributing to Roompy, you agree that your contributions will be licensed
-under the [LICENSE file](LICENSE).
+12. Tunggu review dan comment terhadap pull request yang telah kalian buat
+13. ~~Selalu tulis unit test (coming soon)~~

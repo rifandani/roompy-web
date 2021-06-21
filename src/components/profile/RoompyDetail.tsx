@@ -1,6 +1,9 @@
 import axios from 'axios'
+import dynamic from 'next/dynamic'
+import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { useState, useContext, MouseEvent } from 'react'
+import { IoLogoWhatsapp } from 'react-icons/io'
 import {
   FaCrown,
   FaRegCalendarAlt,
@@ -29,72 +32,67 @@ import {
   HiCheck,
   HiOutlineHome,
 } from 'react-icons/hi'
-import { IoLogoWhatsapp } from 'react-icons/io'
-import { toast } from 'react-toastify'
-import dynamic from 'next/dynamic'
 // files
-import UserContext from '../../contexts/UserContext'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
-import { Roompy } from '../../utils/interfaces'
 import MyModal from '../MyModal'
+import UserContext from 'contexts/UserContext'
+import axiosErrorHandle from 'utils/axiosErrorHandle'
+import { RoompyProps } from 'utils/interfaces'
 
-export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
-  // state
+export default function RoompyDetail({ roompy }: RoompyProps): JSX.Element {
+  // hooks
+  const { back } = useRouter()
+  const { user } = useContext(UserContext)
+
   const [message, setMessage] = useState<string>('')
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [isAlreadyFav, setIsAlreadyFav] = useState<boolean>(false)
 
-  // useRouter
-  const { back } = useRouter()
-
-  // UserContext
-  const { user } = useContext(UserContext)
-
-  function closeModal() {
+  function closeModal(): void {
     setIsOpen(false)
   }
 
-  function openModal() {
+  function openModal(): void {
     if (!user) {
-      return toast.warning('Please login to report roompies')
+      toast.warning('Please login to report roompies')
+      return
     }
 
     setIsOpen(true)
   }
 
-  async function submitMessage(e: MouseEvent) {
+  // TODO: chat user
+  async function submitMessage(e: MouseEvent): Promise<void> {
     e.preventDefault()
-
-    console.log(message)
 
     // when all done
     toast.success('Message delivered. Please wait for the reply.')
   }
 
-  async function onAddToFavorite() {
-    if (!user) {
-      return toast.warning('Please login first')
-    }
-
+  async function onAddToFavorite(): Promise<void> {
     try {
-      const resp = await axios.post('/favorites/roompies', {
+      if (!user) {
+        toast.warning('Please login first')
+        return
+      }
+
+      const res = await axios.post('/favorites/roompies', {
         userId: user.uid,
         roompyId: roompy.id,
       })
 
-      if (resp.status === 400) {
-        // on ALREADY FAVORITED
-        toast.warning('This roompy is already favorited')
-      } else {
-        // on SUCCESS
-        toast.success('Added to your favorites list')
+      // client error -> is ALREADY FAVORITED
+      if (res.status !== 201) {
+        toast.warning(res.data.message)
+        return
       }
 
-      setIsAlreadyFav(true)
+      // on SUCCESS
+      toast.success('Added to your favorites list')
     } catch (err) {
-      // on ERROR
       axiosErrorHandle(err)
       toast.error(err.message)
+    } finally {
+      setIsAlreadyFav(true)
     }
   }
 
@@ -553,7 +551,6 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                 <p className="pb-4 text-xl font-bold">Location Preferences</p>
               </div>
 
-              {/* @ts-ignore */}
               <MapWithNoSSR locPref={roompy.locPref} />
             </div>
           </article>
@@ -584,25 +581,16 @@ export default function RoompyDetail({ roompy }: { roompy: Roompy }) {
                   </>
                 ) : (
                   <p className="text-lg italic text-red-500">
-                    Please login to see {roompy.name}'s number
+                    Please login to see {roompy.name}&apos;s number
                   </p>
                 )}
               </span>
 
               {/* verified social media */}
               <div className="flex items-center justify-center space-x-4 text-2xl md:justify-start">
-                <FaFacebook
-                  onClick={() => {}}
-                  className="text-blue-500 transition duration-500 transform cursor-pointer hover:scale-125"
-                />
-                <FaInstagram
-                  onClick={() => {}}
-                  className="text-red-500 transition duration-500 transform cursor-pointer hover:scale-125"
-                />
-                <FaTwitter
-                  onClick={() => {}}
-                  className="text-blue-400 transition duration-500 transform cursor-pointer hover:scale-125"
-                />
+                <FaFacebook className="text-blue-500 transition duration-500 transform cursor-pointer hover:scale-125" />
+                <FaInstagram className="text-red-500 transition duration-500 transform cursor-pointer hover:scale-125" />
+                <FaTwitter className="text-blue-400 transition duration-500 transform cursor-pointer hover:scale-125" />
               </div>
             </div>
           </article>

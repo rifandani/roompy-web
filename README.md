@@ -74,7 +74,7 @@ Kami ingin semua yang terlibat, baik itu pengguna _(user)_ ataupun pengembang _(
 
 ## Change Log 📜
 
-Digunakan untuk tracking major update terhadap aplikasi.
+Digunakan untuk tracking setiap commit terhadap aplikasi.
 
 Silahkan baca [CHANGELOG.md](https://github.com/rifandani/roompy-web/blob/master/CHANGELOG.md) untuk mengetahui lebih detailnya.
 
@@ -86,7 +86,7 @@ Silahkan baca [CONTRIBUTING.md](https://github.com/rifandani/roompy-web/blob/mas
 
 ## Design Guidelines 🎨
 
-Roompy web membutuhkan UI/UX designer dan React developer untuk merancang bagaimana design guidelines yang cocok untuk aplikasi ini dan diharapkan dapat memperbaiki tampilan UI yang saat ini masih sangat kurang. Hal ini dikarenakan saya pribadi tidak familiar dengan bagaimana trend UI/UX zaman now.
+Roompy web membutuhkan UI/UX designer dan frontend React developer untuk merancang bagaimana design guidelines yang cocok untuk aplikasi ini dan diharapkan dapat memperbaiki tampilan UI/UX yang saat ini masih sangat kurang. Hal ini dikarenakan saya pribadi tidak familiar dengan bagaimana trend UI/UX zaman now.
 
 Silahkan baca [DESIGN_GUIDELINES.md](https://github.com/rifandani/roompy-web/blob/master/DESIGN_GUIDELINES.md) untuk mengetahui lebih detailnya.
 

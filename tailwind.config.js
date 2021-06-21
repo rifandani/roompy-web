@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   mode: 'jit',
   purge: [
@@ -36,6 +38,9 @@ module.exports = {
         // selectIconOffset: defaultTheme.spacing[2],
         // selectIconSize: '1.5em',
       }),
+      fontFamily: {
+        sans: ['Quicksand', ...defaultTheme.fontFamily.sans],
+      },
       lineClamp: {
         10: '10',
       },

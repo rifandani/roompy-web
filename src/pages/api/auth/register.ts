@@ -1,12 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import setCookie from '../../../utils/setCookie'
-import { db, nowMillis } from '../../../configs/firebaseConfig'
-import initMiddleware from '../../../middlewares/initMiddleware'
-import captureException from '../../../utils/sentry/captureException'
-import yupMiddleware from '../../../middlewares/yupMiddleware'
-import { registerApiSchema } from '../../../utils/yup/apiSchema'
+import setCookie from 'utils/setCookie'
+import captureException from 'utils/sentry/captureException'
+import initMiddleware from 'middlewares/initMiddleware'
+import withYup from 'middlewares/withYup'
+import { db, nowMillis } from 'configs/firebaseConfig'
+import { registerApiSchema, TRegisterApi } from 'utils/yup/apiSchema'
 
 const cors = initMiddleware(
   Cors({
@@ -14,22 +14,27 @@ const cors = initMiddleware(
   })
 )
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  await cors(req, res) // Run cors
+const handler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
+  try {
+    await cors(req, res) // Run cors
 
-  // SECTION POST /api/auth/register
-  if (req.method === 'POST') {
-    // NOTE: id from firebase auth client
-    const { id, username, email } = req.body
+    if (req.method === 'POST') {
+      // NOTE: id from firebase auth client
+      const { id, username, email } = req.body as TRegisterApi
 
-    try {
-      // check if the user.id is already exists
+      /* ----------------- check if the user.id is already exists ----------------- */
       const userRef = await db.collection('users').doc(id).get()
       const userIsExists = userRef.exists
 
       if (!userIsExists) {
-        // ANCHOR POST error => client error ---------------------------------------------
-        res.status(400).json({ error: true, message: 'Id is already exists' })
+        // client error => user already exists
+        res.status(400).json({
+          error: true,
+          message: `User with id: ${id} is already exists`,
+        })
         return
       }
 
@@ -55,27 +60,33 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           username,
         })
 
-      /* ------------------- set JWT token to cookie in headers ------------------- */
+      // set JWT token to cookie in headers
       setCookie({ sub: id }, res)
 
-      // ANCHOR POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+      // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
       res.status(201).json({
         error: false,
         message: 'Register success',
       })
-    } catch (err) {
-      // capture exception sentry
-      await captureException(err)
-
-      // ANCHOR server error => Internal Server Error -----------------------------------------------------------------
-      res
-        .status(500)
-        .json({ error: true, name: err.name, message: err.message })
+    } else {
+      // client error => Method Not Allowed -----------------------------------------------------------------
+      res.status(405).json({
+        error: true,
+        name: 'METHOD NOT ALLOWED',
+        message: 'Only support POST req',
+      })
     }
-  } else {
-    // ANCHOR client error => Method Not Allowed -----------------------------------------------------------------
-    res.status(405).json({ error: true, message: 'Only support POST req' })
+  } catch (err) {
+    // capture exception sentry
+    await captureException(err)
+
+    // server error => Internal Server Error -----------------------------------------------------------------
+    res.status(500).json({
+      error: true,
+      name: err.name,
+      message: err.message,
+    })
   }
 }
 
-export default yupMiddleware(registerApiSchema, handler)
+export default withYup(registerApiSchema, handler)
