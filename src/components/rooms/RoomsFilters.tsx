@@ -2,7 +2,7 @@ import { useState, FormEvent } from 'react'
 import { HiOutlineSearch } from 'react-icons/hi'
 import { IoFilter } from 'react-icons/io5'
 
-export default function RoomsFilters() {
+export default function RoomsFilters(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false)
 
   const onSubmit = async (e: FormEvent) => {
@@ -271,7 +271,10 @@ export default function RoomsFilters() {
         </article>
 
         <div className="px-4 py-4 bg-gray-900 sm:text-right">
-          <button className="block w-full px-4 py-2 font-semibold text-white bg-purple-500 rounded-lg focus:ring-4 focus:ring-purple-200 focus:outline-none sm:w-auto sm:inline-block hover:bg-purple-700 xl:block xl:w-full">
+          <button
+            className="block w-full px-4 py-2 font-semibold text-white bg-purple-500 rounded-lg focus:ring-4 focus:ring-purple-200 focus:outline-none sm:w-auto sm:inline-block hover:bg-purple-700 xl:block xl:w-full"
+            onClick={onSubmit}
+          >
             Search
           </button>
         </div>

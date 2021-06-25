@@ -1,12 +1,13 @@
-import Link from 'next/link'
 import React from 'react'
-// import { FaMapMarkerAlt } from 'react-icons/fa'
+import Link from 'next/link'
 import { FcMoneyTransfer } from 'react-icons/fc'
 import { GiFemale, GiMale } from 'react-icons/gi'
 // files
-import { RoompyProps } from '../../utils/interfaces'
+import { RoompyProps } from 'utils/interfaces'
 
-export default function RoompyCard2({ roompy }: RoompyProps) {
+export default function RoompyCard2({ roompy }: RoompyProps): JSX.Element {
+  const check = false
+
   return (
     <Link href={`/roompies/${roompy.id}`}>
       <article className="transition duration-500 transform cursor-pointer hover:scale-105">
@@ -23,7 +24,7 @@ export default function RoompyCard2({ roompy }: RoompyProps) {
           <div
             // premium user check bg-color
             className={`${
-              false ? 'bg-yellow-50' : 'bg-white'
+              check ? 'bg-yellow-50' : 'bg-white'
             } px-4 py-4 rounded-lg shadow-lg`}
           >
             <div className="flex items-baseline">

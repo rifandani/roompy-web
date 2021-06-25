@@ -19,12 +19,12 @@ const messaging = firebase.messaging()
 // 1) a message is received while the app has focus
 // 2) the user clicks on an app notification created by a service worker `messaging.onBackgroundMessage` handler.
 messaging.onMessage((payload) => {
-  console.log('messaging.onMessage => ', payload);
+  console.info('messaging.onMessage => ', payload);
 });
 
 // Handle messages when your web app is in the background.
 messaging.onBackgroundMessage((payload) => {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  console.info('messaging.onBackgroundMessage => ', payload);
 
   // Customize notification here
   const notificationTitle = 'Background Message Title';
@@ -39,6 +39,6 @@ messaging.onBackgroundMessage((payload) => {
 // code from karthik-js
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.addEventListener('message', (ev) => {
-    console.log('code from karthik-js work => ', ev)
+    console.info('code from karthik-js work => ', ev)
   })
 }

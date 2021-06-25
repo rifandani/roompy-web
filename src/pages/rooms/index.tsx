@@ -1,11 +1,11 @@
-import { GetServerSideProps } from 'next'
-import { useState } from 'react'
 import Loader from 'react-loader-spinner'
+import { useState } from 'react'
+import { GetServerSideProps } from 'next'
 // files
-import Rooms from '../../components/rooms/Rooms'
+import Rooms from 'components/rooms/Rooms'
 
-export default function RoomsPage() {
-  const [busy, setBusy] = useState<boolean>(false)
+export default function RoomsPage(): JSX.Element {
+  const [busy] = useState<boolean>(false)
 
   if (busy) {
     return (
@@ -32,6 +32,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { sharedFacility, roomFacility } = ctx.query
 
   return {
-    props: {},
+    props: {
+      sharedFacility,
+      roomFacility,
+    },
   }
 }

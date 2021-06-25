@@ -1,10 +1,11 @@
 import Cors from 'cors'
 // files
-import withYupConnect from 'middlewares/withYupConnect'
 import nc from 'middlewares/nc'
+import withYupConnect from 'middlewares/withYupConnect'
 import getUser from 'utils/getUser'
 import { chatsApiSchema, TChatsApi } from 'utils/yup/apiSchema'
 import { realDB, databaseTimestamp } from 'configs/firebaseConfig'
+import { getAsString } from 'utils/getAsString'
 
 const chatsRef = realDB.ref('chats')
 
@@ -18,8 +19,11 @@ export default nc
   .use(withYupConnect(chatsApiSchema)) // yup middleware
   /* --------------------------------- GET req => /chats?id=userId -------------------------------- */
   .get(async (req, res) => {
+    // get query as string
+    const userId = getAsString(req.query.id)
+
     // get user
-    const { user } = await getUser(req)
+    const { user } = await getUser(userId)
 
     // variables
     const promises = []

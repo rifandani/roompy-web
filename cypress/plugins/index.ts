@@ -9,14 +9,14 @@
 // https://on.cypress.io/plugins-guide
 // ***********************************************************
 
-// This function is called when a project is opened or re-opened (e.g. due to
-// the project's config changing)
+import dotenv from 'dotenv'
 
-/**
- * @type {Cypress.PluginConfig}
- */
-// eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
+dotenv.config({ path: '.env.local' })
+
+// This function is called when a project is opened or re-opened (e.g. due to the project's config changing)
+module.exports = (
+  _on: Cypress.PluginEvents,
+  config: Cypress.PluginConfigOptions
+) => {
+  return config
 }

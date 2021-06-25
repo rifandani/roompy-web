@@ -1,21 +1,22 @@
-import { NextApiRequest } from 'next'
-// files
-import { db } from '../configs/firebaseConfig'
-import { getAsString } from './getAsString'
-import { User } from './interfaces'
+import { db } from 'configs/firebaseConfig'
+import { DocDataRef, User } from './interfaces'
 
-export default async function getUser(req: NextApiRequest) {
-  // ref
-  const userId = getAsString(req.query.id)
+interface Return {
+  user: User
+  userRef: DocDataRef
+}
+
+export default async function getUser(userId: string): Promise<Return> {
+  // get user ref
   const userRef = db.collection('users').doc(userId)
 
-  // get roompy
-  const userSnap = await userRef.get()
+  // get user
+  const userDoc = await userRef.get()
 
   const user = {
-    ...userSnap.data(),
-    id: userSnap.id,
-  }
+    ...userDoc.data(),
+    id: userDoc.id,
+  } as User
 
-  return { user: user as User, userRef: userRef }
+  return { user, userRef }
 }

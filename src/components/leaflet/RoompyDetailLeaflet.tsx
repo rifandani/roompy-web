@@ -1,4 +1,6 @@
+import { Map } from 'leaflet'
 import { useRef } from 'react'
+import MarkerClusterGroup from 'react-leaflet-markercluster' // clustering marker
 import {
   MapContainer,
   Marker,
@@ -10,17 +12,16 @@ import {
   Circle,
   LayerGroup,
 } from 'react-leaflet'
-import MarkerClusterGroup from 'react-leaflet-markercluster' // clustering marker
 // files
 import MyIcon from './CustomIcon'
-import { LocPref } from '../../utils/interfaces'
+import { LocPref } from 'utils/interfaces'
 
 interface IRoompyDetailLeaflet {
   locPref: LocPref[]
 }
 
 const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
-  const LMap = useRef() // Map ref
+  const LMap = useRef<Map>(null) // Map ref
 
   return (
     <MapContainer
@@ -40,10 +41,8 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
       <MapConsumer>
         {(map) => {
           // masukin Leaflet Map instance ke ref
-          // @ts-ignore
           LMap.current = map
 
-          console.log('Map Consumer')
           return null
         }}
       </MapConsumer>
@@ -82,7 +81,6 @@ const RoompyDetailLeaflet: React.FC<IRoompyDetailLeaflet> = ({ locPref }) => {
                 <button
                   className="px-4 py-2 text-white bg-purple-500 rounded-md"
                   onClick={() => {
-                    // @ts-ignore
                     LMap.current.flyTo([position.lat, position.lng], 17, {
                       duration: 7,
                     })

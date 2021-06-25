@@ -6,15 +6,16 @@ import 'firebase/storage'
 import 'firebase/database'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// NOTE: without null assertion might be error
 export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIRE_API_KEY!,
-  authDomain: process.env.NEXT_PUBLIC_FIRE_AUTH_DOMAIN!,
-  projectId: process.env.NEXT_PUBLIC_FIRE_PROJECT_ID!,
-  storageBucket: process.env.NEXT_PUBLIC_FIRE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIRE_MESSAGING_SENDER_ID!,
-  appId: process.env.NEXT_PUBLIC_FIRE_APP_ID!,
-  measurementId: process.env.NEXT_PUBLIC_FIRE_MEASUREMENT_ID!,
-  databaseURL: process.env.NEXT_PUBLIC_FIRE_DATABASE_URL!,
+  apiKey: process.env.NEXT_PUBLIC_FIRE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIRE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIRE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIRE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIRE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIRE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIRE_MEASUREMENT_ID,
+  databaseURL: process.env.NEXT_PUBLIC_FIRE_DATABASE_URL,
 }
 
 if (!app.apps.length) {
@@ -38,28 +39,28 @@ export const emailAuthProvider = app.auth.EmailAuthProvider
 import 'firebase/messaging'
 import localforage from 'localforage'
 
-export const initFCM = async () => {
+export const initFCM = async (): Promise<void> => {
   try {
     // get fcmToken from localforage
     const fcmToken = await localforage.getItem<string>('fcmToken')
 
     // kalau fcmToken sudah ada di localforage
-    if (fcmToken !== null) return false
+    if (fcmToken !== null) return
 
     // inisiasi fcm
     const messaging = app.messaging()
 
     // request notifikasi permission
     const permission = await Notification.requestPermission()
-    console.log('permission', permission.valueOf())
+    console.info('permission', permission.valueOf())
 
     // get token from fcm
     const token = await messaging.getToken()
-    console.log('token', token)
+    console.info('token', token)
 
     // set fcmToken to localforage
     const forageResult = await localforage.setItem('fcmToken', token)
-    console.log('forageResult', forageResult)
+    console.info('forageResult', forageResult)
 
     // messaging.onMessage((payload) => {
     //   console.log('messaging.onMessage => ', payload)
