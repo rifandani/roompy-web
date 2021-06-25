@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 import * as Sentry from '@sentry/node'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import init from '../../../utils/sentry/init'
+import init from 'utils/sentry/init'
+import initMiddleware from 'middlewares/initMiddleware'
 
 const cors = initMiddleware(
   Cors({
@@ -14,7 +14,10 @@ const cors = initMiddleware(
 // init sentry
 init()
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
   await cors(req, res) // Run cors
 
   if (req.method === 'GET') {

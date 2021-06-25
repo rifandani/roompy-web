@@ -137,13 +137,10 @@ export interface NextApiRequestWithMulterFile extends NextApiRequest {
 }
 
 export interface AuthCookiePayload {
-  email: string
-  premium: boolean
-  premiumUntil: number
   sub: string // subject, whom the token refers to
+  iss?: string // issuer, token creator
   iat?: number // issuedAt, seconds since Unix epoch
   exp?: number // expiredAt, seconds since Unix epoch
-  iss?: string // issuer, token creator
 }
 
 // firebase type

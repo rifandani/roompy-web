@@ -3,13 +3,18 @@ import { FaCrown } from 'react-icons/fa'
 import { FcMoneyTransfer } from 'react-icons/fc'
 import { GiFemale, GiMale } from 'react-icons/gi'
 // files
-import { Roompy } from '../../utils/interfaces'
-import { nowMillis } from '../../configs/firebaseConfig'
+import { Roompy } from 'utils/interfaces'
+import { nowMillis } from 'configs/firebaseConfig'
 
-export default function RoompyCard({ roompy }: { roompy: Roompy }) {
-  // milliseconds
-  const oneWeek = 604800000
-  const isMoreThanAWeek = nowMillis <= roompy.updatedAt + oneWeek
+interface Props {
+  roompy: Roompy
+}
+
+// in milliseconds
+const ONE_WEEK = 604800000
+
+export default function RoompyCard({ roompy }: Props): JSX.Element {
+  const isMoreThanAWeek = nowMillis <= roompy.updatedAt + ONE_WEEK
 
   return (
     <Link href={`/roompies/${roompy.id}`}>

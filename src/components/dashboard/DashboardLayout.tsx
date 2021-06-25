@@ -1,25 +1,26 @@
+import axios from 'axios'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
+import { HiSearch, HiOutlineLogout } from 'react-icons/hi'
 import { AiFillSetting, AiFillHeart } from 'react-icons/ai'
 import { FaEnvelope, FaUserCircle, FaLink } from 'react-icons/fa'
-import { HiSearch, HiOutlineLogout } from 'react-icons/hi'
-import axios from 'axios'
 // files
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
-import { auth } from '../../configs/firebaseConfig'
+import { auth } from 'configs/firebaseConfig'
+
+interface Props {
+  children: any
+  ver2?: boolean
+}
 
 export default function DashboardLayout({
   children,
   ver2,
-}: {
-  children: any
-  ver2?: boolean
-}) {
+}: Props): JSX.Element {
   // hooks
-  const [toggle, setToggle] = useState(false)
   const { push, pathname } = useRouter()
+  const [toggle, setToggle] = useState<boolean>(false)
 
   async function logout() {
     try {
@@ -31,9 +32,11 @@ export default function DashboardLayout({
       // delete cookie from server
       await axios.get('/auth/logout')
 
-      toast.info('Logout success')
+      // success
+      toast('Logout success')
     } catch (err) {
-      axiosErrorHandle(err)
+      console.error(err)
+      toast.error(err.message)
     }
   }
 
@@ -50,6 +53,7 @@ export default function DashboardLayout({
                   <img
                     className="w-auto h-8 md:h-10"
                     src={ver2 ? '/favicon.ico' : 'favicon.ico'}
+                    alt="rooompy logo"
                   />
                 </a>
               </Link>
@@ -59,9 +63,9 @@ export default function DashboardLayout({
           <div className="flex justify-center flex-1 px-2 text-white md:py-2 md:w-1/3 md:justify-start">
             <span className="relative w-full">
               <input
-                type="search"
-                placeholder="Search"
                 className="w-full px-2 py-3 pl-10 leading-normal text-white transition bg-gray-700 border border-transparent rounded appearance-none focus:outline-none focus:border-gray-400"
+                placeholder="Search"
+                type="search"
               />
 
               <div className="absolute top-4 left-3">

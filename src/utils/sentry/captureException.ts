@@ -5,7 +5,7 @@ import init from './init'
 // init sentry node
 init()
 
-const captureException = async (err: Error) => {
+const captureException = async (err: Error): Promise<void> => {
   Sentry.captureException(err, {
     user: {
       username: 'rifandani',

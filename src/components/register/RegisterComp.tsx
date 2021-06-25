@@ -1,13 +1,13 @@
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { toast } from 'react-toastify'
 import axios from 'axios'
+import Link from 'next/link'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
-import { auth } from '../../configs/firebaseConfig'
-import { registerSchema, TRegisterSchema } from '../../utils/yup/schema'
+import { auth } from 'configs/firebaseConfig'
+import { registerSchema, TRegisterSchema } from 'utils/yup/schema'
 
-export default function RegisterComp() {
+export default function RegisterComp(): JSX.Element {
   const initialValues: TRegisterSchema = {
     username: '',
     email: '',
@@ -22,16 +22,18 @@ export default function RegisterComp() {
   async function onRegister(
     values: TRegisterSchema,
     actions: FormikHelpers<TRegisterSchema>
-  ) {
+  ): Promise<void> {
     try {
       // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
       const newUser = await auth.createUserWithEmailAndPassword(
         values.email,
         values.password
       )
-      await newUser.user.updateProfile({ displayName: values.username }) // update user profile displayName
 
-      // POST req
+      // update user profile displayName
+      await newUser.user.updateProfile({ displayName: values.username })
+
+      // POST register
       await axios.post('/auth/register', {
         id: newUser.user.uid,
         username: values.username,
@@ -41,10 +43,10 @@ export default function RegisterComp() {
       // on SUCCESS
       await push('/dashboard')
       toast.success(`Welcome, ${newUser.user.displayName}`)
-      actions.setSubmitting(false) // finish formik cycle
     } catch (err) {
-      toast.error(err.message)
       console.error('onRegister error => ', err)
+      toast.error(err.message)
+    } finally {
       actions.setSubmitting(false) // finish formik cycle
     }
   }
@@ -191,13 +193,11 @@ export default function RegisterComp() {
 
                 <div className="mt-6">
                   <button
-                    className={`${
-                      isSubmitting ? 'opacity-50' : 'opacity-100'
-                    } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
+                    className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100 disabled:opacity-50"
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Loading' : 'Register'}
+                    {isSubmitting ? 'Loading...' : 'Register'}
                   </button>
                 </div>
               </Form>

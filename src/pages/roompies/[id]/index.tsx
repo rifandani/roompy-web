@@ -1,15 +1,16 @@
-import { GetStaticPaths, GetStaticProps } from 'next'
-import { useRouter } from 'next/router'
 import Loader from 'react-loader-spinner'
+import { useRouter } from 'next/router'
+import { GetStaticPaths, GetStaticProps } from 'next'
 // files
-import Nav from '../../../components/Nav'
-import RoompyDetail from '../../../components/profile/RoompyDetail'
-import Footer from '../../../components/Footer'
-import { db } from '../../../configs/firebaseConfig'
-import { RoompyProps } from '../../../utils/interfaces'
-import { getAsString } from '../../../utils/getAsString'
+import Nav from 'components/Nav'
+import RoompyDetail from 'components/profile/RoompyDetail'
+import Footer from 'components/Footer'
+import { db } from 'configs/firebaseConfig'
+import { RoompyProps } from 'utils/interfaces'
+import { getAsString } from 'utils/getAsString'
+import { getRoompy } from 'utils/getRoompy'
 
-export default function RoompyPage({ roompy }: RoompyProps) {
+export default function RoompyPage({ roompy }: RoompyProps): JSX.Element {
   const { isFallback } = useRouter()
 
   // If the page is not yet generated, this will be displayed
@@ -40,21 +41,15 @@ export default function RoompyPage({ roompy }: RoompyProps) {
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const id = getAsString(ctx.params?.id)
+  // get query
+  const roompyId = getAsString(ctx.params?.id)
 
-  const roompiesRef = db.collection('roompies').doc(id)
-  const roompiesSnap = await roompiesRef.get()
-
-  const roompy = {
-    ...roompiesSnap.data(),
-    id,
-  }
+  // get roompy
+  const { roompy } = await getRoompy(roompyId)
 
   return {
     props: {
-      roompy: {
-        ...roompy,
-      },
+      roompy,
     },
     // Next.js will attempt to re-generate the page:
     // - When a request comes in
@@ -64,8 +59,9 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const docSnap = await db.collection('roompies').get()
-  const paths = docSnap.docs.map((doc) => ({
+  const roompiesSnap = await db.collection('roompies').get()
+
+  const paths = roompiesSnap.docs.map((doc) => ({
     params: { id: doc.id },
   }))
 

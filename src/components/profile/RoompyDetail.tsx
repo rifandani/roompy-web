@@ -35,14 +35,13 @@ import {
 // files
 import MyModal from '../MyModal'
 import UserContext from 'contexts/UserContext'
-import axiosErrorHandle from 'utils/axiosErrorHandle'
+import generateRupiah from 'utils/generateRupiah'
 import { RoompyProps } from 'utils/interfaces'
 
 export default function RoompyDetail({ roompy }: RoompyProps): JSX.Element {
   // hooks
   const { back } = useRouter()
   const { user } = useContext(UserContext)
-
   const [message, setMessage] = useState<string>('')
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [isAlreadyFav, setIsAlreadyFav] = useState<boolean>(false)
@@ -70,11 +69,13 @@ export default function RoompyDetail({ roompy }: RoompyProps): JSX.Element {
 
   async function onAddToFavorite(): Promise<void> {
     try {
+      // if not authenticated
       if (!user) {
         toast.warning('Please login first')
         return
       }
 
+      // POST add favorite roompy
       const res = await axios.post('/favorites/roompies', {
         userId: user.uid,
         roompyId: roompy.id,
@@ -89,7 +90,7 @@ export default function RoompyDetail({ roompy }: RoompyProps): JSX.Element {
       // on SUCCESS
       toast.success('Added to your favorites list')
     } catch (err) {
-      axiosErrorHandle(err)
+      console.error(err)
       toast.error(err.message)
     } finally {
       setIsAlreadyFav(true)
@@ -201,13 +202,7 @@ export default function RoompyDetail({ roompy }: RoompyProps): JSX.Element {
 
                   <div className="flex flex-col items-center">
                     <p className="text-base font-semibold">
-                      {new Intl.NumberFormat('id-ID', {
-                        style: 'currency',
-                        currency: 'IDR',
-                        maximumFractionDigits: 0,
-                        minimumFractionDigits: 0,
-                      }).format(roompy.budget)}{' '}
-                      <small>/bln</small>
+                      {generateRupiah(roompy.budget)} <small>/bln</small>
                     </p>
                     <p className="text-sm italic">Budget</p>
                   </div>

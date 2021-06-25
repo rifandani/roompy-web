@@ -1,37 +1,36 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { GetServerSideProps } from 'next'
 import { parse } from 'cookie'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
+import { GetServerSideProps } from 'next'
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
-import { auth } from '../configs/firebaseConfig'
-import {
-  TForgotPasswordSchema,
-  forgotPasswordSchema,
-} from '../utils/yup/schema'
+import { auth } from 'configs/firebaseConfig'
+import { TForgotPasswordSchema, forgotPasswordSchema } from 'utils/yup/schema'
 
-export default function ForgotPasswordPage() {
-  const { push } = useRouter() // useRouter
-
+export default function ForgotPasswordPage(): JSX.Element {
   const initialValues: TForgotPasswordSchema = {
     email: '',
   }
 
+  // hooks
+  const { push } = useRouter()
+
   async function onResetPassword(
     values: TForgotPasswordSchema,
     actions: FormikHelpers<TForgotPasswordSchema>
-  ) {
+  ): Promise<void> {
     try {
-      await auth.sendPasswordResetEmail(values.email) // send passwrod reset to email
+      // send password reset to email
+      await auth.sendPasswordResetEmail(values.email)
 
-      toast.info('Check your email to reset your password')
-      actions.setSubmitting(false) // finish formik cycle
-
-      return push('/login')
+      // success
+      await push('/login')
+      toast('Check your email to reset your password')
     } catch (err) {
-      toast.error(err.message)
       console.error('onResetPassword error => ', err)
+      toast.error(err.message)
+    } finally {
       actions.setSubmitting(false) // finish formik cycle
     }
   }
@@ -97,9 +96,7 @@ export default function ForgotPasswordPage() {
 
                 <div className="mt-6">
                   <button
-                    className={`${
-                      isSubmitting ? 'opacity-50' : 'opacity-100'
-                    } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:shadow-outline hover:text-purple-700 hover:bg-purple-100`}
+                    className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:shadow-outline hover:text-purple-700 hover:bg-purple-100 disabled:opacity-50"
                     type="submit"
                     disabled={isSubmitting}
                   >
@@ -125,7 +122,6 @@ export default function ForgotPasswordPage() {
   )
 }
 
-// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookies = parse(ctx.req.headers?.cookie ?? '')
   const authCookie = cookies.auth // get only the cookie

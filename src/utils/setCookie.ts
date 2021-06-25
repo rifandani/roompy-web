@@ -1,21 +1,15 @@
-import { NextApiResponse } from 'next'
-import { sign } from 'jsonwebtoken'
 import cookie from 'cookie'
+import { sign } from 'jsonwebtoken'
+import { NextApiResponse } from 'next'
+// files
+import { AuthCookiePayload } from './interfaces'
 
-interface Payload {
-  // subject (whom the token refers to)
-  sub: string
-}
-
-export default function setCookie(payload: Payload, res: NextApiResponse) {
+export default function setCookie(
+  payload: AuthCookiePayload,
+  res: NextApiResponse
+): void {
   // sign JWT token
-  // const payload = {
-  // sub: user._id, // reserved word sub == subject
-  // userEmail: user.email,
-  // iat: Math.floor(Date.now() / 1000), // reserved word iat == issuedAt
-  // };
-
-  const jwt = sign(payload, process.env.MY_SECRET_KEY, { expiresIn: '3h' })
+  const jwt = sign(payload, process.env.MY_SECRET_KEY, { expiresIn: '1h' })
 
   // set cookie to response header
   res.setHeader(
@@ -23,10 +17,11 @@ export default function setCookie(payload: Payload, res: NextApiResponse) {
     // seperti JSON.stringify untuk cookies
     cookie.serialize('auth', jwt, {
       httpOnly: true, // klo true berarti client side javascript can't access our cookies (PENTING)
+      maxAge: 60 * 60 * 1, // 1 hour
+      path: '/', // make it available everywhere, not only in /api
       secure: process.env.NODE_ENV !== 'development',
       sameSite: 'strict',
-      maxAge: 60 * 60 * 3, // 3 hour
-      path: '/', // make it available everywhere, not only in /api
+      // domain: process.env.NODE_ENV !== 'development' ? 'vercel.app' : '',
     })
   )
 }

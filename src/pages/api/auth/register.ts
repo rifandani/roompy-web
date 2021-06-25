@@ -1,7 +1,7 @@
 import Cors from 'cors'
 // files
-import withYupConnect from 'middlewares/withYupConnect'
 import nc from 'middlewares/nc'
+import withYupConnect from 'middlewares/withYupConnect'
 import setCookie from 'utils/setCookie'
 import { db, nowMillis } from 'configs/firebaseConfig'
 import { registerApiSchema, TRegisterApi } from 'utils/yup/apiSchema'
@@ -54,7 +54,13 @@ export default nc
       })
 
     // set JWT token to cookie in headers
-    setCookie({ sub: id }, res)
+    setCookie(
+      {
+        sub: id,
+        iss: 'Roompy',
+      },
+      res
+    )
 
     // POST success => Created ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(201).json({

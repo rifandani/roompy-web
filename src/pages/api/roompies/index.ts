@@ -6,6 +6,7 @@ import WS from 'ws'
 // files
 import nc from 'middlewares/nc'
 import { getRoompy } from 'utils/getRoompy'
+import { getAsString } from 'utils/getAsString'
 import { db, nowMillis, storage } from 'configs/firebaseConfig'
 import { NextApiRequestWithMulterFile } from 'utils/interfaces'
 
@@ -46,7 +47,8 @@ export default nc
     }
 
     // get roompy
-    const { roompy } = await getRoompy(req)
+    const roompyId = getAsString(req.query.id)
+    const { roompy } = await getRoompy(roompyId)
 
     // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json(roompy)
@@ -124,7 +126,8 @@ export default nc
     // res.status(201).json({ file, body: req.body });
 
     // get roompy & roompyRef
-    const { roompy, roompyRef } = await getRoompy(req)
+    const roompyId = getAsString(req.query.id)
+    const { roompy, roompyRef } = await getRoompy(roompyId)
 
     // split photoURL string
     const splitted = roompy.photoURL.split('%2F') // [1] = userId, [3] = roompyId
@@ -163,8 +166,9 @@ export default nc
   })
   /* ----------------------------- DELETE req => /roompies?id=roompyId ---------------------------- */
   .delete(async (req, res) => {
-    // get roompy
-    const { roompy, roompyRef } = await getRoompy(req)
+    // get roompy and ref
+    const roompyId = getAsString(req.query.id)
+    const { roompy, roompyRef } = await getRoompy(roompyId)
 
     // split photoURL string
     const splitted = roompy.photoURL.split('%2F') // [1] = userId, [3] = roompyId

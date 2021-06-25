@@ -1,4 +1,6 @@
 import { useRouter } from 'next/router'
+// files
+import generateRupiah from 'utils/generateRupiah'
 
 const pricings = [
   {
@@ -48,7 +50,8 @@ const pricings = [
   },
 ]
 
-export default function Pricing() {
+export default function Pricing(): JSX.Element {
+  // hooks
   const { push } = useRouter()
 
   return (
@@ -68,43 +71,39 @@ export default function Pricing() {
 
         <section className="flex flex-wrap -mx-2 lg:w-4/5 sm:mx-auto sm:mb-2">
           {pricings.map((pricing) => (
-            <div key={pricing.id} className="xl:w-1/3 md:w-1/2 w-full px-6 md:px-8 py-4 md:py-8">
+            <div
+              key={pricing.id}
+              className="w-full px-6 py-4 xl:w-1/3 md:w-1/2 md:px-8 md:py-8"
+            >
               <div
                 className={`${
                   pricing.recommended ? 'border-purple-500' : 'border-gray-300'
-                  } h-full p-6 rounded-lg border-2 flex flex-col relative overflow-hidden`}
+                } h-full p-6 rounded-lg border-2 flex flex-col relative overflow-hidden`}
               >
                 {pricing.recommended && (
-                  <span className="bg-purple-500 text-white px-3 py-1 tracking-widest text-xs absolute right-0 top-0 rounded-bl">
+                  <span className="absolute top-0 right-0 px-3 py-1 text-xs tracking-widest text-white bg-purple-500 rounded-bl">
                     RECOMMENDED
                   </span>
                 )}
 
-                <h2 className="uppercase text-sm tracking-widest title-font mb-2 font-medium">
+                <h2 className="mb-2 text-sm font-medium tracking-widest uppercase title-font">
                   {pricing.title}
                 </h2>
 
-                <h1 className="text-4xl text-gray-900 leading-none flex items-center pb-4 mb-4 border-b border-gray-200">
-                  <span>
-                    {new Intl.NumberFormat('id-ID', {
-                      style: 'currency',
-                      currency: 'IDR',
-                      maximumFractionDigits: 0,
-                      minimumFractionDigits: 0,
-                    }).format(pricing.price)}
-                  </span>
+                <h1 className="flex items-center pb-4 mb-4 text-4xl leading-none text-gray-900 border-b border-gray-200">
+                  <span>{generateRupiah(pricing.price)}</span>
 
-                  <span className="text-lg ml-2 font-normal text-gray-500">
+                  <span className="ml-2 text-lg font-normal text-gray-500">
                     /bln
                   </span>
                 </h1>
 
                 {pricing.features?.map((feature, i) => (
-                  <p key={i} className="flex items-center text-gray-600 mb-2">
+                  <p key={i} className="flex items-center mb-2 text-gray-600">
                     <span
                       className={`${
                         pricing.recommended ? 'bg-purple-500' : 'bg-gray-500'
-                        } w-4 h-4 mr-2 inline-flex items-center justify-center text-white rounded-full flex-shrink-0`}
+                      } w-4 h-4 mr-2 inline-flex items-center justify-center text-white rounded-full flex-shrink-0`}
                     >
                       <svg
                         fill="none"
@@ -129,7 +128,7 @@ export default function Pricing() {
 
                       return push('/login')
                     }}
-                    className="flex items-center mt-2 w-full rounded-md px-4 py-2 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent md:text-lg focus:outline-none hover:bg-purple-100 hover:text-purple-700"
+                    className="flex items-center w-full px-4 py-2 mt-2 text-base font-medium leading-6 text-white bg-purple-700 border border-transparent rounded-md md:text-lg focus:outline-none hover:bg-purple-100 hover:text-purple-700"
                   >
                     {pricing.recommended ? 'Subscribe' : 'Login'}
                     <svg
@@ -146,7 +145,7 @@ export default function Pricing() {
                   </button>
                 )}
 
-                <p className="text-xs text-gray-500 mt-3">{pricing.desc}</p>
+                <p className="mt-3 text-xs text-gray-500">{pricing.desc}</p>
               </div>
             </div>
           ))}

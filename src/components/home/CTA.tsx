@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { FaGooglePlay } from 'react-icons/fa'
 
-export default function CTA() {
+export default function CTA(): JSX.Element {
   return (
     <article className="relative block pb-10 mt-16 bg-white">
       <div
@@ -52,8 +52,9 @@ export default function CTA() {
           {/* gambar */}
           <div className="bottom-0 right-0 mb-0 mr-3 lg:absolute lg:-mb-12">
             <img
-              src="cta.png"
               className="hidden max-w-md mb-4 opacity-75 lg:flex xl:mb-0"
+              src="cta.png"
+              alt="Call to Action logo"
             />
           </div>
         </div>

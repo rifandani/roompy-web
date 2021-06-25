@@ -1,8 +1,8 @@
+import { Roll } from 'react-awesome-reveal'
 import { HiLightBulb, HiLockClosed } from 'react-icons/hi'
 import { RiUserStarFill, RiMessengerFill } from 'react-icons/ri'
-import { Roll } from 'react-awesome-reveal'
 
-export default function FeatureHome() {
+export default function FeatureHome(): JSX.Element {
   return (
     <div className="relative w-full py-20 overflow-hidden bg-gray-100">
       <main className="container max-w-screen-xl min-h-full mx-auto">

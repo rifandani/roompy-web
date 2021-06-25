@@ -1,8 +1,19 @@
-import { useState } from 'react'
+import { LatLngExpression } from 'leaflet'
 import { Marker, useMapEvents, Circle } from 'react-leaflet'
+import { Dispatch, SetStateAction, useState } from 'react'
+// files
+import { LocPref } from 'utils/interfaces'
 
-const AddMarker = ({ selectedCity, setSelectedCity }) => {
-  const [position, setPosition] = useState(null)
+interface AddMarkerProps {
+  selectedCity: LocPref[]
+  setSelectedCity: Dispatch<SetStateAction<LocPref[]>>
+}
+
+const AddMarker = ({
+  selectedCity,
+  setSelectedCity,
+}: AddMarkerProps): JSX.Element => {
+  const [position, setPosition] = useState<LatLngExpression | null>(null)
 
   useMapEvents({
     click: (e) => {
@@ -12,8 +23,9 @@ const AddMarker = ({ selectedCity, setSelectedCity }) => {
       if (selectedCity.length >= 3) {
         const agreedToReset = confirm(
           'No more than 3 marker. Reset the marker?'
-        ) // eslint-disable-line no-restricted-globals
+        )
 
+        // reset marker
         if (agreedToReset) {
           setSelectedCity([])
         }
@@ -21,12 +33,12 @@ const AddMarker = ({ selectedCity, setSelectedCity }) => {
         return
       }
 
-      setPosition(e.latlng) // LatLng type
+      setPosition(e.latlng)
 
-      // prompt user if they really want to add
       setTimeout(() => {
-        const agreed = confirm('are u sure?') // eslint-disable-line no-restricted-globals
+        const agreed = confirm('are u sure?')
 
+        // add marker
         if (agreed) {
           setSelectedCity((prev) => [...prev, e.latlng])
         }

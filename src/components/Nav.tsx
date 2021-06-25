@@ -1,25 +1,22 @@
+import axios from 'axios'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 import { useContext, useState } from 'react'
+import { JackInTheBox } from 'react-awesome-reveal'
 import {
   HiOutlineMenu,
   HiOutlineUsers,
   HiOutlineHome,
   HiX,
 } from 'react-icons/hi'
-import { JackInTheBox } from 'react-awesome-reveal'
-import { toast } from 'react-toastify'
-import axios from 'axios'
 // files
-import UserContext from '../contexts/UserContext'
-import { auth } from '../configs/firebaseConfig'
-import axiosErrorHandle from '../utils/axiosErrorHandle'
+import UserContext from 'contexts/UserContext'
+import { auth } from 'configs/firebaseConfig'
 
-export default function Nav() {
-  // state
-  const [menu, setMenu] = useState(false)
-
-  // UserContext
+export default function Nav(): JSX.Element {
+  // hooks
   const { user } = useContext(UserContext)
+  const [openMenu, setOpenMenu] = useState<boolean>(false)
 
   async function logout() {
     try {
@@ -29,9 +26,11 @@ export default function Nav() {
       // delete cookie from server
       await axios.get('/auth/logout')
 
-      toast.info('Logout success')
+      // success
+      toast('Logout success')
     } catch (err) {
-      axiosErrorHandle(err)
+      console.error(err)
+      toast.error(err.message)
     }
   }
 
@@ -55,7 +54,7 @@ export default function Nav() {
 
           <section className="-my-2 -mr-2 md:hidden">
             <button
-              onClick={() => setMenu((prev) => !prev)}
+              onClick={() => setOpenMenu((prev) => !prev)}
               className="inline-flex items-center justify-center p-2 text-gray-400 bg-white rounded-md hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500"
             >
               <span className="sr-only">Open menu</span>
@@ -109,7 +108,7 @@ export default function Nav() {
       {/* Mobile menu, show/hide based on mobile menu state */}
       <section
         className={`${
-          menu ? 'absolute' : 'hidden'
+          openMenu ? 'absolute' : 'hidden'
         } z-20 top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden`}
       >
         <JackInTheBox duration={500}>
@@ -127,7 +126,7 @@ export default function Nav() {
 
                 <div className="-mr-2">
                   <button
-                    onClick={() => setMenu((prev) => !prev)}
+                    onClick={() => setOpenMenu((prev) => !prev)}
                     className="inline-flex items-center justify-center p-2 text-gray-400 bg-white rounded-md hover:text-red-500 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-red-500"
                   >
                     <span className="sr-only">Close menu</span>

@@ -3,13 +3,19 @@ import { useState, useEffect } from 'react'
 // files
 import { storage } from '../configs/firebaseConfig'
 
-interface IUseStorage {
-  progress: number
+interface Props {
+  file: File
+  prefix: string
+}
+
+interface UseStorageReturn {
   url: string
+  progress: number
   error: firebase.storage.FirebaseStorageError
 }
 
-export const useStorage = (file: File, prefix: string): IUseStorage => {
+export const useStorage = ({ file, prefix }: Props): UseStorageReturn => {
+  // state
   const [progress, setProgress] = useState<number>(0)
   const [error, setError] =
     useState<firebase.storage.FirebaseStorageError>(null)

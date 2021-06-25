@@ -1,11 +1,11 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
-import * as Sentry from '@sentry/node'
 import axios from 'axios'
+import * as Sentry from '@sentry/node'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import { db, nowMillis } from '../../../configs/firebaseConfig'
-import init from '../../../utils/sentry/init'
+import init from 'utils/sentry/init'
+import initMiddleware from 'middlewares/initMiddleware'
+import { db, nowMillis } from 'configs/firebaseConfig'
 
 const cors = initMiddleware(
   Cors({

@@ -1,9 +1,8 @@
-import { FiPhoneCall, FiHome, FiMail } from 'react-icons/fi'
 import { toast } from 'react-toastify'
 import { useForm, ValidationError } from '@formspree/react'
-// files
+import { FiPhoneCall, FiHome, FiMail } from 'react-icons/fi'
 
-export default function Contact() {
+export default function Contact(): JSX.Element {
   // formspree
   const [state, handleSubmit] = useForm('contact')
 
@@ -96,9 +95,8 @@ export default function Contact() {
               className="inline-block w-full px-8 py-4 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:shadow-outline hover:text-purple-700 hover:bg-purple-100"
               type="submit"
               disabled={state.submitting}
-              // onClick={contact}
             >
-              Submit
+              {state.submitting ? 'Loading...' : 'Submit'}
             </button>
           </div>
         </form>

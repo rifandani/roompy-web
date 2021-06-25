@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { FcMoneyTransfer } from 'react-icons/fc'
 import { GiFemale, GiMale } from 'react-icons/gi'
 // files
+import generateRupiah from 'utils/generateRupiah'
 import { RoompyProps } from 'utils/interfaces'
 
 export default function RoompyCard2({ roompy }: RoompyProps): JSX.Element {
@@ -81,12 +82,7 @@ export default function RoompyCard2({ roompy }: RoompyProps): JSX.Element {
               <FcMoneyTransfer className="mr-2" />
 
               <span className="text-gray-900">
-                {new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                  maximumFractionDigits: 0,
-                  minimumFractionDigits: 0,
-                }).format(roompy.budget)}
+                {generateRupiah(roompy.budget)}
               </span>
               <span className="ml-1 text-gray-600">/bln</span>
             </div>

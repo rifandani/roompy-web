@@ -10,6 +10,7 @@ import {
   FaPlusCircle,
 } from 'react-icons/fa'
 // files
+import generateRupiah from 'utils/generateRupiah'
 import { ISubscribePageProps } from 'pages/dashboard/subscribe'
 import { subscribeSchema, TSubscribeSchema } from 'utils/yup/schema'
 
@@ -354,12 +355,7 @@ export default function SubscribeComp({
                   </div>
 
                   <span className="text-gray-600">
-                    {new Intl.NumberFormat('id-ID', {
-                      style: 'currency',
-                      currency: 'IDR',
-                      maximumFractionDigits: 0,
-                      minimumFractionDigits: 0,
-                    }).format(price * quantity)}
+                    {generateRupiah(price * quantity)}
                   </span>
                 </div>
               </div>

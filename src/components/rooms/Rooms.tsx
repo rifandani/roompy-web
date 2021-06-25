@@ -1,7 +1,7 @@
 // files
-import SiteHeader from '../SiteHeader'
-import SearchFilters from './RoomsFilters'
 import RoomCard from './RoomCard'
+import SearchFilters from './RoomsFilters'
+import SiteHeader from '../SiteHeader'
 
 const locations = [
   {
@@ -146,7 +146,7 @@ const locations = [
   },
 ]
 
-export default function Rooms() {
+export default function Rooms(): JSX.Element {
   return (
     <div className="min-h-screen antialiased bg-gray-200 xl:flex xl:flex-col xl:h-screen">
       {/* site header */}

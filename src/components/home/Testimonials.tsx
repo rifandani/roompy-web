@@ -1,25 +1,25 @@
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import { Flip } from 'react-awesome-reveal'
 import { useState } from 'react'
+import { Flip } from 'react-awesome-reveal'
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
-export default function Testimonials() {
-  const [monials] = useState([
-    {
-      desc:
-        'Karena situasi ekonomi yang tidak terduga, saya harus mencari teman sekamar. Saya tidak pernah memilikinya sebelumnya dan saya agak ragu-ragu. Jika saya akan berbagi tempat tinggal yang sama dengan orang lain, saya menginginkan seseorang yang cocok dengan saya. Bagaimana saya akan melakukan ini? Saya iseng buka website Roompy dan menemukan bahwa kita dapat menyaring setiap orang dan mendapatkan gambaran tentang karakter roompies tersebut. Teman sekamar yang saya temukan, profilnya identik dengan profil saya. Kami telah menjadi teman sekamar selama 6 minggu dan ini merupakan kejutan yang menyenangkan. Terima kasih Roompy!',
-      name: 'John Doe',
-      date: '25 Desember 2020',
-    },
-    {
-      desc:
-        'Terima kasih banyak! Website anda sangat membantu. Saya dapat menemukan teman sekamar dari situs anda ... Roompy sangat bermanfaat bagi saya! Saya telah mencari teman sekamar selama berbulan-bulan, tapi kali ini dapat dengan sangat cepat. Terima kasih sekali lagi!',
-      name: 'Jane Doe',
-      date: '18 November 2020',
-    },
-  ])
-  const [index, setIndex] = useState(0)
+const monials = [
+  {
+    desc: 'Karena situasi ekonomi yang tidak terduga, saya harus mencari teman sekamar. Saya tidak pernah memilikinya sebelumnya dan saya agak ragu-ragu. Jika saya akan berbagi tempat tinggal yang sama dengan orang lain, saya menginginkan seseorang yang cocok dengan saya. Bagaimana saya akan melakukan ini? Saya iseng buka website Roompy dan menemukan bahwa kita dapat menyaring setiap orang dan mendapatkan gambaran tentang karakter roompies tersebut. Teman sekamar yang saya temukan, profilnya identik dengan profil saya. Kami telah menjadi teman sekamar selama 6 minggu dan ini merupakan kejutan yang menyenangkan. Terima kasih Roompy!',
+    name: 'John Doe',
+    date: '25 Desember 2020',
+  },
+  {
+    desc: 'Terima kasih banyak! Website anda sangat membantu. Saya dapat menemukan teman sekamar dari situs anda ... Roompy sangat bermanfaat bagi saya! Saya telah mencari teman sekamar selama berbulan-bulan, tapi kali ini dapat dengan sangat cepat. Terima kasih sekali lagi!',
+    name: 'Jane Doe',
+    date: '18 November 2020',
+  },
+]
 
-  function onLeft() {
+export default function Testimonials(): JSX.Element {
+  // hooks
+  const [index, setIndex] = useState<number>(0)
+
+  function onLeft(): void {
     if (index === 0) {
       setIndex(monials.length - 1)
     } else {
@@ -27,7 +27,7 @@ export default function Testimonials() {
     }
   }
 
-  function onRight() {
+  function onRight(): void {
     if (index === monials.length - 1) {
       setIndex(0)
     } else {

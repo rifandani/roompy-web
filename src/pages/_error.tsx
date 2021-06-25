@@ -3,9 +3,9 @@ import { NextPageContext } from 'next'
 import NextErrorComponent, { ErrorProps as NextErrorProps } from 'next/error'
 
 export type ErrorPageProps = {
-  err: Error
   statusCode: number
-  isReadyToRender: boolean
+  hasGetInitialPropsRun: boolean
+  err: Error
   children?: React.ReactElement
 }
 
@@ -13,7 +13,11 @@ export type ErrorProps = {
   isReadyToRender: boolean
 } & NextErrorProps
 
-const MyError = ({ statusCode, hasGetInitialPropsRun, err }) => {
+const MyError = ({
+  statusCode,
+  hasGetInitialPropsRun,
+  err,
+}: ErrorPageProps): JSX.Element => {
   if (!hasGetInitialPropsRun && err) {
     // getInitialProps is not called in case of
     // https://github.com/vercel/next.js/issues/8592. As a workaround, we pass
