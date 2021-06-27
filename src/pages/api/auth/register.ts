@@ -1,29 +1,24 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
-import setCookie from 'utils/setCookie'
+import getUser from 'utils/getUser'
+import setAuthCookie from 'utils/setAuthCookie'
 import { db, nowMillis } from 'configs/firebaseConfig'
 import { registerApiSchema, TRegisterApi } from 'utils/yup/apiSchema'
 
 export default nc
   // cors middleware
-  .use(
-    Cors({
-      methods: ['POST'],
-    })
-  )
+  .use(withCors(['POST']))
   .use(withYupConnect(registerApiSchema)) // yup middleware
   .post(async (req, res) => {
     // id from firebase auth client
     const { id, username, email } = req.body as TRegisterApi
 
-    // check if the user.id is already exists
-    const userRef = await db.collection('users').doc(id).get()
-    const userIsExists = userRef.exists
+    // check if the user.id is ALREADY exists
+    const { userSnap } = await getUser(id)
 
-    if (!userIsExists) {
-      // client error => user already exists
+    if (userSnap.exists) {
+      // client error => user is ALREADY exists
       res.status(400).json({
         error: true,
         message: `User with id: ${id} is already exists`,
@@ -54,7 +49,7 @@ export default nc
       })
 
     // set JWT token to cookie in headers
-    setCookie(
+    setAuthCookie(
       {
         sub: id,
         iss: 'Roompy',

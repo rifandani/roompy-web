@@ -1,65 +1,55 @@
+// load the global Cypress types
 /// <reference types="cypress" />
+// no export & import, will cause errors
 
-interface IPostQrcodeRequestBody {
-  url: string
-}
+/* --------------------------------------------- api types -------------------------------------------- */
 
-interface IPostQrcodeResponseBody {
+type TErrorResponse = {
   error: boolean
-  url: string
+  message: string
+  name?: string // 500
+  errors?: string[] // 500
 }
 
-interface IGetUserResponseBody {
-  user: Record<string, unknown> // should be User
-}
-
-interface IGetUsersResponseBody {
-  users: [] // should be User[]
-}
-
-interface IPutUserRequestBody {
-  username: string
-  email: string
-}
-
-interface IPutUserResponseBody {
+type TCommonApiResponse = {
   error: boolean
   message: string
 }
 
-interface IDeleteUserResponseBody {
-  error: boolean
-  message: string
-}
+type TLoginApi = { id: string }
+type TRegisterApi = { id: string; username: string; email: string }
 
-interface IRegisterUserRequestBody extends IPutUserRequestBody {
-  id: string
-}
-
-interface IRegisterUserResponseBody {
-  error: boolean
-  message: string
-}
+type IPostQrcodeReqBody = { url: string }
+type IPostQrcodeResBody = { error: boolean; url: string }
 
 declare namespace Cypress {
   interface Chainable {
-    // qrcode
-    postQrcode(
-      requestBody: IPostQrcodeRequestBody
-    ): Chainable<Response<IPostQrcodeResponseBody>>
+    /* ------------------------------------------- helpers ------------------------------------------ */
+    dataCy(
+      dataTestAttribute: string,
+      args?: Partial<
+        Cypress.Loggable &
+          Cypress.Timeoutable &
+          Cypress.Withinable &
+          Cypress.Shadow
+      >
+    ): Chainable<Element>
 
-    // users
-    getUsers(): Chainable<Response<IGetUsersResponseBody>>
-    getUser(userId: string): Chainable<Response<IGetUserResponseBody>>
-    putUser(
-      userId: string,
-      requestBody: IPutUserRequestBody
-    ): Chainable<Response<IPutUserResponseBody>>
-    deleteUser(userId: string): Chainable<Response<IDeleteUserResponseBody>>
+    /* --------------------------------------------- api -------------------------------------------- */
 
     // auth
-    registerUser(
-      requestBody: IRegisterUserRequestBody
-    ): Chainable<Response<IRegisterUserResponseBody>>
+    loginByApi(
+      reqBody: TLoginApi
+    ): Chainable<Response<TCommonApiResponse & TErrorResponse>>
+    registerByApi(
+      reqBody: TRegisterApi
+    ): Chainable<Response<TCommonApiResponse & TErrorResponse>>
+
+    // qrcode
+    postQrcode(
+      reqBody: IPostQrcodeReqBody
+    ): Chainable<Response<IPostQrcodeResBody & TErrorResponse>>
+
+    /* --------------------------------------------- UI --------------------------------------------- */
   }
 }

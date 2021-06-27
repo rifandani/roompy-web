@@ -1,24 +1,32 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
-import setCookie from 'utils/setCookie'
+import getUser from 'utils/getUser'
+import setAuthCookie from 'utils/setAuthCookie'
 import { loginApiSchema, TLoginApi } from 'utils/yup/apiSchema'
 
 export default nc
   // cors middleware
-  .use(
-    Cors({
-      methods: ['POST'],
-    })
-  )
+  .use(withCors(['POST']))
   .use(withYupConnect(loginApiSchema)) // yup middleware
   .post(async (req, res) => {
     // id from firebase auth client
     const { id } = req.body as TLoginApi
 
+    // check if the user.id is NOT exists
+    const { userSnap } = await getUser(id)
+
+    if (!userSnap.exists) {
+      // client error => user is NOT exists
+      res.status(400).json({
+        error: true,
+        message: `User with id: ${id} is not exists`,
+      })
+      return
+    }
+
     // set JWT token to cookie in headers
-    setCookie(
+    setAuthCookie(
       {
         sub: id,
         iss: 'Roompy',

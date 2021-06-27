@@ -6,8 +6,8 @@ import { GetServerSideProps } from 'next'
 // files
 import DashboardLayout from 'components/dashboard/DashboardLayout'
 import MatchesContent from 'components/matches/MatchesContent'
-import checkIfUserExists from 'utils/checkIfUserExists'
 import { AuthCookiePayload } from 'utils/interfaces'
+import getUser from 'utils/getUser'
 
 export interface MatchesPageProps {
   userId: string
@@ -61,8 +61,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     const userId = decoded.sub
 
     // if user does not exists
-    const userIsExists = await checkIfUserExists(userId)
-    if (!userIsExists) {
+    const { userSnap } = await getUser(userId)
+    if (!userSnap.exists) {
       return {
         redirect: { destination: '/login', permanent: false },
       }

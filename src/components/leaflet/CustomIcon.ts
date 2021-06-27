@@ -1,9 +1,9 @@
-import { Icon } from "leaflet";
+import { Icon } from 'leaflet'
 
 // custom Icon
 const MyIcon = new Icon({
-  iconUrl: "/favicon.ico",
-  iconSize: [25, 25]
-});
+  iconUrl: '/favicon.ico',
+  iconSize: [25, 25],
+})
 
-export default MyIcon;
+export default MyIcon

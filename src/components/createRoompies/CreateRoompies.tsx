@@ -13,9 +13,7 @@ import { FaQuestionCircle } from 'react-icons/fa'
 import { Range, createSliderWithTooltip } from 'rc-slider'
 // files
 import Dropzone from './Dropzone'
-import axiosErrorHandle from 'utils/axiosErrorHandle'
-import { LocPref } from 'utils/interfaces'
-import { CreateRoompiesProps } from 'pages/dashboard/roompies/create'
+import { LocPref, UserProps } from 'utils/interfaces'
 
 const RangeWithTooltip = createSliderWithTooltip(Range) // rc-slider with tooltip
 
@@ -23,9 +21,7 @@ const MapWithNoSSR = dynamic(() => import('../leaflet/CreateRoompiesLeaflet'), {
   ssr: false,
 })
 
-export default function CreateRoompies({
-  user,
-}: CreateRoompiesProps): JSX.Element {
+export default function CreateRoompies({ user }: UserProps): JSX.Element {
   const { push } = useRouter()
   const [busy, setBusy] = useState<boolean>(false)
   // contact info
@@ -110,24 +106,21 @@ export default function CreateRoompies({
       formData.append('photo', photoURL)
       formData.append('roompy', JSON.stringify(state))
 
-      // POST Form Data
-      const res = await axios.post('/roompies', formData, {
+      // POST roompy
+      await axios.post('/roompies', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       })
 
-      // if POST success
-      if (res.status === 201) {
-        await push('/dashboard')
-        setBusy(false)
-        return toast.success('Roompies created')
-      }
+      // success
+      await push('/dashboard')
+      toast.success('Roompies created')
     } catch (err) {
-      // on ERROR => Axios Response error
+      console.error(err)
+      toast.error(err.message)
+    } finally {
       setBusy(false) // enable login button
-
-      axiosErrorHandle(err)
     }
   }
 

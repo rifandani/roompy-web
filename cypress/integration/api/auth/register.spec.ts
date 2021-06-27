@@ -1,83 +1,99 @@
 /// <reference types="cypress" />
 
-import { datatype } from 'faker'
+describe('POST /api/auth/register', () => {
+  const validId = '8zXuZV5f8CQ3SCVy5VvaZDR2fp69' // di mirip2 in
 
-describe('auth API test: /api/auth', () => {
-  const validId = datatype.uuid()
+  before(() => {
+    cy.clearCookies()
+  })
 
-  /* -------------------------------------------------------------------------- */
-  /*                          SECTION - POST /register                          */
-  /* -------------------------------------------------------------------------- */
-  context('with POST request', () => {
-    /* ----------------- ANCHOR - ERROR - empty request.body ----------------- */
-    it('should ERROR creating user - empty request.body', () => {
-      const requestBody = {
+  after(() => {
+    // DELETE user after all tests
+    cy.deleteUser(validId)
+    cy.clearCookies()
+  })
+
+  context('register', () => {
+    /* ----------------- ERROR - empty request.body ----------------- */
+    it('should ERROR - empty request.body', () => {
+      const emptyBody = {
         id: '',
         username: '',
         email: '',
       }
 
-      cy.registerUser(requestBody).should((response) => {
+      // register by API
+      cy.registerByApi(emptyBody).should((response) => {
         expect(response.status).to.eq(400)
-        expect(response.body).to.have.property('error', true)
-        expect(response.body).to.have.property('name', 'ValidationError')
-        expect(response.body).to.have.property('errors')
+        expect(response.body.error).to.eq(true)
+        expect(response.body.name).to.eq('ValidationError')
+        expect(response.body.errors).to.satisfy(
+          (errors: string[]) => errors.length > 0
+        )
       })
+
+      // auth cookie should NOT be present
+      cy.getCookies().should('have.length', 0)
     })
 
-    /* ------------- ANCHOR - ERROR - invalid request.body.email ------------- */
-    it('should ERROR creating user - invalid request.body.email', () => {
-      const requestBody = {
-        id: 'username12345',
+    /* ------------- ERROR - invalid request.body.email ------------- */
+    it('should ERROR - invalid request.body.email', () => {
+      const invalidEmailBody = {
+        id: 'username12345QWERTY',
         username: 'username',
         email: 'username',
       }
 
-      cy.registerUser(requestBody).should((response) => {
+      // register by API
+      cy.registerByApi(invalidEmailBody).should((response) => {
         expect(response.status).to.eq(400)
-        expect(response.body).to.have.property('error', true)
-        expect(response.body).to.have.property('name', 'ValidationError')
-        expect(response.body).to.have.property('message', 'Invalid email')
-        expect(response.body).to.have.property('errors')
-      })
-    })
-
-    /* ----------- ANCHOR - ERROR - already exists request.body.id ----------- */
-    it('should ERROR creating user - already exists request.body.id', () => {
-      const requestBody = {
-        id: 'gjLF9J9LcJXcqtoNl5NxVNTi4Sl2',
-        username: 'username',
-        email: 'username@email.com',
-      }
-
-      cy.registerUser(requestBody).should((response) => {
-        expect(response.status).to.eq(400)
-        expect(response.body).to.have.property('error', true)
-        expect(response.body).to.have.property(
-          'message',
-          'Id is already exists'
+        expect(response.body.error).to.eq(true)
+        expect(response.body.name).to.eq('ValidationError')
+        expect(response.body.errors).to.satisfy(
+          (errors: string[]) => errors.length > 0
         )
       })
+
+      // auth cookie should NOT be present
+      cy.getCookies().should('have.length', 0)
     })
 
-    /* ------------------ ANCHOR - SUCCESS - valid request.body ----------------- */
-    it('should SUCCESS creating user - valid request.body', () => {
-      const requestBody = {
-        id: validId,
+    /* ----------- ERROR - user.id already exists ----------- */
+    it('should ERROR - user.id already exists', () => {
+      const alreadyExistedId = {
+        id: '8zXuZV5f8CQ3SCVy5VvaZDR2fp73', // elonmusk@gmail.com
         username: 'username',
         email: 'username@email.com',
       }
 
-      cy.registerUser(requestBody).should((response) => {
-        cy.log('response body', response.body)
-        expect(response.status).to.eq(201)
-        expect(response.body).to.have.property('error', false)
+      // register by API
+      cy.registerByApi(alreadyExistedId).should((response) => {
+        expect(response.status).to.eq(400)
+        expect(response.body.error).to.eq(true)
         expect(response.body.message).to.be.a('string')
       })
 
-      cy.deleteUser(validId).then((res) => {
-        cy.log('delete user', res.body)
+      // auth cookie should NOT be present
+      cy.getCookies().should('have.length', 0)
+    })
+
+    /* ------------------ SUCCESS - valid request.body ----------------- */
+    it('should SUCCESS - valid request.body', () => {
+      const requestBody = {
+        id: validId,
+        username: 'cypress',
+        email: 'cypress@gmail.com',
+      }
+
+      // register by API
+      cy.registerByApi(requestBody).should((response) => {
+        expect(response.status).to.eq(201)
+        expect(response.body.error).to.eq(false)
+        expect(response.body.message).to.be.a('string')
       })
+
+      // auth cookie should be present
+      cy.getCookies().should('have.length.at.least', 1)
     })
   })
 })

@@ -2,6 +2,34 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 
+/* ------------------------------------------- helpers ------------------------------------------ */
+
+Cypress.Commands.add('dataCy', (dataTestAttribute, args) => {
+  return cy.get(`[data-cy=${dataTestAttribute}]`, args)
+})
+
+/* --------------------------------------------- api -------------------------------------------- */
+
+// POST /api/auth/login
+Cypress.Commands.add('loginByApi', (requestBody) => {
+  return cy.request({
+    method: 'POST',
+    url: '/api/auth/login',
+    body: requestBody,
+    failOnStatusCode: false,
+  })
+})
+
+// POST /api/auth/register
+Cypress.Commands.add('registerByApi', (requestBody) => {
+  return cy.request({
+    method: 'POST',
+    url: '/api/auth/register',
+    body: requestBody,
+    failOnStatusCode: false,
+  })
+})
+
 // POST /api/qrcode
 Cypress.Commands.add('postQrcode', (requestBody) => {
   return cy.request({
@@ -11,6 +39,8 @@ Cypress.Commands.add('postQrcode', (requestBody) => {
     failOnStatusCode: false,
   })
 })
+
+/* --------------------------------------------- UI --------------------------------------------- */
 
 // GET /api/users
 Cypress.Commands.add('getUsers', () => {
@@ -53,16 +83,6 @@ Cypress.Commands.add('deleteUser', (id) => {
     qs: {
       id,
     },
-    failOnStatusCode: false,
-  })
-})
-
-// POST /api/auth/register
-Cypress.Commands.add('registerUser', (requestBody) => {
-  return cy.request({
-    method: 'POST',
-    url: '/api/auth/register',
-    body: requestBody,
     failOnStatusCode: false,
   })
 })

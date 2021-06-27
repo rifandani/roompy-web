@@ -147,6 +147,8 @@ export interface AuthCookiePayload {
 export type DocRef = firebase.firestore.DocumentReference
 export type DocDataRef =
   firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
+export type DocDataSnap =
+  firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
 export type Timestamp = firebase.firestore.Timestamp
 export type FireUser = firebase.User
 export type UserCredential = firebase.UserInfo

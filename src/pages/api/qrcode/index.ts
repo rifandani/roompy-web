@@ -1,17 +1,12 @@
-import Cors from 'cors'
 import QRCode from 'qrcode'
 // files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
 import { qrcodeApiSchema, TQrcodeApi } from 'utils/yup/apiSchema'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET', 'POST'],
-    })
-  )
+  .use(withCors(['GET', 'POST']))
   // yup middleware
   .use(withYupConnect(qrcodeApiSchema))
   .get(async (_, res) => {

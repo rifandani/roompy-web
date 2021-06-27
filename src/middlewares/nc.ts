@@ -17,8 +17,8 @@ export default nextConnect<NextApiRequest, NextApiResponse>({
     // server error => Internal Server Error -----------------------------------------------------------------
     res.status(500).json({
       error: true,
-      name: err.name,
       message: err.message,
+      name: err.name,
       errors: err.errors || [], // from yup middleware
     })
   },

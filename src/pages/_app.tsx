@@ -20,12 +20,11 @@ import useAuth from 'hooks/useAuth'
 import UserContext from 'contexts/UserContext'
 import init from 'utils/sentry/init'
 import SEO from 'configs/nextSeoConfig'
+import { API_URL_DEV, API_URL_PROD } from 'configs/constants'
 
 // axios BASE URL
 axios.defaults.baseURL =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:3000/api'
-    : 'https://roompy.vercel.app/api'
+  process.env.NODE_ENV === 'development' ? API_URL_DEV : API_URL_PROD
 
 // axios default validateStatus
 axios.defaults.validateStatus = (status) =>

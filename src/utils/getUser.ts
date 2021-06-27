@@ -1,9 +1,10 @@
 import { db } from 'configs/firebaseConfig'
-import { DocDataRef, User } from './interfaces'
+import { User, DocDataRef, DocDataSnap } from './interfaces'
 
 interface Return {
   user: User
   userRef: DocDataRef
+  userSnap: DocDataSnap
 }
 
 export default async function getUser(userId: string): Promise<Return> {
@@ -11,12 +12,12 @@ export default async function getUser(userId: string): Promise<Return> {
   const userRef = db.collection('users').doc(userId)
 
   // get user
-  const userDoc = await userRef.get()
+  const userSnap = await userRef.get()
 
   const user = {
-    ...userDoc.data(),
-    id: userDoc.id,
+    ...userSnap.data(),
+    id: userSnap.id,
   } as User
 
-  return { user, userRef }
+  return { user, userRef, userSnap }
 }
