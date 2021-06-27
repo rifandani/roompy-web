@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { FaLinkedin, FaInstagram } from 'react-icons/fa'
 
-export default function Teams() {
+export default function Teams(): JSX.Element {
   return (
     <>
       <section className="relative w-full py-20 overflow-hidden bg-gray-100">
@@ -24,8 +24,8 @@ export default function Teams() {
               <div className="flex flex-col items-center justify-center h-full text-center sm:flex-row sm:justify-start sm:text-left">
                 <img
                   className="flex-shrink-0 object-cover object-center w-48 h-48 mb-4 rounded-lg sm:mb-0"
-                  alt="rifandani foto"
                   src="rifandani.jpg"
+                  alt="rifandani foto"
                 />
 
                 <div className="flex-grow sm:pl-8">
@@ -60,9 +60,9 @@ export default function Teams() {
             <div className="flex items-center justify-center p-4 lg:w-1/2">
               <div className="flex flex-col items-center justify-center h-full text-center sm:flex-row sm:justify-start sm:text-left">
                 <img
-                  alt="foto matuff"
                   className="flex-shrink-0 object-cover object-center w-48 h-48 mb-4 rounded-lg sm:mb-0"
                   src="matuff.png"
+                  alt="foto matuff"
                 />
 
                 <div className="flex-grow sm:pl-8">

@@ -1,13 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import {
-  db,
-  nowMillis,
-  firestoreTimestamp,
-} from '../../../configs/firebaseConfig'
-import { getAsString } from '../../../utils/getAsString'
+import initMiddleware from 'middlewares/initMiddleware'
+import { getAsString } from 'utils/getAsString'
+import { db, nowMillis, firestoreTimestamp } from 'configs/firebaseConfig'
 
 const cors = initMiddleware(
   Cors({
@@ -15,7 +11,10 @@ const cors = initMiddleware(
   })
 )
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
   await cors(req, res) // Run cors
 
   // GET /api/testing/timestamp

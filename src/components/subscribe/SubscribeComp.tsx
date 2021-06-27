@@ -1,17 +1,18 @@
+import axios from 'axios'
+import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 import {
   FaAngleLeft,
   FaAngleRight,
   FaMinusCircle,
   FaPlusCircle,
 } from 'react-icons/fa'
-import { toast } from 'react-toastify'
-import axios from 'axios'
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
-import { ISubscribePageProps } from '../../pages/dashboard/subscribe'
-import { subscribeSchema, TSubscribeSchema } from '../../utils/yup/schema'
+import generateRupiah from 'utils/generateRupiah'
+import { ISubscribePageProps } from 'pages/dashboard/subscribe'
+import { subscribeSchema, TSubscribeSchema } from 'utils/yup/schema'
 
 declare global {
   interface Window {
@@ -19,7 +20,9 @@ declare global {
   }
 }
 
-export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
+export default function SubscribeComp({
+  dbUser,
+}: ISubscribePageProps): JSX.Element {
   const initialValues: TSubscribeSchema = {
     firstName: '',
     lastName: '',
@@ -131,7 +134,7 @@ export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
     //change this according to your client-key
     const myMidtransClientKey = 'SB-Mid-client-7GiXOKQvXG7nriAO'
 
-    let scriptTag = document.createElement('script')
+    const scriptTag = document.createElement('script')
     scriptTag.src = midtransScriptUrl
     // optional if you want to set script attribute
     // for example snap.js have data-client-key attribute
@@ -352,12 +355,7 @@ export default function SubscribeComp({ dbUser }: ISubscribePageProps) {
                   </div>
 
                   <span className="text-gray-600">
-                    {new Intl.NumberFormat('id-ID', {
-                      style: 'currency',
-                      currency: 'IDR',
-                      maximumFractionDigits: 0,
-                      minimumFractionDigits: 0,
-                    }).format(price * quantity)}
+                    {generateRupiah(price * quantity)}
                   </span>
                 </div>
               </div>

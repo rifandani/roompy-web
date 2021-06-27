@@ -78,6 +78,10 @@ export interface User {
   username: string
 }
 
+export interface UserProps {
+  user: User
+}
+
 export interface UserContextState {
   user: FireUser | null
   setUser: firebase.User | Dispatch<SetStateAction<firebase.User>>
@@ -93,15 +97,8 @@ export interface Postal {
   postal_code: string
 }
 
-export interface PhotoURL {
-  lastModified: number
-  lastModifiedDate: Date
-  name: string
-  path: string
-  preview?: string // hasil URL.createObjectURL(image)
-  size: number
-  type: string
-  webkitRelativePath: string
+export interface ImagePreview extends File {
+  preview?: string
 }
 
 /** Object containing file metadata and access information. */
@@ -139,10 +136,19 @@ export interface NextApiRequestWithMulterFile extends NextApiRequest {
   file: MulterFile
 }
 
+export interface AuthCookiePayload {
+  sub: string // subject, whom the token refers to
+  iss?: string // issuer, token creator
+  iat?: number // issuedAt, seconds since Unix epoch
+  exp?: number // expiredAt, seconds since Unix epoch
+}
+
 // firebase type
 export type DocRef = firebase.firestore.DocumentReference
 export type DocDataRef =
   firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
+export type DocDataSnap =
+  firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
 export type Timestamp = firebase.firestore.Timestamp
 export type FireUser = firebase.User
 export type UserCredential = firebase.UserInfo

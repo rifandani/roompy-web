@@ -1,7 +1,11 @@
 import Link from 'next/link'
 import { FaInstagram, FaFacebook } from 'react-icons/fa'
 
-export default function Footer({ footer2 }: { footer2?: boolean }) {
+export default function Footer({
+  footer2,
+}: {
+  footer2?: boolean
+}): JSX.Element {
   return (
     <footer className="relative block py-4 pt-12 mt-16 bg-gray-100">
       <div
@@ -44,9 +48,9 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
 
             <div className="mt-6">
               <a
-                href="https://www.facebook.com/ipan.dns"
+                href="https://www.facebook.com/"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
               >
                 <FaFacebook className="items-center justify-center inline-block mr-2 text-3xl text-center text-blue-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
               </a>
@@ -54,7 +58,7 @@ export default function Footer({ footer2 }: { footer2?: boolean }) {
               <a
                 href="https://www.instagram.com/3richkey"
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
               >
                 <FaInstagram className="items-center justify-center inline-block mr-2 text-3xl text-center text-pink-500 transition duration-500 transform rounded-full shadow-lg outline-none align-center focus:outline-none hover:scale-125" />
               </a>

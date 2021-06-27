@@ -1,11 +1,11 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
-import * as Sentry from '@sentry/node'
 import axios from 'axios'
+import * as Sentry from '@sentry/node'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
-import { db, nowMillis } from '../../../configs/firebaseConfig'
-import init from '../../../utils/sentry/init'
+import init from 'utils/sentry/init'
+import initMiddleware from 'middlewares/initMiddleware'
+import { db, nowMillis } from 'configs/firebaseConfig'
 
 const cors = initMiddleware(
   Cors({
@@ -16,7 +16,10 @@ const cors = initMiddleware(
 // init sentry
 init()
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
   await cors(req, res) // Run cors
 
   // POST /api/midtrans/token-request
@@ -25,9 +28,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       const { user_id, customer_details } = req.body // destructure body
 
       // Buffer() requires a number, array or string as the first parameter, and an optional encoding type as the second parameter.
-      var bufferObj = Buffer.from(process.env.MIDTRANS_SERVER_KEY + ':')
+      const bufferObj = Buffer.from(process.env.MIDTRANS_SERVER_KEY + ':')
       // If we don't use toString(), JavaScript assumes we want to convert the object to utf8.
-      var base64EncodedString = bufferObj.toString('base64')
+      const base64EncodedString = bufferObj.toString('base64')
 
       // trying to decode
       // var bufferObj2 = Buffer.from(base64EncodedString, 'base64')

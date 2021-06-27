@@ -1,13 +1,13 @@
+import axios from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
-import axios from 'axios'
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from 'formik'
 // files
-import { auth } from '../../configs/firebaseConfig'
-import { loginSchema, TLoginSchema } from '../../utils/yup/schema'
+import { auth } from 'configs/firebaseConfig'
+import { loginSchema, TLoginSchema } from 'utils/yup/schema'
 
-export default function LoginComp() {
+export default function LoginComp(): JSX.Element {
   const initialValues: TLoginSchema = {
     email: '',
     password: '',
@@ -19,7 +19,7 @@ export default function LoginComp() {
   async function onLogin(
     values: TLoginSchema,
     actions: FormikHelpers<TLoginSchema>
-  ) {
+  ): Promise<void> {
     try {
       // save to firebase auth in client-side, biar useAuth/UserContext bisa ke trigger
       const userCred = await auth.signInWithEmailAndPassword(
@@ -27,7 +27,7 @@ export default function LoginComp() {
         values.password
       )
 
-      // POST req
+      // POST login
       await axios.post('/auth/login', {
         id: userCred.user.uid,
       })
@@ -35,10 +35,10 @@ export default function LoginComp() {
       // on SUCCESS
       await push('/dashboard')
       toast.success(`Welcome Back, ${userCred.user.displayName}`)
-      actions.setSubmitting(false) // finish formik cycle
     } catch (err) {
-      toast.error(err.message)
       console.error('onLogin error => ', err)
+      toast.error(err.message)
+    } finally {
       actions.setSubmitting(false) // finish formik cycle
     }
   }
@@ -123,13 +123,11 @@ export default function LoginComp() {
 
                 <div className="mt-6">
                   <button
-                    className={`${
-                      isSubmitting ? 'opacity-50' : 'opacity-100'
-                    } block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100`}
+                    className="block w-full px-4 py-3 font-bold tracking-wider text-white uppercase bg-purple-700 rounded-md focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-opacity-50 hover:text-purple-700 hover:bg-purple-100 disabled:opacity-50"
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Loading' : 'Login'}
+                    {isSubmitting ? 'Loading...' : 'Login'}
                   </button>
                 </div>
               </Form>

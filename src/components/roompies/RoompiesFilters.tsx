@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router'
 import { useState, FormEvent } from 'react'
-import { HiOutlineSearch } from 'react-icons/hi'
 import { IoFilter } from 'react-icons/io5'
+import { HiOutlineSearch } from 'react-icons/hi'
 // files
 
-export default function RoompiesFilters() {
+export default function RoompiesFilters(): JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [searchQue, setSearchQue] = useState<string>('')
   const [ageQue, setAgeQue] = useState<string>('') // '', '20' atau '30' atau '40' atau '50' atau '51'
@@ -32,7 +32,7 @@ export default function RoompiesFilters() {
   const onSearchLoc = async (e: FormEvent) => {
     e.preventDefault()
 
-    console.log(searchQue)
+    console.info(searchQue)
   }
 
   return (
@@ -57,8 +57,8 @@ export default function RoompiesFilters() {
                 onChange={(e) => setSearchQue(e.target.value)}
                 onKeyDown={(e) =>
                   e.key === 'Enter'
-                    ? console.log('Enter pressed')
-                    : console.log(e.key)
+                    ? console.info('Enter pressed')
+                    : console.info(e.key)
                 }
               />
             </label>

@@ -1,18 +1,16 @@
+import axios from 'axios'
 import Link from 'next/link'
+import { toast } from 'react-toastify'
 import { useContext, useState } from 'react'
 import { JackInTheBox } from 'react-awesome-reveal'
-import { toast } from 'react-toastify'
-import axios from 'axios'
 // files
-import UserContext from '../../contexts/UserContext'
-import { auth } from '../../configs/firebaseConfig'
-import axiosErrorHandle from '../../utils/axiosErrorHandle'
+import UserContext from 'contexts/UserContext'
+import { auth } from 'configs/firebaseConfig'
 
-const NavFAQ = () => {
-  const [toggleMenu, setToggleMenu] = useState(false)
-
-  // UserContext
+const NavFAQ = (): JSX.Element => {
+  // hooks
   const { user } = useContext(UserContext)
+  const [toggleMenu, setToggleMenu] = useState<boolean>(false)
 
   async function logout() {
     try {
@@ -22,9 +20,10 @@ const NavFAQ = () => {
       // delete cookie from the server
       await axios.get('/auth/logout')
 
-      toast.info('Logout success')
+      toast('Logout success')
     } catch (err) {
-      axiosErrorHandle(err)
+      console.error(err)
+      toast.error(err.message)
     }
   }
 

@@ -2,16 +2,18 @@ import { GetServerSideProps } from 'next'
 import { verify } from 'jsonwebtoken'
 import { parse } from 'cookie'
 // files
-import DashboardLayout from '../../../components/dashboard/DashboardLayout'
-import SubscribeComp from '../../../components/subscribe/SubscribeComp'
-import { User } from '../../../utils/interfaces'
-import getUserFromDecodedToken from '../../../utils/getUserFromDecodedToken'
+import SubscribeComp from 'components/subscribe/SubscribeComp'
+import DashboardLayout from 'components/dashboard/DashboardLayout'
+import getUser from 'utils/getUser'
+import { AuthCookiePayload, User } from 'utils/interfaces'
 
 export interface ISubscribePageProps {
   dbUser: User
 }
 
-export default function SubscribePage({ dbUser }: ISubscribePageProps) {
+export default function SubscribePage({
+  dbUser,
+}: ISubscribePageProps): JSX.Element {
   return (
     <DashboardLayout ver2>
       <SubscribeComp dbUser={dbUser} />
@@ -19,7 +21,6 @@ export default function SubscribePage({ dbUser }: ISubscribePageProps) {
   )
 }
 
-// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookies = parse(ctx.req.headers?.cookie ?? '')
   const authCookie = cookies.auth
@@ -36,11 +37,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     // verify the authCookie
-    // decoded === payload { sub: user.uid }
-    const decoded = verify(authCookie!, process.env.MY_SECRET_KEY)
+    const decoded = verify(
+      authCookie,
+      process.env.MY_SECRET_KEY
+    ) as AuthCookiePayload
 
     // get user from firestore
-    const { user } = await getUserFromDecodedToken(decoded as { sub: string })
+    const { user } = await getUser(decoded.sub)
 
     return {
       props: {

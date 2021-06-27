@@ -1,4 +1,11 @@
-export default function RoomCard({ prop, i }: { prop: any; i: number }) {
+import generateRupiah from 'utils/generateRupiah'
+
+interface Props {
+  prop: any
+  i: number
+}
+
+export default function RoomCard({ prop, i }: Props): JSX.Element {
   return (
     <article>
       {/* room image */}
@@ -30,14 +37,7 @@ export default function RoomCard({ prop, i }: { prop: any; i: number }) {
           </h4>
 
           <div className="mt-1">
-            <span className="text-gray-900">
-              {new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0,
-                minimumFractionDigits: 0,
-              }).format(prop.price)}
-            </span>
+            <span className="text-gray-900">{generateRupiah(prop.price)}</span>
             <span className="ml-1 text-sm text-gray-600">/wk</span>
           </div>
 

@@ -1,16 +1,13 @@
-import { GetServerSideProps } from 'next'
+import { parse } from 'cookie'
 import { verify } from 'jsonwebtoken'
+import { GetServerSideProps } from 'next'
 // files
-import DashboardLayout from '../../../components/dashboard/DashboardLayout'
-import CreateRoompies from '../../../components/createRoompies/CreateRoompies'
-import { db } from '../../../configs/firebaseConfig'
-import { User } from '../../../utils/interfaces'
+import DashboardLayout from 'components/dashboard/DashboardLayout'
+import CreateRoompies from 'components/createRoompies/CreateRoompies'
+import getUser from 'utils/getUser'
+import { AuthCookiePayload, UserProps } from 'utils/interfaces'
 
-export interface CreateRoompiesProps {
-  user: User
-}
-
-export default function CreateRoompiesPage({ user }: CreateRoompiesProps) {
+export default function CreateRoompiesPage({ user }: UserProps): JSX.Element {
   return (
     <div className="">
       <DashboardLayout ver2>
@@ -20,10 +17,9 @@ export default function CreateRoompiesPage({ user }: CreateRoompiesProps) {
   )
 }
 
-// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookie = ctx.req.headers?.cookie
-  const authCookie = cookie?.replace('auth=', '') // get only the cookie
+  const cookies = parse(ctx.req.headers?.cookie ?? '')
+  const authCookie = cookies.auth
 
   // kalau auth cookie kosong
   if (!authCookie) {
@@ -36,19 +32,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   try {
-    // decoded === payload { sub: user.uid }
-    const decoded = verify(authCookie!, process.env.MY_SECRET_KEY)
+    // verify the authCookie
+    const decoded = verify(
+      authCookie,
+      process.env.MY_SECRET_KEY
+    ) as AuthCookiePayload
 
     // get user from firestore
-    const userSnap = await db
-      .collection('users')
-      .doc((decoded as { sub: string })?.sub)
-      .get()
-
-    const user = {
-      ...userSnap.data(),
-      id: userSnap.id,
-    }
+    const { user } = await getUser(decoded.sub)
 
     return {
       props: {

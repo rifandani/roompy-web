@@ -1,3 +1,4 @@
+import { Map } from 'leaflet'
 import { Dispatch, SetStateAction, useRef, useState } from 'react'
 import {
   MapContainer,
@@ -8,7 +9,7 @@ import {
   useMapEvents,
 } from 'react-leaflet'
 // files
-import { LocPref } from '../../utils/interfaces'
+import { LocPref } from 'utils/interfaces'
 
 interface IEditRoompiesLeaflet {
   locPref: LocPref[]
@@ -25,7 +26,7 @@ const EditRoompiesLeaflet: React.FC<IEditRoompiesLeaflet> = ({
     zoom: 5,
     maxZoom: 30,
   })
-  const LMap = useRef() // Map ref
+  const LMap = useRef<Map>(null) // Map ref
 
   return (
     <MapContainer
@@ -45,7 +46,6 @@ const EditRoompiesLeaflet: React.FC<IEditRoompiesLeaflet> = ({
       <MapConsumer>
         {(map) => {
           // masukin Leaflet Map instance ke ref
-          // @ts-ignore
           LMap.current = map
 
           return null

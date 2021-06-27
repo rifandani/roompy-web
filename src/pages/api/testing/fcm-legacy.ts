@@ -1,8 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next'
 import Cors from 'cors'
 import axios from 'axios'
+import { NextApiRequest, NextApiResponse } from 'next'
 // files
-import initMiddleware from '../../../middlewares/initMiddleware'
+import initMiddleware from 'middlewares/initMiddleware'
 
 const cors = initMiddleware(
   Cors({
@@ -10,13 +10,16 @@ const cors = initMiddleware(
   })
 )
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse
+): Promise<void> => {
   await cors(req, res) // Run cors
 
   // GET req => /testing/fcm-legacy
   if (req.method === 'GET') {
     try {
-      const res2 = await axios.get(process.env.SERVICE_ACCOUNT_LINK!)
+      const res2 = await axios.get(process.env.SERVICE_ACCOUNT_LINK)
 
       const serviceAccount = res2?.data
 

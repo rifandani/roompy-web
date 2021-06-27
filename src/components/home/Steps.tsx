@@ -1,7 +1,7 @@
-import { FcImport, FcGlobe, FcCameraIdentification } from 'react-icons/fc'
 import { Zoom } from 'react-awesome-reveal'
+import { FcImport, FcGlobe, FcCameraIdentification } from 'react-icons/fc'
 
-export default function Steps() {
+export default function Steps(): JSX.Element {
   return (
     <div className="relative w-full py-20 overflow-hidden bg-white">
       <main className="container max-w-screen-xl min-h-full mx-auto">

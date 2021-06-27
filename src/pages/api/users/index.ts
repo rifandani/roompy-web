@@ -35,8 +35,11 @@ export default nc
       return
     }
 
+    // get query as string
+    const userId = getAsString(req.query.id)
+
     // get user
-    const { user } = await getUser(req)
+    const { user } = await getUser(userId)
 
     // kalau query.id tidak valid
     if (!user.username) {
@@ -66,7 +69,11 @@ export default nc
   })
   /* ------------------------------- DELETE req => /users?id=userId ------------------------------- */
   .delete(async (req, res) => {
-    const { user, userRef } = await getUser(req)
+    // get query as string
+    const userId = getAsString(req.query.id)
+
+    // get user
+    const { user, userRef } = await getUser(userId)
 
     // kalau query id tidak valid
     if (!user.username) {

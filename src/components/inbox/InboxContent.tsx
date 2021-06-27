@@ -1,3 +1,4 @@
+import { IoSend } from 'react-icons/io5'
 import { useState, Dispatch, SetStateAction } from 'react'
 import {
   FaSortAmountUp,
@@ -5,10 +6,8 @@ import {
   FaEllipsisV,
   FaPaperclip,
 } from 'react-icons/fa'
-import { IoSend } from 'react-icons/io5'
-import { toast } from 'react-toastify'
 // files
-import { InboxPageProps } from '../../pages/dashboard/inbox'
+import { InboxPageProps } from 'pages/dashboard/inbox'
 
 const chat = {
   name: 'Masturah Adam',
@@ -21,9 +20,17 @@ interface IInboxProps extends InboxPageProps {
   setBusy: Dispatch<SetStateAction<boolean>>
 }
 
-export default function InboxContent({ setBusy, dbUser }: IInboxProps) {
+export default function InboxContent({
+  setBusy,
+  dbUser,
+}: IInboxProps): JSX.Element {
   // hooks
   const [isAsc, setIsAsc] = useState<boolean>(false)
+
+  const onSubmit = () => {
+    setBusy(false)
+    console.info(dbUser.username)
+  }
 
   return (
     <div className="flex-1 pb-20 mt-12 overflow-hidden bg-gray-100 md:mt-2 md:pb-0">
@@ -152,6 +159,7 @@ export default function InboxContent({ setBusy, dbUser }: IInboxProps) {
             <button
               className="p-1 rounded-full outline-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
               type="submit"
+              onClick={onSubmit}
             >
               <IoSend className="w-6 h-6 text-gray-900 " />
             </button>

@@ -1,9 +1,14 @@
 import { useState, useEffect, Dispatch, SetStateAction } from 'react'
 // files
-import { auth } from '../configs/firebaseConfig'
-import { FireUser } from '../utils/interfaces'
+import { auth } from 'configs/firebaseConfig'
+import { FireUser } from 'utils/interfaces'
 
-function useAuth() {
+type UseAuthReturn = readonly [
+  FireUser | null,
+  Dispatch<SetStateAction<FireUser>>
+]
+
+function useAuth(): UseAuthReturn {
   const [authUser, setAuthUser] = useState<FireUser | null>(null)
 
   useEffect(() => {
@@ -22,10 +27,7 @@ function useAuth() {
     return () => unsubscribe()
   }, [])
 
-  return [authUser, setAuthUser] as [
-    FireUser | null,
-    Dispatch<SetStateAction<FireUser>>
-  ]
+  return [authUser, setAuthUser] as const
 }
 
 export default useAuth

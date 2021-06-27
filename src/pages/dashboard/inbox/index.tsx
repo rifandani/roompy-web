@@ -1,18 +1,19 @@
-import { GetServerSideProps } from 'next'
+import Loader from 'react-loader-spinner'
+import { parse } from 'cookie'
 import { useState } from 'react'
 import { verify } from 'jsonwebtoken'
-import Loader from 'react-loader-spinner'
+import { GetServerSideProps } from 'next'
 // files
-import DashboardLayout from '../../../components/dashboard/DashboardLayout'
-import InboxContent from '../../../components/inbox/InboxContent'
-import { db } from '../../../configs/firebaseConfig'
-import { User } from '../../../utils/interfaces'
+import DashboardLayout from 'components/dashboard/DashboardLayout'
+import InboxContent from 'components/inbox/InboxContent'
+import getUser from 'utils/getUser'
+import { AuthCookiePayload, User } from 'utils/interfaces'
 
 export interface InboxPageProps {
   dbUser: User
 }
 
-export default function InboxPage({ dbUser }: InboxPageProps) {
+export default function InboxPage({ dbUser }: InboxPageProps): JSX.Element {
   const [busy, setBusy] = useState<boolean>(false)
 
   return (
@@ -36,10 +37,9 @@ export default function InboxPage({ dbUser }: InboxPageProps) {
   )
 }
 
-// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookie = ctx.req.headers?.cookie
-  const authCookie = cookie?.replace('auth=', '') // get only the cookie
+  const cookies = parse(ctx.req.headers?.cookie ?? '')
+  const authCookie = cookies.auth
 
   // kalau auth cookie kosong
   if (!authCookie) {
@@ -52,23 +52,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   try {
-    // decoded === payload { sub: user.uid }
-    const decoded = verify(authCookie!, process.env.MY_SECRET_KEY)
+    // verify the authCookie
+    const decoded = verify(
+      authCookie,
+      process.env.MY_SECRET_KEY
+    ) as AuthCookiePayload
 
-    // get current user from auth cookie
-    const userSnap = await db
-      .collection('users')
-      .doc((decoded as { sub: string })?.sub)
-      .get()
-
-    const dbUser = {
-      ...userSnap.data(),
-      id: userSnap.id,
-    }
+    // get user from firestore
+    const { user } = await getUser(decoded.sub)
 
     return {
       props: {
-        dbUser,
+        dbUser: user,
       },
     }
   } catch (err) {

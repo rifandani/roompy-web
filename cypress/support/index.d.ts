@@ -1,29 +1,55 @@
-// load type definitions that come with Cypress module
+// load the global Cypress types
 /// <reference types="cypress" />
+// no export & import, will cause errors
 
-interface IPostQrcodeRequestBody {
-  url: string
+/* --------------------------------------------- api types -------------------------------------------- */
+
+type TErrorResponse = {
+  error: boolean
+  message: string
+  name?: string // 500
+  errors?: string[] // 500
 }
 
-interface IPutUserRequestBody {
-  username: string
-  email: string
+type TCommonApiResponse = {
+  error: boolean
+  message: string
 }
 
-interface IRegisterUserRequestBody extends IPutUserRequestBody {
-  id: string
-}
+type TLoginApi = { id: string }
+type TRegisterApi = { id: string; username: string; email: string }
+
+type IPostQrcodeReqBody = { url: string }
+type IPostQrcodeResBody = { error: boolean; url: string }
 
 declare namespace Cypress {
   interface Chainable {
-    // qrcode
-    postQrcode(requestBody: IPostQrcodeRequestBody): Chainable<Response>
-    // users
-    getUsers(): Chainable<Response>
-    getUser(id: string): Chainable<Response>
-    putUser(id: string, requestBody: IPutUserRequestBody): Chainable<Response>
-    deleteUser(id: string): Chainable<Response>
+    /* ------------------------------------------- helpers ------------------------------------------ */
+    dataCy(
+      dataTestAttribute: string,
+      args?: Partial<
+        Cypress.Loggable &
+          Cypress.Timeoutable &
+          Cypress.Withinable &
+          Cypress.Shadow
+      >
+    ): Chainable<Element>
+
+    /* --------------------------------------------- api -------------------------------------------- */
+
     // auth
-    registerUser(requestBody: IRegisterUserRequestBody): Chainable<Response>
+    loginByApi(
+      reqBody: TLoginApi
+    ): Chainable<Response<TCommonApiResponse & TErrorResponse>>
+    registerByApi(
+      reqBody: TRegisterApi
+    ): Chainable<Response<TCommonApiResponse & TErrorResponse>>
+
+    // qrcode
+    postQrcode(
+      reqBody: IPostQrcodeReqBody
+    ): Chainable<Response<IPostQrcodeResBody & TErrorResponse>>
+
+    /* --------------------------------------------- UI --------------------------------------------- */
   }
 }

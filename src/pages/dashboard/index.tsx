@@ -2,18 +2,18 @@ import { GetServerSideProps } from 'next'
 import { verify } from 'jsonwebtoken'
 import { parse } from 'cookie'
 // files
-import DashboardLayout from '../../components/dashboard/DashboardLayout'
-import DashboardContent from '../../components/dashboard/DashboardContent'
-import { User } from '../../utils/interfaces'
-import getUserFromDecodedToken from '../../utils/getUserFromDecodedToken'
-import validatePremiumUser from '../../utils/validatePremiumUser'
-import unpremiumUser from '../../utils/unpremiumUser'
+import DashboardLayout from 'components/dashboard/DashboardLayout'
+import DashboardContent from 'components/dashboard/DashboardContent'
+import getUser from 'utils/getUser'
+import unpremiumUser from 'utils/unpremiumUser'
+import validatePremiumUser from 'utils/validatePremiumUser'
+import { AuthCookiePayload, User } from 'utils/interfaces'
 
 export interface DashboardProps {
   dbUser: User
 }
 
-export default function DashboardPage({ dbUser }: DashboardProps) {
+export default function DashboardPage({ dbUser }: DashboardProps): JSX.Element {
   return (
     <DashboardLayout>
       <DashboardContent dbUser={dbUser} />
@@ -21,7 +21,6 @@ export default function DashboardPage({ dbUser }: DashboardProps) {
   )
 }
 
-// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookies = parse(ctx.req.headers?.cookie ?? '')
   const authCookie = cookies.auth
@@ -38,17 +37,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     // verify the authCookie
-    // decoded === payload { sub: user.uid }
-    const decoded = verify(authCookie!, process.env.MY_SECRET_KEY)
+    const decoded = verify(
+      authCookie,
+      process.env.MY_SECRET_KEY
+    ) as AuthCookiePayload
 
     // get user from firestore
-    const { user, userRef } = await getUserFromDecodedToken(
-      decoded as { sub: string }
-    )
+    const { user, userRef } = await getUser(decoded.sub)
 
     // premium user validation only happen in user dashboard
     // validate is the user premiumUntil is still valid
-    if (user?.premium) {
+    if (user.premium) {
       const isValid = validatePremiumUser(user)
 
       // if premiumUntil is no longer valid

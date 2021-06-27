@@ -69,26 +69,26 @@ Kami ingin semua yang terlibat, baik itu pengguna _(user)_ ataupun pengembang _(
 
 ## Branches 🔱
 
-- [dev](https://github.com/rifandani/roompy-web/tree/dev) -> PR branch ini untuk kontribusi **(coming soon)**
-- [master](https://github.com/rifandani/roompy-web) -> Jangan disentuh, branch ini untuk production
+- [develop](https://github.com/rifandani/roompy-web/tree/develop) -> PR branch ini untuk kontribusi
+- [master](https://github.com/rifandani/roompy-web/tree/master) -> Jangan disentuh, branch ini untuk production
 
 ## Change Log 📜
 
 Digunakan untuk tracking setiap commit terhadap aplikasi.
 
-Silahkan baca [CHANGELOG.md](https://github.com/rifandani/roompy-web/blob/master/CHANGELOG.md) untuk mengetahui lebih detailnya.
+Silahkan baca [CHANGELOG.md](https://github.com/rifandani/roompy-web/blob/develop/CHANGELOG.md) untuk mengetahui lebih detailnya.
 
 ## Contributions 🧩
 
 Roompy web dibuka untuk kontribusi, tetapi saya merekomendasikan kalian membuat issue baru atau membalas dalam bentuk komentar agar saya dapat mengetahui terlebih dahulu apa yang kalian ingin tambahkan/kerjakan. Dengan itu apa yang kita kerjakan tidak akan saling bertabrakan.
 
-Silahkan baca [CONTRIBUTING.md](https://github.com/rifandani/roompy-web/blob/master/CONTRIBUTING.md) untuk mengetahui lebih detailnya.
+Silahkan baca [CONTRIBUTING.md](https://github.com/rifandani/roompy-web/blob/develop/CONTRIBUTING.md) untuk mengetahui lebih detailnya.
 
 ## Design Guidelines 🎨
 
 Roompy web membutuhkan UI/UX designer dan frontend React developer untuk merancang bagaimana design guidelines yang cocok untuk aplikasi ini dan diharapkan dapat memperbaiki tampilan UI/UX yang saat ini masih sangat kurang. Hal ini dikarenakan saya pribadi tidak familiar dengan bagaimana trend UI/UX zaman now.
 
-Silahkan baca [DESIGN_GUIDELINES.md](https://github.com/rifandani/roompy-web/blob/master/DESIGN_GUIDELINES.md) untuk mengetahui lebih detailnya.
+Silahkan baca [DESIGN_GUIDELINES.md](https://github.com/rifandani/roompy-web/blob/develop/DESIGN_GUIDELINES.md) untuk mengetahui lebih detailnya.
 
 ## Roompy on Android 📱
 

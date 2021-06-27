@@ -6,6 +6,7 @@ import WS from 'ws'
 // files
 import nc from 'middlewares/nc'
 import { getRoompy } from 'utils/getRoompy'
+import { getAsString } from 'utils/getAsString'
 import { nowMillis, storage } from 'configs/firebaseConfig'
 import { NextApiRequestWithMulterFile } from 'utils/interfaces'
 
@@ -31,12 +32,14 @@ export default nc
     global.XMLHttpRequest = XHR
     ;(global.WebSocket as any) = WS
 
+    // get request file and query
+    const roompyId = getAsString(req.query.id)
     const file = req.file
     // console.log('file => ', file);
     // res.status(201).json({ file, body: req.body });
 
     // get roompy & roompyRef
-    const { roompy, roompyRef } = await getRoompy(req)
+    const { roompy, roompyRef } = await getRoompy(roompyId)
 
     // split photoURL string
     const splitted = roompy.photoURL.split('%2F') // [1] = userId, [3] = roompyId

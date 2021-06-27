@@ -1,18 +1,21 @@
-import { GetServerSideProps } from 'next'
-import { useState } from 'react'
 import Loader from 'react-loader-spinner'
+import { parse } from 'cookie'
+import { useState } from 'react'
 import { verify } from 'jsonwebtoken'
+import { GetServerSideProps } from 'next'
 // files
-import DashboardLayout from '../../../components/dashboard/DashboardLayout'
-import MatchesContent from '../../../components/matches/MatchesContent'
+import DashboardLayout from 'components/dashboard/DashboardLayout'
+import MatchesContent from 'components/matches/MatchesContent'
+import { AuthCookiePayload } from 'utils/interfaces'
+import getUser from 'utils/getUser'
 
 export interface MatchesPageProps {
   userId: string
 }
 
-export default function MatchesPage({ userId }: MatchesPageProps) {
+export default function MatchesPage({ userId }: MatchesPageProps): JSX.Element {
   // hooks
-  const [busy, setBusy] = useState<boolean>(false)
+  const [busy] = useState<boolean>(false)
 
   return (
     <div className="">
@@ -35,10 +38,9 @@ export default function MatchesPage({ userId }: MatchesPageProps) {
   )
 }
 
-// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cookie = ctx.req.headers?.cookie
-  const authCookie = cookie?.replace('auth=', '') // get only the cookie
+  const cookies = parse(ctx.req.headers?.cookie ?? '')
+  const authCookie = cookies.auth
 
   // kalau auth cookie kosong
   if (!authCookie) {
@@ -51,9 +53,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   try {
-    // decoded === payload { sub: user.uid }
-    const decoded = verify(authCookie!, process.env.MY_SECRET_KEY)
-    const userId = (decoded as { sub: string })?.sub
+    // verify auth cookie
+    const decoded = verify(
+      authCookie,
+      process.env.MY_SECRET_KEY
+    ) as AuthCookiePayload
+    const userId = decoded.sub
+
+    // if user does not exists
+    const { userSnap } = await getUser(userId)
+    if (!userSnap.exists) {
+      return {
+        redirect: { destination: '/login', permanent: false },
+      }
+    }
 
     return {
       props: {
@@ -61,7 +74,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     }
   } catch (err) {
-    // kalau auth cookie ada tapi tidak valid / verify error
+    // kalau jwt malformed  || auth cookie tidak valid
+    console.error(err)
     return {
       redirect: {
         destination: '/login',

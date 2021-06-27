@@ -1,9 +1,9 @@
-import { GetServerSideProps } from 'next'
 import { parse } from 'cookie'
+import { GetServerSideProps } from 'next'
 // files
-import LoginComp from '../components/login/LoginComp'
+import LoginComp from 'components/login/LoginComp'
 
-export default function LoginPage() {
+export default function LoginPage(): JSX.Element {
   // const { prefetch } = useRouter()
 
   // useEffect(() => {
@@ -18,7 +18,6 @@ export default function LoginPage() {
   )
 }
 
-// You should not use fetch() to call an API route in getServerSideProps. Instead, directly import the logic used inside your API route
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookies = parse(ctx.req.headers?.cookie ?? '')
   const authCookie = cookies.auth // get only the auth cookie

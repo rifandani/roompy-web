@@ -1,11 +1,11 @@
-import { useState } from 'react'
 import Select from 'react-select'
+import { useState } from 'react'
 // files
-import SiteHeader from '../SiteHeader'
-import RoompiesFilters from './RoompiesFilters'
 import RoompyCard2 from './RoompyCard2'
+import RoompiesFilters from './RoompiesFilters'
+import SiteHeader from '../SiteHeader'
 import Pagination from '../Pagination'
-import { RoompiesProps } from '../../utils/interfaces'
+import { RoompiesProps } from 'utils/interfaces'
 
 const sorts = [
   { value: 'createdAt', label: 'Newest' },
@@ -14,7 +14,8 @@ const sorts = [
   { value: 'moveDate', label: 'Earliest Move Date' },
 ]
 
-export default function RoompiesComp({ roompies }: RoompiesProps) {
+export default function RoompiesComp({ roompies }: RoompiesProps): JSX.Element {
+  // hooks
   const [selectedSort, setSelectedSort] = useState(null) // object
   const [currentPage, setCurrentPage] = useState<number>(0) // number => for pagination
   const [limit] = useState<number>(12) // number => for pagination
