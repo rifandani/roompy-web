@@ -1,6 +1,5 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
 import { Roompy, User } from 'utils/interfaces'
 import { getAsString } from 'utils/getAsString'
@@ -8,15 +7,10 @@ import { db, nowMillis } from 'configs/firebaseConfig'
 import { favRoompiesApiSchema, TFavRoompiesApi } from 'utils/yup/apiSchema'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET', 'POST', 'DELETE'],
-    })
-  )
+  .use(withCors(['GET', 'POST', 'DELETE']))
   .use(withYupConnect(favRoompiesApiSchema)) // yup middleware
-  /* ------------------------ GET req => /favorites/roompies?userId=userId ------------------------ */
-  .get(async (req, res) => {
+  /* ------------------------ GET => /api/favorites/roompies?userId=userId ------------------------ */
+  .get('/api/favorites/roompies', async (req, res) => {
     const userId = getAsString(req.query.userId)
 
     // get user from firestore
@@ -46,8 +40,8 @@ export default nc
     // GET success => OK +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json({ error: false, user: dbUser, favRoompies })
   })
-  /* ------------------------------- POST req => /favorites/roompies ------------------------------ */
-  .post(async (req, res) => {
+  /* ------------------------------- POST => /api/favorites/roompies ------------------------------ */
+  .post('/api/favorites/roompies', async (req, res) => {
     const { userId, roompyId } = req.body as TFavRoompiesApi
 
     const userRef = db.collection('users').doc(userId) // user ref
@@ -85,8 +79,8 @@ export default nc
       message: 'Success adding to the favorites list',
     })
   })
-  /* -------------- DELETE req => /favorites/roompies?userId=userId&roompyId=roompyId ------------- */
-  .delete(async (req, res) => {
+  /* -------------- DELETE => /api/favorites/roompies?userId=userId&roompyId=roompyId ------------- */
+  .delete('/api/favorites/roompies', async (req, res) => {
     const userId = getAsString(req.query.userId)
     const roompyId = getAsString(req.query.roompyId)
 

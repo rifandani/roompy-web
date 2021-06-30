@@ -1,6 +1,5 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
 import { snapClient } from 'configs/midtransConfig'
 import { db, nowMillis } from 'configs/firebaseConfig'
@@ -10,16 +9,10 @@ import {
 } from 'utils/yup/apiSchema'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['POST'],
-    })
-  )
-  // yup middleware
+  .use(withCors(['POST']))
   .use(withYupConnect(midtransTransactionApiSchema))
-  /* ----------------------------- POST / api / midtrans / transaction ---------------------------- */
-  .post(async (req, res) => {
+  /* ----------------------------- POST /api/midtrans/transaction ---------------------------- */
+  .post('/api/midtrans/transaction', async (req, res) => {
     const { user_id, customer_details, item_details } =
       req.body as TMidtransTransactionApi
 

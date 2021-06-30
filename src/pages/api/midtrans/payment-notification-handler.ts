@@ -1,18 +1,12 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import { db, nowMillis } from 'configs/firebaseConfig'
 import { snapClient } from 'configs/midtransConfig'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['POST'],
-    })
-  )
+  .use(withCors(['POST']))
   /* ----------------------- POST /api/midtrans/payment-notification-handler ---------------------- */
-  .post(async (req, res) => {
+  .post('/api/midtrans/payment-notification-handler', async (req, res) => {
     const notificationJson = req.body // POST notification dari midtrans webhook
 
     // ensure the integrity of the notifications and the content, it is recommended to verify the notification

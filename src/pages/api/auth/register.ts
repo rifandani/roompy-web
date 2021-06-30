@@ -7,10 +7,10 @@ import { db, nowMillis } from 'configs/firebaseConfig'
 import { registerApiSchema, TRegisterApi } from 'utils/yup/apiSchema'
 
 export default nc
-  // cors middleware
   .use(withCors(['POST']))
   .use(withYupConnect(registerApiSchema)) // yup middleware
-  .post(async (req, res) => {
+  /* ----------------------------------- POST /api/auth/register ---------------------------------- */
+  .post('/api/auth/register', async (req, res) => {
     // id from firebase auth client
     const { id, username, email } = req.body as TRegisterApi
 

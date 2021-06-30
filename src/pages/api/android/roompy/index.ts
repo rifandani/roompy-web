@@ -1,20 +1,14 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import { getAsString } from 'utils/getAsString'
 import { getRoompy } from 'utils/getRoompy'
 import { nowMillis } from 'configs/firebaseConfig'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['PUT'],
-    })
-  )
-  /* ------------------------------- PUT req => /roompy?id=roompyId ------------------------------- */
+  .use(withCors(['PUT']))
+  /* ------------------------------- PUT => /api/android/roompy?id=roompyId ------------------------------- */
   /* ----------------------- update ONLY roompy data (photoURL not included) ---------------------- */
-  .put(async (req, res) => {
+  .put('/api/android/roompy', async (req, res) => {
     // get request body & query
     const roompyId = getAsString(req.query.id)
     const reqBody = req.body

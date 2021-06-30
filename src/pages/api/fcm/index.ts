@@ -1,21 +1,16 @@
-import Cors from 'cors'
 import axios from 'axios'
 import * as admin from 'firebase-admin'
 // files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
 import { fcmApiSchema, TFcmApi } from 'utils/yup/apiSchema'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['POST'],
-    })
-  )
+  .use(withCors(['POST']))
   .use(withYupConnect(fcmApiSchema)) // yup middleware
-  /* -------------------------------------- POST req => /fcm -------------------------------------- */
-  .post(async (req, res) => {
+  /* -------------------------------------- POST => /api/fcm -------------------------------------- */
+  .post('/api/fcm', async (req, res) => {
     // setting up firebase-admin
     let serviceAccount: admin.ServiceAccount
 

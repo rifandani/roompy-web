@@ -1,20 +1,15 @@
-import Cors from 'cors'
 import * as turf from '@turf/turf'
 // files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import { db } from 'configs/firebaseConfig'
 import { Roompy } from 'utils/interfaces'
 import { getAsString } from 'utils/getAsString'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET'],
-    })
-  )
-  // GET req => /matches/roompies?userId=userId
-  .get(async (req, res) => {
+  .use(withCors(['GET']))
+  /* ------------------------- GET req => /api/matches/roompies?userId=userId ------------------------- */
+  .get('/api/matches/roompies', async (req, res) => {
     const userId = getAsString(req.query.userId) // destructure req.query
 
     // get all roompies

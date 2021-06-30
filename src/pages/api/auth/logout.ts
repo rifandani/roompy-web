@@ -1,16 +1,12 @@
-import Cors from 'cors'
 import { serialize } from 'cookie'
 // files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET'],
-    })
-  )
-  .get(async (_, res) => {
+  .use(withCors(['GET']))
+  /* ------------------------------------ GET /api/auth/logout ------------------------------------ */
+  .get('/api/auth/logout', async (_, res) => {
     // remove cookies from request header by setting its expires to 0
     res.setHeader(
       'Set-Cookie',

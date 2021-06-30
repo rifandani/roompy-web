@@ -1,8 +1,8 @@
-import Cors from 'cors'
 import axios from 'axios'
 // files
-import withYupConnect from 'middlewares/withYupConnect'
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
+import withYupConnect from 'middlewares/withYupConnect'
 import getUser from 'utils/getUser'
 import { getAsString } from 'utils/getAsString'
 import { usersApiSchema } from 'utils/yup/apiSchema'
@@ -11,15 +11,10 @@ import { db, nowMillis } from 'configs/firebaseConfig'
 const usersRef = db.collection('users')
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET', 'PUT', 'DELETE'],
-    })
-  )
+  .use(withCors(['GET', 'PUT', 'DELETE']))
   .use(withYupConnect(usersApiSchema)) // yup middleware
   /* ---------------------------- GET req => /users & /users?id=userId ---------------------------- */
-  .get(async (req, res) => {
+  .get('/api/users', async (req, res) => {
     // if there is no query === get ALL users
     if (Object.keys(req.query).length === 0) {
       // get all users
@@ -35,10 +30,8 @@ export default nc
       return
     }
 
-    // get query as string
-    const userId = getAsString(req.query.id)
-
     // get user
+    const userId = getAsString(req.query.id)
     const { user } = await getUser(userId)
 
     // kalau query.id tidak valid
@@ -51,7 +44,7 @@ export default nc
     res.status(200).json(user)
   })
   /* --------------------------------- PUT req => /users?id=userId -------------------------------- */
-  .put(async (req, res) => {
+  .put('/api/users', async (req, res) => {
     // get request query and body
     const userId = getAsString(req.query.id)
     const { username, email } = req.body
@@ -68,7 +61,7 @@ export default nc
     res.status(201).json({ error: false, message: 'User updated successfully' })
   })
   /* ------------------------------- DELETE req => /users?id=userId ------------------------------- */
-  .delete(async (req, res) => {
+  .delete('/api/users', async (req, res) => {
     // get query as string
     const userId = getAsString(req.query.id)
 
