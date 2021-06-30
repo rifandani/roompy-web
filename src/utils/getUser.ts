@@ -11,7 +11,7 @@ export default async function getUser(userId: string): Promise<Return> {
   // get user ref
   const userRef = db.collection('users').doc(userId)
 
-  // get user
+  // get user snap
   const userSnap = await userRef.get()
 
   const user = {

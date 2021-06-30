@@ -1,10 +1,10 @@
 import multer from 'multer'
-import Cors from 'cors'
 // Polyfills required for Firebase
 import XHR from 'xhr2'
 import WS from 'ws'
 // files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import { getRoompy } from 'utils/getRoompy'
 import { getAsString } from 'utils/getAsString'
 import { db, nowMillis, storage } from 'configs/firebaseConfig'
@@ -19,16 +19,10 @@ export const config = {
 const roompiesRef = db.collection('roompies')
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    })
-  )
-  // handle files upload middleware - will ONLY support form-data
-  .use(multer().single('photo'))
+  .use(withCors(['GET', 'POST', 'PUT', 'DELETE']))
+  .use(multer().single('photo')) // handle files upload middleware - will ONLY support form-data
   /* ---------------------- GET => /roompies & /roompies?id=roompyId ---------------------- */
-  .get(async (req, res) => {
+  .get('/api/roompies', async (req, res) => {
     // kalau gaada query berarti GET all roompies
     if (Object.keys(req.query).length === 0) {
       // get all roompies
@@ -50,11 +44,17 @@ export default nc
     const roompyId = getAsString(req.query.id)
     const { roompy } = await getRoompy(roompyId)
 
+    // kalau query.id tidak valid
+    if (!roompy.name) {
+      res.status(400).json({ error: true, message: 'Invalid query roompy id' })
+      return
+    }
+
     // GET success => OK ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json(roompy)
   })
   /* -------------------------------------- POST => /roompies ------------------------------------- */
-  .post(async (req: NextApiRequestWithMulterFile, res) => {
+  .post('/api/roompies', async (req: NextApiRequestWithMulterFile, res) => {
     // TODO: validate client request body
 
     // polyfill
@@ -109,7 +109,7 @@ export default nc
     }
   })
   /* ------------------------------ PUT req => /roompies?id=roompyId ------------------------------ */
-  .put(async (req: NextApiRequestWithMulterFile, res) => {
+  .put('/api/roompies', async (req: NextApiRequestWithMulterFile, res) => {
     // TODO: validate client request body
 
     // polyfill
@@ -165,7 +165,7 @@ export default nc
     }
   })
   /* ----------------------------- DELETE req => /roompies?id=roompyId ---------------------------- */
-  .delete(async (req, res) => {
+  .delete('/api/roompies', async (req, res) => {
     // get roompy and ref
     const roompyId = getAsString(req.query.id)
     const { roompy, roompyRef } = await getRoompy(roompyId)

@@ -143,12 +143,16 @@ export interface AuthCookiePayload {
   exp?: number // expiredAt, seconds since Unix epoch
 }
 
-// firebase type
-export type DocRef = firebase.firestore.DocumentReference
+// firebase types
+export type ColDataRef =
+  firebase.firestore.CollectionReference<firebase.firestore.DocumentData>
+export type ColDataSnap =
+  firebase.firestore.QuerySnapshot<firebase.firestore.DocumentData>
 export type DocDataRef =
   firebase.firestore.DocumentReference<firebase.firestore.DocumentData>
 export type DocDataSnap =
   firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
+
 export type Timestamp = firebase.firestore.Timestamp
 export type FireUser = firebase.User
 export type UserCredential = firebase.UserInfo

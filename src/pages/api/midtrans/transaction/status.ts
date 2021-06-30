@@ -1,18 +1,13 @@
-import Cors from 'cors'
 import axios from 'axios'
 // files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import { getAsString } from 'utils/getAsString'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET'],
-    })
-  )
+  .use(withCors(['GET']))
   /* -------------------- GET /api/midtrans/transaction/status?orderId=orderId -------------------- */
-  .get(async (req, res) => {
+  .get('/api/midtrans/transaction/status', async (req, res) => {
     const orderId = getAsString(req.query.orderId)
 
     // Buffer() requires a number, array or string as the first parameter, and an optional encoding type as the second parameter.

@@ -1,6 +1,5 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
 import { firstChatApiSchema, TFirstChatApi } from 'utils/yup/apiSchema'
 import {
@@ -11,15 +10,10 @@ import {
 } from 'configs/firebaseConfig'
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['POST'],
-    })
-  )
+  .use(withCors(['POST']))
   .use(withYupConnect(firstChatApiSchema)) // yup middleware
-  /* --------------------------------- POST req => /api/first-chat -------------------------------- */
-  .post(async (req, res) => {
+  /* --------------------------------- POST => /api/first-chat -------------------------------- */
+  .post('/api/first-chat', async (req, res) => {
     const usersRef = db.collection('users') // users ref
 
     const { senderUserId, senderRoompyId, receiverUserId, receiverRoompyId } =

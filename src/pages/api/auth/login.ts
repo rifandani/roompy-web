@@ -6,10 +6,10 @@ import setAuthCookie from 'utils/setAuthCookie'
 import { loginApiSchema, TLoginApi } from 'utils/yup/apiSchema'
 
 export default nc
-  // cors middleware
   .use(withCors(['POST']))
   .use(withYupConnect(loginApiSchema)) // yup middleware
-  .post(async (req, res) => {
+  /* ----------------------------------- POST => /api/auth/login ---------------------------------- */
+  .post('/api/auth/login', async (req, res) => {
     // id from firebase auth client
     const { id } = req.body as TLoginApi
 

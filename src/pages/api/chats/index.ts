@@ -1,6 +1,5 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
+import withCors from 'middlewares/withCors'
 import withYupConnect from 'middlewares/withYupConnect'
 import getUser from 'utils/getUser'
 import { chatsApiSchema, TChatsApi } from 'utils/yup/apiSchema'
@@ -10,15 +9,10 @@ import { getAsString } from 'utils/getAsString'
 const chatsRef = realDB.ref('chats')
 
 export default nc
-  // cors middleware
-  .use(
-    Cors({
-      methods: ['GET', 'POST'],
-    })
-  )
+  .use(withCors(['GET', 'POST']))
   .use(withYupConnect(chatsApiSchema)) // yup middleware
-  /* --------------------------------- GET req => /chats?id=userId -------------------------------- */
-  .get(async (req, res) => {
+  /* --------------------------------- GET => /api/chats?id=userId -------------------------------- */
+  .get('/api/chats', async (req, res) => {
     // get query as string
     const userId = getAsString(req.query.id)
 
@@ -66,8 +60,8 @@ export default nc
       error: false,
     })
   })
-  /* ------------------------------------- POST req => /chats ------------------------------------- */
-  .post(async (req, res) => {
+  /* ------------------------------------- POST => /api/chats ------------------------------------- */
+  .post('/api/chats', async (req, res) => {
     const { senderUserId, text, chatId } = req.body as TChatsApi
 
     // chat ref

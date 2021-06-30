@@ -1,31 +1,29 @@
-import Cors from 'cors'
-// files
 import nc from 'middlewares/nc'
-import { db } from 'configs/firebaseConfig'
-import { Roompy } from 'utils/interfaces'
+import withCors from 'middlewares/withCors'
 import { getAsString } from 'utils/getAsString'
+import { getRoompies } from 'utils/getRoompies'
 
 export default nc
   // cors middleware
-  .use(
-    Cors({
-      methods: ['GET'],
-    })
-  )
+  .use(withCors(['GET']))
   /* -------------------------- GET req => /posted/roompies?userId=userId ------------------------- */
-  .get(async (req, res) => {
-    const userId = getAsString(req.query.userId)
+  .get('/api/posted/roompies', async (req, res) => {
+    // if there is no query, throws 400
+    if (Object.keys(req.query).length === 0) {
+      res
+        .status(400)
+        .json({ error: true, message: 'Please provide query userId' })
+      return
+    }
 
     // get all roompies
-    const roompiesSnap = await db.collection('roompies').get()
-
-    const roompies = roompiesSnap.docs.map((el) => ({
-      ...el.data(),
-      id: el.id,
-    })) as Roompy[]
+    const userId = getAsString(req.query.userId)
+    const { roompies } = await getRoompies()
 
     // filter all roompies array to get the roompy object that match with userId from query
-    const userPostedRoompies = roompies.filter((el) => el.postedBy === userId)
+    const userPostedRoompies = roompies.filter(
+      (roompy) => roompy.postedBy === userId
+    )
 
     // GET success => OK +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     res.status(200).json({

@@ -9,7 +9,7 @@ export default nc
   .use(withCors(['GET', 'POST']))
   // yup middleware
   .use(withYupConnect(qrcodeApiSchema))
-  .get(async (_, res) => {
+  .get('/api/qrcode', async (_, res) => {
     // generate QRcode
     const url = 'https://roompy.vercel.app'
     const qrcodeUrl = await QRCode.toDataURL(url)
@@ -20,7 +20,7 @@ export default nc
       url: qrcodeUrl,
     })
   })
-  .post(async (req, res) => {
+  .post('/api/qrcode', async (req, res) => {
     // desctructure req.body
     const { url } = req.body as TQrcodeApi
 
